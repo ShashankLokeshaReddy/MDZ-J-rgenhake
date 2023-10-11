@@ -1,0 +1,14 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <!-- Content specific to authenticated users -->
+        <div class="auth-content">
+            {% block auth_content %}{% endblock %}
+        </div>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            You must be logged in to access this page.
+        </div>
+    {% endif %}
+{% endblock %}

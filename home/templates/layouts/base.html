@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Your Website{% endblock %}</title>
+    <!-- Add your CSS links or stylesheets here -->
+    <link rel="stylesheet" href="static\css\material-dashboard.css">
+</head>
+
+<body class="g-sidenav-show bg-gray-200">
+    <!-- Your navigation bar goes here -->
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <!-- Add more navigation items as needed -->
+        </ul>
+    </nav>
+
+    <!-- Content from child templates will be placed here -->
+    <div class="content">
+        {% block content %}
+        <!-- Default content if child templates do not provide content -->
+        <h1>Welcome to Your Website!</h1>
+        {% endblock %}
+    </div>
+
+    <!-- Your JavaScript scripts go here -->
+    <script src="static\js\scripts.js"></script>
+</body>
+
+</html>
