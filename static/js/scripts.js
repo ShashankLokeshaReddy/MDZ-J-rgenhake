@@ -18,4 +18,23 @@ dropdownToggle.forEach((toggle) => {
     });
 });
 
+function openSidebar() {
+    document.getElementById("sidenav-main").style.width = "100%";
+  }
+
+function closeSidebar() {
+    document.getElementById("sidenav-main").style.width = "0";
+}
+
+// Get the button element
+var nachObenButton = document.getElementById('nach-oben-bt');
+
+// Add a click event listener to the button
+nachObenButton.addEventListener('click', function() {
+    // Scroll to the top of the page smoothly
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
 // Add more functionality as needed
