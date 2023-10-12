@@ -1,11 +1,8 @@
-{% extends 'layouts/base-auth.html' %}
+{% extends 'layouts/base.html' %}
 
-{% block title %}My Profile{% endblock %}
-
-{% block auth_content %}
+{% block content %}
     <div class="container mt-4">
-        <h1>Hello, {{ user.username }}!</h1>
-        <p>Email: {{ user.email }}</p>
-        <!-- Add more profile information here -->
+        <h1>User Profile</h1>
+        <!-- Add your profile content here -->
     </div>
 {% endblock %}

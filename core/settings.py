@@ -67,7 +67,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "core.urls"
 
-UI_TEMPLATES = os.path.join(BASE_DIR, 'templates')
+# UI_TEMPLATES = os.path.join(BASE_DIR, 'templates')
 HOME_TEMPLATES = os.path.join(BASE_DIR, 'home', 'templates')
 
 TEMPLATES = [
