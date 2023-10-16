@@ -1,12 +1,12 @@
 // scripts.js
 
 // Toggle Sidebar Functionality
-const sidebarToggle = document.getElementById('sidebar-toggle');
-const sidebar = document.getElementById('sidebar');
+// const sidebarToggle = document.getElementById('sidebar-toggle');
+// const sidebar = document.getElementById('sidebar');
 
-sidebarToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('active');
-});
+// sidebarToggle.addEventListener('click', () => {
+//     sidebar.classList.toggle('active');
+// });
 
 // Toggle Dropdown Functionality
 const dropdownToggle = document.querySelectorAll('.dropdown-toggle');
@@ -18,13 +18,20 @@ dropdownToggle.forEach((toggle) => {
     });
 });
 
-function openSidebar() {
-    document.getElementById("sidenav-main").style.width = "100%";
-  }
+window.addEventListener("load", function() {
+    closePopupMenu();
+});
 
-function closeSidebar() {
-    document.getElementById("sidenav-main").style.width = "0";
+function openPopupMenu() {
+    var popupMenu = document.getElementById("popup-menu-wrapper");
+    popupMenu.style.display = "flex";
 }
+
+function closePopupMenu() {
+    var popupMenu = document.getElementById("popup-menu-wrapper");
+    popupMenu.style.display = "none";
+}
+
 
 // Get the button element
 var nachObenButton = document.getElementById('nach-oben-bt');
@@ -37,4 +44,22 @@ nachObenButton.addEventListener('click', function() {
         behavior: 'smooth'
     });
 });
+
+var lastScrollTop = 0;
+var mainWebsiteTopArea = document.getElementById('main-website-top-area');
+
+window.addEventListener('scroll', function() {
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    if (scrollTop > lastScrollTop) {
+        // Scrolling down
+        mainWebsiteTopArea.classList.remove('headroom--pinned');
+    } else {
+        // Scrolling up
+        mainWebsiteTopArea.classList.add('headroom--pinned');
+    }
+    
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+});
+
 // Add more functionality as needed

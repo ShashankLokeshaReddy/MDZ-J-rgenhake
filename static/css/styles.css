@@ -111,7 +111,7 @@ html {
 }
 
 .main-website-top-area {
-    /* position: fixed; */
+    position: fixed;
     width: 100%;
     left: 0px;
     top: 0px;
@@ -394,12 +394,27 @@ i, em {
     width: 100vw;
     z-index: 10000;
 }
-.main-menu-wrapper {
+/* .main-menu-wrapper {
     width: 100%;
     background: rgba(0,0,0,0);
+} */
+.main-menu-wrapper {
+    position: fixed;
+    top: 0;
+    left: -100%; /* Initially off-screen */
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 1); /* Semi-transparent black background */
+    z-index: 9999; /* Ensure the sidebar appears above other content */
+    transition: left 0.3s ease; /* Add a smooth transition effect */
+  }
+  
+.main-menu-wrapper.open {
+    left: 0; /* Slide in from the left when the sidebar is open */
 }
+
 .main-menu-container .main-header-menu-wrapper-twin {
-    /* position: fixed; */
+    position: fixed;
     left: 0px;
     top: 0px;
     width: 100%;
@@ -691,8 +706,69 @@ svg:not(:root) {
     opacity: .25;
 }
 
+.popup-menu-wrapper {
+    position: fixed;
+    display: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
 
+.popup-menu {
+    width: 50%;
+    background: #fff; /* White background */
+    padding: 100px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
 
+.popup-menu-content {
+    margin-top: 20px; /* Adjust the margin-top value to set the desired vertical space */
+}
+
+.popup-menu-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.popup-close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+}
+
+.popup-menu-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.popup-menu-list li {
+    margin-bottom: 15px;
+}
+
+.popup-menu-list li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 18px;
+}
 
 
 
