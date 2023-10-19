@@ -1,39 +1,33 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from .models import CustomerProfile
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+from .forms import CustomerProfileRegisterForm, UserRegisterForm
+import logging
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 
 def register(request):
     if request.method == 'POST':
-        ust_id = request.POST['ust_id']
-        email = request.POST['email']
-        password = request.POST['password']
-        unternehmensname = request.POST['unternehmensname']
-        land = request.POST['land']
-        address = request.POST['address']
-        telefonnummer = request.POST['telefonnummer']
-        ansprechpartner = request.POST['ansprechpartner']
+        userRegisterForm = UserRegisterForm(request.POST)
+        customerProfileRegisterForm = CustomerProfileRegisterForm(request.POST)
 
-        # Create a new user
-        user = User.objects.create_user(username=ust_id, email=email, password=password)
+        if userRegisterForm.is_valid() and customerProfileRegisterForm.is_valid():
+            userRegisterForm.save()
+            customerProfile = customerProfileRegisterForm.save()
 
-        # Create a CustomerProfile instance associated with the user
-        customer_profile = CustomerProfile.objects.create(
-            ust_id=ust_id,
-            unternehmensname=unternehmensname,
-            land=land,
-            address=address,
-            email=email,
-            telefonnummer=telefonnummer,
-            ansprechpartner=ansprechpartner
-        )
-
-        # Redirect to the login page after successful registration
-        return redirect('login')
-
-    return render(request, 'registration/register.html')
+            # TODO: Redirect to the login page after successful registration
+            # DEBUG: Trying to return customer profile temporarily 
+            return HttpResponse(customerProfile)
+        else:
+            render(request, 'accounts/register.html', {'userRegisterForm': userRegisterForm, 'customerProfileRegisterForm': customerProfileRegisterForm})
+    else:
+        userRegisterForm = UserRegisterForm()
+        customerProfileRegisterForm = CustomerProfileRegisterForm()
+        return render(request, 'accounts/register.html', {'userRegisterForm': userRegisterForm, 'customerProfileRegisterForm': customerProfileRegisterForm})
 
 def user_login(request):
     if request.method == 'POST':
@@ -56,9 +50,6 @@ def user_login(request):
 def index(request):
     # Page from the theme 
     return render(request, 'pages/index.html')
-
-def register(request):
-    return render(request, 'accounts/register.html')
 
 def login(request):
     return render(request, 'accounts/login.html')
