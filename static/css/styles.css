@@ -455,7 +455,7 @@ h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, 
     margin-top: 0;
 }
 
-[hidden] {
+[hidden], .hidden {
     display: none;
 }
 h1, h2, h3, h4 {
@@ -770,12 +770,85 @@ svg:not(:root) {
     font-size: 18px;
 }
 
+.lb-hinweisausgabe {
+    display: flex;
+    flex-flow: row wrap;
+    position: relative;
+    width: 100%;
+    max-width: 970px;
+    margin: 0 auto;
+}
 
+/* CSS for Product Selector Container */
+.akkuvariante-selectors-container, .kabelvariante-selectors-container, .straight-slider-image-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    max-width: 800px; /* Adjust the maximum width as needed */
+}
 
-/* ...pending css.. */
+/* CSS for Individual Product Selector */
+.akkuvariante-selector, .kabelvariante-selector {
+    width: 200px;
+    width: 200px;
+    padding: 20px;
+    text-align: center;
+    margin: 10px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
-/* ..... */
+.akkuvariante-selector:hover, .kabelvariante-selector:hover {
+    background-color: #f5f5f5;
+}
 
+.akkuvariante-selector.selected, .kabelvariante-selector.selected {
+    border-color: #d66800;
+}
 
+/* CSS for Product Images */
+.akkuvariante-selector img, .kabelvariante-selector img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px; /* Adjust the margin between label and image */
+}
 
+/* CSS for Label (Product Name) */
+.akkuvariante-selector label, .kabelvariante-selector label {
+    font-weight: bold;
+}
 
+.slider-container {
+    text-align: center;
+}
+
+.straight-slider-input-field {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.straight-slider-input-field label {
+    margin-right: 10px;
+}
+
+.straight-slider-input-field input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px; /* Rounded corners */
+    font-size: 16px;
+}
+
+.straight-slider-input-field span {
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.straight-slider-image {
+    max-width: 100%;
+    height: auto;
+}

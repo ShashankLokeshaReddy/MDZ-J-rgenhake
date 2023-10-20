@@ -2,10 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-from .models import CustomerProfile
+from .models import CustomerProfile, Akkuvariante
 from django.contrib.auth.models import User
 
-def register(request):
+def user_register(request):
     if request.method == 'POST':
         ust_id = request.POST['ust_id']
         email = request.POST['email']
@@ -51,6 +51,7 @@ def user_login(request):
             pass
 
     return render(request, 'accounts/login.html')
+
 # Create your views here.
 
 def index(request):
@@ -65,3 +66,13 @@ def login(request):
 
 def purchase(request):
     return render(request, 'pages/purchase.html')
+
+def akkuvariante_list(request):
+    akkuvarianten = Akkuvariante.objects.all()
+    # akkuvarianten_list = []
+    # for akkuvariante in akkuvarianten:
+    #     akkuvarianten_list.append({
+    #         'name': akkuvariante.name,
+    #         # Include other fields as needed
+    #     })
+    print("akkuvarianten:", akkuvarianten)

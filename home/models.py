@@ -11,3 +11,6 @@ class CustomerProfile(models.Model):
 
     def __str__(self):
         return self.ust_id  # or any other field to represent the object as a string
+
+class Akkuvariante(models.Model):
+    name = models.CharField(max_length=255)
