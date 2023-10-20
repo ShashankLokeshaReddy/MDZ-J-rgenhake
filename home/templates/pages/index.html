@@ -1,8 +1,104 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h1>Welcome to the Dashboard!</h1>
-        <!-- Add your dashboard content here -->
+    <div class="editor_content" style="text-align: center;">
+        <h3 style="text-align: center;">Der Kabelkonfigurator von Jürgenhake</h3>
+        <p style="text-align: center;">Berechnen Sie automatisch die Kosten und die voraussichtliche Lieferzeit der Kabelbestellungen.</p>
     </div>
+
+    <!-- Akkuvariante Selector -->
+    <div class="space space-2"></div>
+    <section class="layoutblock lb-10col-width lb-hinweisausgabe">
+        <div class="content anlauf_text">
+            <p style="text-align: center;">
+                Akkuvariante
+            </p>
+        </div>
+    </section>
+    <div class="space space-2"></div>
+    <div class="akkuvariante-selectors-container">
+        <div class="akkuvariante-selector" onclick="selectAkkuvariante('EBike Akku Classic')">
+            <label>EBike Akku Classic</label>
+            <img src="static\images\Akkuvariante\EBike Akku Classic.png" alt="EBike Akku Classic">
+        </div>
+        <div class="akkuvariante-selector" onclick="selectAkkuvariante('EBike Akku 2.0')">
+            <label>EBike Akku 2.0</label>
+            <img src="static\images\Akkuvariante\EBike Akku 2.0.png" alt="EBike Akku 2.0">
+        </div>
+        <div class="akkuvariante-selector" onclick="selectAkkuvariante('EBike Akku Carrier')">
+            <label>EBike Akku Carrier</label>
+            <img src="static\images\Akkuvariante\EBike Akku Carrier.png" alt="EBike Akku Carrier">
+        </div>
+        <div class="akkuvariante-selector" onclick="selectAkkuvariante('Superpack')">
+            <label>Superpack</label>
+            <img src="static\images\Akkuvariante\Superpack.png" alt="Superpack">
+        </div>
+        <div class="akkuvariante-selector" onclick="selectAkkuvariante('Powerpack Plus')">
+            <label>Powerpack Plus</label>
+            <img src="static\images\Akkuvariante\Powerpack Plus.png" alt="Powerpack Plus">
+        </div>
+        <div class="akkuvariante-selector" onclick="selectAkkuvariante('Minipack')">
+            <label>Minipack</label>
+            <img src="static\images\Akkuvariante\Minipack.png" alt="Minipack">
+        </div>
+    </div>
+
+    <!-- Kabelvariante Selector -->
+    <div class="space space-2"></div>
+    <section class="layoutblock lb-10col-width lb-hinweisausgabe">
+        <div class="content anlauf_text">
+            <p style="text-align: center;">
+                Kabelvariante
+            </p>
+        </div>
+    </section>
+    <div class="space space-2"></div>
+    <div class="kabelvariante-selectors-container">
+        <div class="kabelvariante-selector" onclick="selectKabelvariante('Straight')">
+            <label>Straight</label>
+            <img src="static\images\Kabelvariante\Straight.png" alt="Straight">
+        </div>
+        <div class="kabelvariante-selector" onclick="selectKabelvariante('Y')">
+            <label>Y</label>
+            <img src="static\images\Kabelvariante\Y.png" alt="Y">
+        </div>
+    </div>
+
+    <!-- Maße Slider -->
+    <div class="space space-2"></div>
+    <section class="layoutblock lb-10col-width lb-hinweisausgabe">
+        <div class="content anlauf_text">
+            <p style="text-align: center;">
+                Maße
+            </p>
+        </div>
+    </section>
+    <!-- Maße Slider for Straight Cable -->
+    <div id="straight-slider" class="slider-container">
+        <div class="straight-slider-input-field">
+            <label for="x1-input">X1:</label>
+            <input type="number" id="x1-input" min="0" step="1" value="0">
+            <span>CM</span>
+        </div>
+        <div class="straight-slider-image-container">
+            <img src="static\images\Maße\StraightMaße.png" alt="Image" class="straight-slider-image">
+        </div>
+    </div>
+
+    <!-- Maße Slider for Y-shaped Cable (Initially Hidden) -->
+    <div id="y-slider" class="slider-container hidden">
+        <label for="main-length">Main Length (cm): </label>
+        <div class="y-cable">
+            <div class="arrow"></div>
+            <div class="branch"></div>
+            <div class="arrow"></div>
+        </div>
+        <input type="number" id="main-length" min="0" step="1" value="50">
+        <label for="branch1-length">Branch 1 Length (cm): </label>
+        <input type="number" id="branch1-length" min="0" step="1" value="25">
+        <label for="branch2-length">Branch 2 Length (cm): </label>
+        <input type="number" id="branch2-length" min="0" step="1" value="25">
+    </div>
+
 {% endblock %}
+
