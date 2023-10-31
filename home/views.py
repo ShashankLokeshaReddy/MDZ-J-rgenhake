@@ -10,6 +10,7 @@ import logging
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 
+@csrf_exempt
 def register(request):
     if request.method == 'POST':
         userRegisterForm = UserRegisterForm(request.POST)
@@ -18,10 +19,7 @@ def register(request):
         if userRegisterForm.is_valid() and customerProfileRegisterForm.is_valid():
             userRegisterForm.save()
             customerProfile = customerProfileRegisterForm.save()
-
-            # TODO: Redirect to the login page after successful registration
-            # DEBUG: Trying to return customer profile temporarily 
-            return HttpResponse(customerProfile)
+            return redirect('login')
         else:
             render(request, 'accounts/register.html', {'userRegisterForm': userRegisterForm, 'customerProfileRegisterForm': customerProfileRegisterForm})
     else:
