@@ -8,17 +8,14 @@ from django.contrib import messages
 from .forms import CustomerProfileRegisterForm, UserRegisterForm
 import logging
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
 
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
         userRegisterForm = UserRegisterForm(request.POST)
-        customerProfileRegisterForm = CustomerProfileRegisterForm(request.POST)
 
-        if userRegisterForm.is_valid() and customerProfileRegisterForm.is_valid():
+        if userRegisterForm.is_valid():
             userRegisterForm.save()
-            customerProfile = customerProfileRegisterForm.save()
             return redirect('login')
         else:
             render(request, 'accounts/register.html', {'userRegisterForm': userRegisterForm, 'customerProfileRegisterForm': customerProfileRegisterForm})
