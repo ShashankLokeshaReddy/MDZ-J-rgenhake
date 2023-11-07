@@ -1,10 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
-    <div class="editor_content" style="text-align: center;">
-        <h3 style="text-align: center;">Der Kabelkonfigurator von Jürgenhake</h3>
-        <p style="text-align: center;">Berechnen Sie automatisch die Kosten und die voraussichtliche Lieferzeit der Kabelbestellungen.</p>
-    </div>
+    <!-- Header content -->
 
     <!-- Akkuvariante Selector -->
     <div class="space space-2"></div>
@@ -17,30 +14,14 @@
     </section>
     <div class="space space-2"></div>
     <div class="akkuvariante-selectors-container">
-        <div class="akkuvariante-selector" onclick="selectAkkuvariante('EBike Akku Classic')">
-            <label>EBike Akku Classic</label>
-            <img src="static\images\Akkuvariante\EBike Akku Classic.png" alt="EBike Akku Classic">
-        </div>
-        <div class="akkuvariante-selector" onclick="selectAkkuvariante('EBike Akku 2.0')">
-            <label>EBike Akku 2.0</label>
-            <img src="static\images\Akkuvariante\EBike Akku 2.0.png" alt="EBike Akku 2.0">
-        </div>
-        <div class="akkuvariante-selector" onclick="selectAkkuvariante('EBike Akku Carrier')">
-            <label>EBike Akku Carrier</label>
-            <img src="static\images\Akkuvariante\EBike Akku Carrier.png" alt="EBike Akku Carrier">
-        </div>
-        <div class="akkuvariante-selector" onclick="selectAkkuvariante('Superpack')">
-            <label>Superpack</label>
-            <img src="static\images\Akkuvariante\Superpack.png" alt="Superpack">
-        </div>
-        <div class="akkuvariante-selector" onclick="selectAkkuvariante('Powerpack Plus')">
-            <label>Powerpack Plus</label>
-            <img src="static\images\Akkuvariante\Powerpack Plus.png" alt="Powerpack Plus">
-        </div>
-        <div class="akkuvariante-selector" onclick="selectAkkuvariante('Minipack')">
-            <label>Minipack</label>
-            <img src="static\images\Akkuvariante\Minipack.png" alt="Minipack">
-        </div>
+        {% for akkuvariante in akkuvarianten %}
+            <div class="akkuvariante-selector" onclick="selectAkkuvariante('{{ akkuvariante.akkuvariante_name }}')">
+                <label>{{ akkuvariante.akkuvariante_name }}</label>
+                <img src="{{ akkuvariante.akkuvariante_image_path }}" alt="{{ akkuvariante.akkuvariante_name }}">
+            </div>
+        {% empty %}
+            <p>No Akkuvarianten available.</p>
+        {% endfor %}
     </div>
 
     <!-- Kabelvariante Selector -->
@@ -54,17 +35,17 @@
     </section>
     <div class="space space-2"></div>
     <div class="kabelvariante-selectors-container">
-        <div class="kabelvariante-selector" onclick="selectKabelvariante('Straight')">
-            <label>Straight</label>
-            <img src="static\images\Kabelvariante\Straight.png" alt="Straight">
-        </div>
-        <div class="kabelvariante-selector" onclick="selectKabelvariante('Y')">
-            <label>Y</label>
-            <img src="static\images\Kabelvariante\Y.png" alt="Y">
-        </div>
+        {% for kabelvariante in kabelvarianten %}
+            <div class="kabelvariante-selector" onclick="selectKabelvariante('{{ kabelvariante.kabelvariante_name }}')">
+                <label>{{ kabelvariante.kabelvariante_name }}</label>
+                <img src="{{ kabelvariante.kabelvariante_image_path }}" alt="{{ kabelvariante.kabelvariante_name }}">
+            </div>
+        {% empty %}
+            <p>No Kabelvarianten available.</p>
+        {% endfor %}
     </div>
 
-    <!-- Maße Slider -->
+    <!-- Maße Slider Container -->
     <div class="space space-2"></div>
     <section class="layoutblock lb-10col-width lb-hinweisausgabe">
         <div class="content anlauf_text">
@@ -73,32 +54,48 @@
             </p>
         </div>
     </section>
-    <!-- Maße Slider for Straight Cable -->
-    <div id="straight-slider" class="slider-container">
-        <div class="straight-slider-input-field">
-            <label for="x1-input">X1:</label>
-            <input type="number" id="x1-input" min="0" step="1" value="0">
-            <span>CM</span>
-        </div>
-        <div class="straight-slider-image-container">
-            <img src="static\images\Maße\StraightMaße.png" alt="Image" class="straight-slider-image">
-        </div>
+    <div class="space space-2"></div>
+    {% load custom_filters %}
+    <div id="masse-slider-container">
+        {% for kabelvariante in kabelvarianten %}
+            <div class="slider-container" id="{{ kabelvariante.kabelvariante_name|slugify }}-slider">
+                <img class="masse-image" src="{{ kabelvariante.kabelvariante_image_path }}">
+                {% if kabelvariante.splits > 1 %}
+                    <div class="input-pair">
+                        <label for="{{ kabelvariante.kabelvariante_name|slugify }}-main-length">Main Length (cm): </label>
+                        <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-main-length" min="0" max="0" step="1" value="50">
+                    </div>
+                    {% for i in kabelvariante.splits|create_range %}
+                        <div class="input-pair">
+                            <label for="{{ kabelvariante.kabelvariante_name|slugify }}-branch{{ forloop.counter }}-length">Branch {{ forloop.counter }} Length (cm): </label>
+                            <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-branch{{ forloop.counter }}-length" min="0" max="0" step="1" value="25">
+                        </div>
+                    {% endfor %}
+                {% elif kabelvariante.splits == 1 %}
+                    <div class="input-pair">
+                        <label for="{{ kabelvariante.kabelvariante_name|slugify }}-main-length-input">Main length (cm):</label>
+                        <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-main-length-input" min="0" max="0" step="1" value="0">
+                    </div>
+                {% else %}
+                    <p>No valid Kabelvarianten available.</p>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>No Kabelvarianten available.</p>
+        {% endfor %}
     </div>
+        
+    <!-- Schnittstellen Selector -->
+    <div class="space space-2"></div>
+    <section class="layoutblock lb-10col-width lb-hinweisausgabe">
+        <div class="content anlauf_text">
+            <p style="text-align: center;">
+                Schnittstellen
+            </p>
+        </div>
+    </section>
+    <div class="space space-2"></div>
 
-    <!-- Maße Slider for Y-shaped Cable (Initially Hidden) -->
-    <div id="y-slider" class="slider-container hidden">
-        <label for="main-length">Main Length (cm): </label>
-        <div class="y-cable">
-            <div class="arrow"></div>
-            <div class="branch"></div>
-            <div class="arrow"></div>
-        </div>
-        <input type="number" id="main-length" min="0" step="1" value="50">
-        <label for="branch1-length">Branch 1 Length (cm): </label>
-        <input type="number" id="branch1-length" min="0" step="1" value="25">
-        <label for="branch2-length">Branch 2 Length (cm): </label>
-        <input type="number" id="branch2-length" min="0" step="1" value="25">
-    </div>
+    <!-- Rest of your HTML content -->
 
 {% endblock %}
-
