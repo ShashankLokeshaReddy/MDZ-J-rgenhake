@@ -63,18 +63,18 @@
                 {% if kabelvariante.splits > 1 %}
                     <div class="input-pair">
                         <label for="{{ kabelvariante.kabelvariante_name|slugify }}-main-length">Main Length (cm): </label>
-                        <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-main-length" min="0" max="0" step="1" value="50">
+                        <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-main-length" min="{{ kabelvariante.main_part_min_length }}" max="{{ kabelvariante.main_part_max_length }}" step="1" value="{{ kabelvariante.main_part_min_length }}">
                     </div>
                     {% for i in kabelvariante.splits|create_range %}
                         <div class="input-pair">
                             <label for="{{ kabelvariante.kabelvariante_name|slugify }}-branch{{ forloop.counter }}-length">Branch {{ forloop.counter }} Length (cm): </label>
-                            <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-branch{{ forloop.counter }}-length" min="0" max="0" step="1" value="25">
+                            <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-branch{{ forloop.counter }}-length" min="{{ kabelvariante.split_part_min_length }}" max="{{ kabelvariante.split_part_max_length }}" step="1" value="{{ kabelvariante.split_part_min_length }}">
                         </div>
                     {% endfor %}
                 {% elif kabelvariante.splits == 1 %}
                     <div class="input-pair">
                         <label for="{{ kabelvariante.kabelvariante_name|slugify }}-main-length-input">Main length (cm):</label>
-                        <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-main-length-input" min="0" max="0" step="1" value="0">
+                        <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-main-length-input" min="{{ kabelvariante.main_part_min_length }}" max="{{ kabelvariante.main_part_max_length }}" step="1" value="{{ kabelvariante.main_part_min_length }}">
                     </div>
                 {% else %}
                     <p>No valid Kabelvarianten available.</p>

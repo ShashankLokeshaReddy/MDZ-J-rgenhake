@@ -846,9 +846,9 @@ svg:not(:root) {
 }
 
 .input-pair label {
+    width: 250px;
     margin-right: 10px;
     font-weight: bold;
-    text-align: right; /* Align labels to the right */
 }
 
 .input-pair input[type="number"] {
