@@ -38,6 +38,8 @@ class Migration(migrations.Migration):
                 ('main_part_max_length', models.IntegerField(null=True)),
                 ('split_part_min_length', models.IntegerField(null=True)),
                 ('split_part_max_length', models.IntegerField(null=True)),
+                ('masse_image_path', models.CharField(max_length=255)),
+                ('schnittstelle_image_path', models.CharField(max_length=255)),
                 ('splits', models.IntegerField(null=True)),
                 ('kabel_price_per_meter', models.FloatField(null=True)),
             ],

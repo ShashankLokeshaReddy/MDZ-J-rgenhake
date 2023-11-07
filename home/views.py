@@ -98,6 +98,8 @@ def get_kabelvarianten(request):
              'main_part_max_length': kabelvariante.main_part_max_length,
              'split_part_min_length': kabelvariante.split_part_min_length,
              'split_part_max_length': kabelvariante.split_part_max_length,
+             'masse_image_path': kabelvariante.masse_image_path,
+             'schnittstelle_image_path': kabelvariante.schnittstelle_image_path,
              'splits': kabelvariante.splits,
              'kabel_price_per_meter': kabelvariante.kabel_price_per_meter} for kabelvariante in kabelvarianten]
     return data # JsonResponse(data, safe=False)

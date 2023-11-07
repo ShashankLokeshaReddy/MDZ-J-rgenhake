@@ -59,7 +59,7 @@
     <div id="masse-slider-container">
         {% for kabelvariante in kabelvarianten %}
             <div class="slider-container" id="{{ kabelvariante.kabelvariante_name|slugify }}-slider">
-                <img class="masse-image" src="{{ kabelvariante.kabelvariante_image_path }}">
+                <img class="masse-image" src="{{ kabelvariante.masse_image_path }}">
                 {% if kabelvariante.splits > 1 %}
                     <div class="input-pair">
                         <label for="{{ kabelvariante.kabelvariante_name|slugify }}-main-length">Main Length (cm): </label>
