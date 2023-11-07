@@ -105,13 +105,13 @@ function selectKabelvariante(productName) {
     }
 
     // Show Maße corresponding to the selected cable variante
-    var selectedMaße = document.querySelector('.slider-container:not(.hidden) input[type="number"]');
-    if (selectedMaße) {
-        // Set default values for Maße inputs
-        selectedMaße.value = "50";
-    } else {
-        console.log('No Maße found for the selected cable variante.');
-    }
+    // var selectedMaße = document.querySelector('.slider-container:not(.hidden) input[type="number"]');
+    // if (selectedMaße) {
+    //     // Set default values for Maße inputs
+    //     selectedMaße.value = "50";
+    // } else {
+    //     console.log('No Maße found for the selected cable variante.');
+    // }
 }
 
 // Select the first cable variante by default

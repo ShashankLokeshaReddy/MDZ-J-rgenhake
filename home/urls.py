@@ -14,4 +14,5 @@ urlpatterns = [
     path('colors/', views.get_colors, name='get_colors'),
     path('ui-labels/', views.get_ui_labels, name='get_ui_labels'),
     path('images/', views.get_image_path, name='get_image_path'),
+    path('orders/', views.get_image_path, name='get_orders'),
 ]
