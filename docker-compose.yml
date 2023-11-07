@@ -4,6 +4,8 @@ services:
     container_name: appseed_app
     restart: always
     build: .
+    volumes:
+      - db_data:/data  # Mount named volume for the SQLite database
     networks:
       - db_network
       - web_network
@@ -25,3 +27,5 @@ networks:
   web_network:
     driver: bridge
  
+volumes:
+  db_data:
