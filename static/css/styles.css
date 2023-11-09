@@ -821,34 +821,39 @@ svg:not(:root) {
     font-weight: bold;
 }
 
+#masse-slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 .slider-container {
+    margin-top: 20px; /* Add margin at the top of each slider-container */
     text-align: center;
 }
 
-.straight-slider-input-field {
+.masse-image {
+    max-width: 50%;
+    height: auto;
+}
+
+.input-pair {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 20px;
+    margin-bottom: 15px;
 }
 
-.straight-slider-input-field label {
+.input-pair label {
+    width: 250px;
     margin-right: 10px;
+    font-weight: bold;
 }
 
-.straight-slider-input-field input {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 20px; /* Rounded corners */
-    font-size: 16px;
-}
-
-.straight-slider-input-field span {
-    font-size: 16px;
-    margin-right: 10px;
-}
-
-.straight-slider-image {
-    max-width: 100%;
-    height: auto;
+.input-pair input[type="number"] {
+    max-width: 200px;
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 20px;
 }

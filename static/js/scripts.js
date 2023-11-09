@@ -63,7 +63,7 @@ var lastScrollTop = 0;
 // });
 
 function selectAkkuvariante(productName) {
-    console.log('Selected Product:', productName);
+    console.log('Selected Akkuvariante:', productName);
 
     var productSelectors = document.querySelectorAll('.akkuvariante-selector');
 
@@ -77,7 +77,7 @@ function selectAkkuvariante(productName) {
 }
 
 function selectKabelvariante(productName) {
-    console.log('Selected Product:', productName);
+    console.log('Selected Kabelvariante:', productName);
 
     var productSelectors = document.querySelectorAll('.kabelvariante-selector');
 
@@ -88,32 +88,50 @@ function selectKabelvariante(productName) {
             selector.classList.add('selected');
         }
     });
-    document.getElementById('straight-slider').classList.add('hidden');
-    document.getElementById('y-slider').classList.add('hidden');
+
+    // Hide all sliders initially
+    var sliders = document.querySelectorAll('.slider-container');
+    sliders.forEach(function(slider) {
+        slider.classList.add('hidden');
+    });
 
     // Show the selected slider based on cable type
-    if (productName === 'Straight') {
-        document.getElementById('straight-slider').classList.remove('hidden');
-    } else if (productName === 'Y') {
-        document.getElementById('y-slider').classList.remove('hidden');
+    var selectedSliderId = productName.toLowerCase() + '-slider';
+    var selectedSlider = document.getElementById(selectedSliderId);
+    if (selectedSlider) {
+        selectedSlider.classList.remove('hidden');
+    } else {
+        console.log('No matching slider found for:', productName);
     }
+
+    // Show Maße corresponding to the selected cable variante
+    // var selectedMaße = document.querySelector('.slider-container:not(.hidden) input[type="number"]');
+    // if (selectedMaße) {
+    //     // Set default values for Maße inputs
+    //     selectedMaße.value = "50";
+    // } else {
+    //     console.log('No Maße found for the selected cable variante.');
+    // }
 }
 
+// Select the first cable variante by default
+selectKabelvariante(document.querySelector('.kabelvariante-selector:first-child label').textContent.trim());
+
 // Event listeners for slider values (you can modify these according to your requirements)
-document.getElementById('straight-length').addEventListener('input', function() {
-    console.log('Straight Cable Length:', this.value);
-});
+// document.getElementById('straight-length').addEventListener('input', function() {
+//     console.log('Straight Cable Length:', this.value);
+// });
 
-document.getElementById('main-length').addEventListener('input', function() {
-    console.log('Main Cable Length:', this.value);
-});
+// document.getElementById('main-length').addEventListener('input', function() {
+//     console.log('Main Cable Length:', this.value);
+// });
 
-document.getElementById('branch1-length').addEventListener('input', function() {
-    console.log('Branch 1 Length:', this.value);
-});
+// document.getElementById('branch1-length').addEventListener('input', function() {
+//     console.log('Branch 1 Length:', this.value);
+// });
 
-document.getElementById('branch2-length').addEventListener('input', function() {
-    console.log('Branch 2 Length:', this.value);
-});
+// document.getElementById('branch2-length').addEventListener('input', function() {
+//     console.log('Branch 2 Length:', this.value);
+// });
 
-// Add more functionality as needed
+// // Add more functionality as needed

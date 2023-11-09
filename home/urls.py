@@ -9,4 +9,12 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='accounts/logout.html'), name='logout'),
     path('purchase/', views.purchase, name='purchase'),
+    path('customerProfile/', views.get_customer_profiles, name='get_customer_profiles'),
+    path('akkuvarianten/', views.get_akkuvarianten, name='get_akkuvarianten'),
+    path('kabelvarianten/', views.get_kabelvarianten, name='get_kabelvarianten'),
+    path('schnittstellen/', views.get_schnittstellen, name='get_schnittstellen'),
+    path('colors/', views.get_colors, name='get_colors'),
+    path('ui-labels/', views.get_ui_labels, name='get_ui_labels'),
+    path('images/', views.get_image_path, name='get_image_path'),
+    path('orders/', views.get_image_path, name='get_orders'),
 ]
