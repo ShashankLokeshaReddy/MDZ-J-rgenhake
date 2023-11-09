@@ -5,7 +5,7 @@ class CustomerProfile(models.Model):
     unternehmensname = models.CharField(max_length=255, null=True)
     land = models.CharField(max_length=100, null=True)
     address = models.TextField(null=True)
-    email = models.EmailField()
+    email = models.EmailField(null=True)
     telefonnummer = models.CharField(max_length=20, null=True)
     ansprechpartner = models.CharField(max_length=255, null=True)
 

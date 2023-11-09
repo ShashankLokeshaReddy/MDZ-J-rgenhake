@@ -780,12 +780,12 @@ svg:not(:root) {
 }
 
 /* CSS for Product Selector Container */
-.akkuvariante-selectors-container, .kabelvariante-selectors-container, .straight-slider-image-container {
+.akkuvariante-selectors-container, .kabelvariante-selectors-container {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
     margin: 0 auto;
-    max-width: 800px; /* Adjust the maximum width as needed */
+    max-width: 800px;
 }
 
 /* CSS for Individual Product Selector */
@@ -801,7 +801,7 @@ svg:not(:root) {
     transition: background-color 0.3s ease;
 }
 
-.akkuvariante-selector:hover, .kabelvariante-selector:hover {
+.akkuvariante-selector:hover, .kabelvariante-selector:hover{
     background-color: #f5f5f5;
 }
 
@@ -828,7 +828,7 @@ svg:not(:root) {
     justify-content: center;
 }
 
-.slider-container {
+.masse-slider-container-class {
     margin-top: 20px; /* Add margin at the top of each slider-container */
     text-align: center;
 }
@@ -856,4 +856,68 @@ svg:not(:root) {
     padding: 8px;
     font-size: 14px;
     border-radius: 20px;
+}
+
+.schnittstelle-slider-container-class {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.schnittstelle-image {
+    max-width: 50%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.schnittstelle-heading {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+.schnittstelle-heading-option {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.schnittstelle-selectors {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.schnittstelle-selector {
+    width: 200px;
+    padding: 20px;
+    text-align: center;
+    margin: 10px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.schnittstelle-selector:hover {
+    background-color: #f5f5f5;
+}
+
+.schnittstelle-selector.selected {
+    border-color: #d66800;
+}
+
+.schnittstelle-selector img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+}
+
+.schnittstelle-selector label {
+    font-weight: bold;
+}
+
+/* CSS for Schnittstelle Slider Container when no Kabelvarianten are available */
+.schnittstelle-slider-container-class p {
+    margin-top: 20px;
+    font-weight: bold;
+    color: red;
 }

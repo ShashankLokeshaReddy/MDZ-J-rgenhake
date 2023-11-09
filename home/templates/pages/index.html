@@ -45,6 +45,60 @@
         {% endfor %}
     </div>
 
+    <!-- Schnittstellen Selector -->
+    <div class="space space-2"></div>
+    <section class="layoutblock lb-10col-width lb-hinweisausgabe">
+        <div class="content anlauf_text">
+            <p style="text-align: center;">
+                Schnittstellen
+            </p>
+        </div>
+    </section>
+    <div class="space space-2"></div>
+    {% load custom_filters %}
+    <div id="schnittstelle-slider-container">
+        {% for kabelvariante in kabelvarianten %}
+            <div class="schnittstelle-slider-container-class" id="{{ kabelvariante.kabelvariante_name|slugify }}-schnittstelle-slider">
+                <img class="schnittstelle-image" src="{{ kabelvariante.masse_image_path }}">
+                {% if kabelvariante.splits > 1 %}
+                    {% with splits=kabelvariante.splits %}
+                        <div class="schnittstelle-heading">
+                            {% for i in splits|create_range_schnittstellen %}
+                                <div class="schnittstelle-heading-option">Schnittstelle S{{ i }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="schnittstelle-selectors">
+                            {% for i in splits|create_range_schnittstellen %}
+                                {% for schnittstelle in schnittstellen %}
+                                    <div class="schnittstelle-selector" id="{{ schnittstelle.schnittstelle_name|slugify }}-S{{ forloop.counter }}" onclick="selectschnittstellenvariante('{{ schnittstelle.schnittstelle_name }}')">
+                                        <label>{{ schnittstelle.schnittstelle_name }}</label>
+                                        <img src="{{ schnittstelle.schnittstelle_image_path }}" alt="{{ schnittstelle.schnittstelle_name }}">
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endwith %}
+                {% elif kabelvariante.splits == 1 %}
+                    <div class="schnittstelle-heading">
+                            <div class="schnittstelle-heading-option">Schnittstelle S</div>
+                    </div>
+                    <div class="schnittstelle-selectors">
+                        {% for schnittstelle in schnittstellen %}
+                            <div class="schnittstelle-selector" id="{{ schnittstelle.schnittstelle_name|slugify }}-S" onclick="selectschnittstellenvariante('{{ schnittstelle.schnittstelle_name }}')">
+                                <label>{{ schnittstelle.schnittstelle_name }}</label>
+                                <img src="{{ schnittstelle.schnittstelle_image_path }}" alt="{{ schnittstelle.schnittstelle_name }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No valid Kabelvarianten available.</p>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>No Kabelvarianten available.</p>
+        {% endfor %}
+    </div>
+
     <!-- Maße Slider Container -->
     <div class="space space-2"></div>
     <section class="layoutblock lb-10col-width lb-hinweisausgabe">
@@ -55,17 +109,16 @@
         </div>
     </section>
     <div class="space space-2"></div>
-    {% load custom_filters %}
     <div id="masse-slider-container">
         {% for kabelvariante in kabelvarianten %}
-            <div class="slider-container" id="{{ kabelvariante.kabelvariante_name|slugify }}-slider">
+            <div class="masse-slider-container-class" id="{{ kabelvariante.kabelvariante_name|slugify }}-messe-slider">
                 <img class="masse-image" src="{{ kabelvariante.masse_image_path }}">
                 {% if kabelvariante.splits > 1 %}
                     <div class="input-pair">
                         <label for="{{ kabelvariante.kabelvariante_name|slugify }}-main-length">Main Length (cm): </label>
                         <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-main-length" min="{{ kabelvariante.main_part_min_length }}" max="{{ kabelvariante.main_part_max_length }}" step="1" value="{{ kabelvariante.main_part_min_length }}">
                     </div>
-                    {% for i in kabelvariante.splits|create_range %}
+                    {% for i in kabelvariante.splits|create_range_masse %}
                         <div class="input-pair">
                             <label for="{{ kabelvariante.kabelvariante_name|slugify }}-branch{{ forloop.counter }}-length">Branch {{ forloop.counter }} Length (cm): </label>
                             <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-branch{{ forloop.counter }}-length" min="{{ kabelvariante.split_part_min_length }}" max="{{ kabelvariante.split_part_max_length }}" step="1" value="{{ kabelvariante.split_part_min_length }}">
@@ -85,17 +138,6 @@
         {% endfor %}
     </div>
         
-    <!-- Schnittstellen Selector -->
-    <div class="space space-2"></div>
-    <section class="layoutblock lb-10col-width lb-hinweisausgabe">
-        <div class="content anlauf_text">
-            <p style="text-align: center;">
-                Schnittstellen
-            </p>
-        </div>
-    </section>
-    <div class="space space-2"></div>
-
     <!-- Rest of your HTML content -->
 
 {% endblock %}
