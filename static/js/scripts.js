@@ -32,7 +32,6 @@ function closePopupMenu() {
     popupMenu.style.display = "none";
 }
 
-
 // Get the button element
 var nachObenButton = document.getElementById('nach-oben-bt');
 
@@ -77,8 +76,6 @@ function selectAkkuvariante(productName) {
 }
 
 function selectKabelvariante(productName) {
-    console.log('Selected Kabelvariante:', productName);
-
     var productSelectors = document.querySelectorAll('.kabelvariante-selector');
 
     productSelectors.forEach(function(selector) {
@@ -89,29 +86,60 @@ function selectKabelvariante(productName) {
         }
     });
 
+    masse(productName);
+    schnittstelle(productName);
+}
+
+function masse(productName){
+    console.log('Selected Kabelvariante in masse:', productName);
+
     // Hide all sliders initially
-    var sliders = document.querySelectorAll('.slider-container');
+    var sliders = document.querySelectorAll('.masse-slider-container-class');
     sliders.forEach(function(slider) {
         slider.classList.add('hidden');
     });
 
     // Show the selected slider based on cable type
-    var selectedSliderId = productName.toLowerCase() + '-slider';
+    var selectedSliderId = productName.toLowerCase() + '-messe-slider';
     var selectedSlider = document.getElementById(selectedSliderId);
     if (selectedSlider) {
         selectedSlider.classList.remove('hidden');
     } else {
         console.log('No matching slider found for:', productName);
     }
+}
 
-    // Show Maße corresponding to the selected cable variante
-    // var selectedMaße = document.querySelector('.slider-container:not(.hidden) input[type="number"]');
-    // if (selectedMaße) {
-    //     // Set default values for Maße inputs
-    //     selectedMaße.value = "50";
-    // } else {
-    //     console.log('No Maße found for the selected cable variante.');
-    // }
+function schnittstelle(productName){
+    console.log('Selected Kabelvariante in Schnittstellen:', productName);
+
+    // Hide all sliders initially
+    var sliders = document.querySelectorAll('.schnittstelle-slider-container-class');
+    sliders.forEach(function(slider) {
+        slider.classList.add('hidden');
+    });
+
+    // Show the selected slider based on cable type
+    var selectedSliderId = productName.toLowerCase() + '-schnittstelle-slider';
+    var selectedSlider = document.getElementById(selectedSliderId);
+    if (selectedSlider) {
+        selectedSlider.classList.remove('hidden');
+    } else {
+        console.log('No matching slider found for:', productName);
+    }
+}
+
+function selectschnittstellenvariante(productName) {
+    console.log('Selected schnittstelle:', productName);
+
+    var productSelectors = document.querySelectorAll('.schnittstelle-selector');
+
+    productSelectors.forEach(function(selector) {
+        selector.classList.remove('selected');
+        var label = selector.querySelector('label');
+        if (label.textContent.trim() === productName) {
+            selector.classList.add('selected');
+        }
+    });
 }
 
 // Select the first cable variante by default
