@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from .models import CustomerProfile, Akkuvariante, Kabelvariante, Schnittstelle, Color, UILabel, Image
-from .forms import CustomerProfileRegisterForm, UserRegisterForm
+from .forms import UserRegisterForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
@@ -13,13 +13,16 @@ def register(request):
 
         if userRegisterForm.is_valid():
             userRegisterForm.save()
+            customerProfile = CustomerProfile(
+                ust_id=userRegisterForm.cleaned_data['username'],
+                email=userRegisterForm.cleaned_data['email'])
+            customerProfile.save()
             return redirect('login')
         else:
-            render(request, 'accounts/register.html', {'userRegisterForm': userRegisterForm, 'customerProfileRegisterForm': customerProfileRegisterForm})
+            render(request, 'accounts/register.html', {'userRegisterForm': userRegisterForm})
     else:
         userRegisterForm = UserRegisterForm()
-        customerProfileRegisterForm = CustomerProfileRegisterForm()
-        return render(request, 'accounts/register.html', {'userRegisterForm': userRegisterForm, 'customerProfileRegisterForm': customerProfileRegisterForm})
+        return render(request, 'accounts/register.html', {'userRegisterForm': userRegisterForm})
 
 def index(request):
     customer_profiles = get_customer_profiles(request)
