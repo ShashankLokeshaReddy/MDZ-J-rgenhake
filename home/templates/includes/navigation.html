@@ -6,11 +6,7 @@
       <li class="topper-action_item topper-action_left"><a href="tel:+49294128070 "><span class="ico"><i class="fal fa-phone"></i></span> <span class="txt">+49 2941 2807-0</span></a></li>
       <li class="topper-action_item topper-action_left"><a href="mailto:info@juergenhake.de "><span class="ico"><i class="fal fa-envelope"></i></span> <span class="txt">info@juergenhake.de </span></a></li>
       <!-- <li class="topper-action_item topper-action_left lang-item-en"><a href="/" hreflang="en"><span class="flag-ico"><img src="https://www.juergenhake.de/wp-content/themes/juergenhake/img/flags/flag-en.png" alt="en"></span> Englisch</a></li>
-   
       <li class="topper-action_item topper-action_left-spacer"></li>
-  
-  
-      
       <li class="topper-action_item topper-action_right topper-action_item-impr"><a href="https://www.juergenhake.de/impressum/">Impressum</a></li>
       <li class="topper-action_item topper-action_right topper-action_item-impr"><a href="https://www.juergenhake.de/datenschutzerklaerung/">Datenschutzerklärung</a></li>
       <li class="topper-action_item topper-action_right topper-action_item-datenschu"><a href="#" class="borlabs-cookie-preference">Cookie-Einstellungen</a></li> -->
@@ -18,43 +14,55 @@
   
   </section>
     <section id="main-header-wrapper" class="main-header-wrapper">
+        <div class="main-header-content-wrapper con-width" id="main-header-content-wrapper">
+            <nav id="main-nav-container" class="main-nav-container">
+                <button class="bt toggle-nav-bt" id="burger">
+                    <div class="tn-bt-ico">
+                        <span class="tn-bt-ico-open" onclick="openPopupMenu()"><i class="fal fa-bars"></i></span>
+                        <span class="tn-bt-ico-close" onclick="closePopupMenu()"><i class="fal fa-plus"></i></span>
+                    </div>
+                </button>
+                <!-- Profile Icon -->
+                <button class="bt toggle-nav-bt" id="user-profile">
+                    <div class="tn-bt-ico">
+                        <span class="profile-icon fas fa-user" onclick="openProfile()"></span>
+                    </div>
+                </button>
+                <!-- Cart Icon -->
+                <button class="bt toggle-nav-bt" id="shopping-cart">
+                    <div class="tn-bt-ico">
+                        <span class="cart-icon fas fa-shopping-cart" onclick="openCart()"></span>
+                    </div>
+                </button>
+            </nav>
+            <div id="logo" class="logo">
+                <a href="/">
+                    <img src="/static/images/logo.svg" alt="Logo: Jürgenhake" class="logo-svg">
+                </a>
+            </div>
+        </div>
   
-      <div class="main-header-content-wrapper con-width" id="main-header-content-wrapper">
-          <nav id="main-nav-container" class="main-nav-container">
-              <button class="bt toggle-nav-bt" id="burger">
-                  <div class="tn-bt-ico">
-                      <span class="tn-bt-ico-open" onclick="openPopupMenu()"><i class="fal fa-bars"></i></span>
-                      <span class="tn-bt-ico-close" onclick="closePopupMenu()"><i class="fal fa-plus"></i></span>
-                  </div>
-               </button> 
-          </nav>
-  
-          <div id="logo" class="logo">
-            <a href="/">
-                <img src="/static/images/logo.svg" alt="Logo: Jürgenhake" class="logo-svg">
-            </a>
-          </div>
-      </div>
-  
-    <!-- Progressbar Indicator -->
-    <div class="stepper-wrapper">
-        <div class="stepper-item active">
-            <div class="step-counter">1</div>
-            <div class="step-name">Akkuvariante</div>
+        <div class="space space-2"></div>
+
+        <!-- Progressbar Indicator -->
+        <div class="stepper-wrapper">
+            <div class="stepper-item active">
+                <div class="step-counter">1</div>
+                <div class="step-name">Akkuvariante</div>
+            </div>
+            <div class="stepper-item">
+                <div class="step-counter">2</div>
+                <div class="step-name">Kabelvariante</div>
+            </div>
+            <div class="stepper-item">
+                <div class="step-counter">3</div>
+                <div class="step-name">Schnittstelle</div>
+            </div>
+            <div class="stepper-item">
+                <div class="step-counter">4</div>
+                <div class="step-name">Maße</div>
+            </div>
         </div>
-        <div class="stepper-item">
-            <div class="step-counter">2</div>
-            <div class="step-name">Kabelvariante</div>
-        </div>
-        <div class="stepper-item">
-            <div class="step-counter">3</div>
-            <div class="step-name">Schnittstelle</div>
-        </div>
-        <div class="stepper-item">
-            <div class="step-counter">4</div>
-            <div class="step-name">Maße</div>
-        </div>
-    </div>
   </section>
   </div>
   <!-- <div class="main-website-top-area-pusher" id="main-website-top-area-pusher" style="height: 246.047px;"></div> -->
