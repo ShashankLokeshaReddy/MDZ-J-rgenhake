@@ -62,25 +62,25 @@
                 <img class="schnittstelle-image" src="{{ kabelvariante.masse_image_path }}">
                 {% if kabelvariante.splits > 1 %}
                     {% with splits=kabelvariante.splits %}
-                        <div class="schnittstelle-heading">
-                            {% for i in splits|create_range_schnittstellen %}
-                                <div class="schnittstelle-heading-option">Schnittstelle S{{ i }}</div>
-                            {% endfor %}
-                        </div>
-                        <div class="schnittstelle-selectors">
-                            {% for i in splits|create_range_schnittstellen %}
-                                {% for schnittstelle in schnittstellen %}
-                                    <div class="schnittstelle-selector" id="{{ schnittstelle.schnittstelle_name|slugify }}-S{{ forloop.counter }}" data-split-index="{{ i }}" onclick="selectschnittstellenvariante('{{ schnittstelle.schnittstelle_name }}', '{{ i }}')">
-                                        <label>{{ schnittstelle.schnittstelle_name }}</label>
-                                        <img src="{{ schnittstelle.schnittstelle_image_path }}" alt="{{ schnittstelle.schnittstelle_name }}">
-                                    </div>
-                                {% endfor %}
-                            {% endfor %}
-                        </div>
+                        {% for i in splits|create_range_schnittstellen %}
+                            <div class="schnittstelle-row">
+                                <div class="schnittstelle-heading">
+                                    <div class="schnittstelle-heading-option">Schnittstelle S{{ i }}</div>
+                                </div>
+                                <div class="schnittstelle-selectors">
+                                    {% for schnittstelle in schnittstellen %}
+                                        <div class="schnittstelle-selector" id="{{ schnittstelle.schnittstelle_name|slugify }}-S{{ i }}" data-split-index="{{ i }}" onclick="selectschnittstellenvariante('{{ schnittstelle.schnittstelle_name }}', '{{ i }}')">
+                                            <label>{{ schnittstelle.schnittstelle_name }}</label>
+                                            <img src="{{ schnittstelle.schnittstelle_image_path }}" alt="{{ schnittstelle.schnittstelle_name }}">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
                     {% endwith %}
                 {% elif kabelvariante.splits == 1 %}
                     <div class="schnittstelle-heading">
-                            <div class="schnittstelle-heading-option">Schnittstelle S</div>
+                        <div class="schnittstelle-heading-option">Schnittstelle S</div>
                     </div>
                     <div class="schnittstelle-selectors">
                         {% for schnittstelle in schnittstellen %}
@@ -98,7 +98,7 @@
             <p>No Kabelvarianten available.</p>
         {% endfor %}
     </div>
-
+    
     <!-- Maße Slider Container -->
     <div class="space space-2"></div>
     <section class="layoutblock lb-10col-width lb-hinweisausgabe">
@@ -138,6 +138,24 @@
         {% endfor %}
     </div>
         
-    <!-- Rest of your HTML content -->
+    <!-- Zusammenfassung Container -->
+    <div class="space space-2"></div>
+    <section class="layoutblock lb-10col-width lb-hinweisausgabe">
+        <div class="content anlauf_text">
+            <p style="text-align: center;">
+                Zusammenfassung
+            </p>
+        </div>
+    </section>
+    <div class="space space-2"></div>
+    <div id="summary-container">
+        <label id="akkuvariante-summary">Akkuvariante: </label>
+        <label id="kabelvariante-summary">Kabelvariante: </label>
+        <label id="schnittstelle-summary">Schnittstelle: </label>
+        <label id="masse-summary">Maße: </label>
+        <label id="gesamtpreis-summary">Gesamtpreis: </label>
+    </div>
+
+    <div class="space space-2"></div>
 
 {% endblock %}

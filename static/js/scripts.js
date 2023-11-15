@@ -12,6 +12,10 @@ var akkuSelected = false;
 var kabelSelected = false;
 var schnittstellenSelected = false;
 var masseSelected = false;
+var selected_akkuvariante_name = "";
+var selected_kabel_name = "";
+var selected_schnittstellen_name = "";
+var selected_masse_name = "";
 
 // Toggle Dropdown Functionality
 const dropdownToggle = document.querySelectorAll('.dropdown-toggle');
@@ -49,7 +53,8 @@ nachObenButton.addEventListener('click', function() {
     });
 });
 
-var lastScrollTop = 0;
+// var lastScrollTop = 0;
+
 // var mainWebsiteTopArea = document.getElementById('main-website-top-area');
 
 // window.addEventListener('scroll', function() {
@@ -80,6 +85,7 @@ function selectAkkuvariante(productName) {
     });
 
     akkuSelected = true;
+    selected_akkuvariante_name = productName;
     updateProgressBar();
 }
 
@@ -124,6 +130,7 @@ function masse(productName){
 
 function schnittstelle(productName){
     console.log('Selected Kabelvariante in Schnittstellen:', productName);
+    selected_kabel_name = productName;
 
     // Hide all sliders initially
     var sliders = document.querySelectorAll('.schnittstelle-slider-container-class');
@@ -186,8 +193,25 @@ function updateProgressBar() {
     stepperItems[3].classList.toggle('completed', masseSelected);
 }
 
+function updateSummary() {
+    var akkuvariante = selected_akkuvariante_name;
+    var kabelvariante = selected_kabel_name;
+    var schnittstelle = selected_schnittstellen_name;
+    var masse = selected_masse_name;
+
+    document.getElementById('akkuvariante-summary').innerText = 'Akkuvariante: ' + akkuvariante;
+    document.getElementById('kabelvariante-summary').innerText = 'Kabelvariante: ' + kabelvariante;
+    document.getElementById('schnittstelle-summary').innerText = 'Schnittstelle: ' + schnittstelle;
+    document.getElementById('masse-summary').innerText = 'Maße: ' + masse;
+}
+
+// function getSelectedOption(category) {
+//     var selectedOption = ''; // Replace with logic to get the selected option
+//     return selectedOption;
+// }
+
 // Select the first cable variante by default
-selectKabelvariante(document.querySelector('.kabelvariante-selector:first-child label').textContent.trim());
+// selectKabelvariante(document.querySelector('.kabelvariante-selector:first-child label').textContent.trim());
 updateProgressBar();
 
 // Event listeners for slider values (you can modify these according to your requirements)
