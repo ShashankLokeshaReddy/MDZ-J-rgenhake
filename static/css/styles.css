@@ -289,13 +289,18 @@ color: inherit;
 .main-nav-container {
     position: relative;
     margin: 0;
-    display: block;
+    display: flex;
     width: auto;
     z-index: 200;
+}
+.profile-icon, .cart-icon {
+    font-size: 24px; /* Adjust the font size as needed */
+    cursor: pointer; /* Add pointer cursor for better UX */
 }
 .toggle-nav-bt {
     background: rgba(0,0,0,0);
     margin: 0 auto;
+    margin-right: 10px;
     position: relative;
     border: none;
     padding: 0;
@@ -337,6 +342,18 @@ i, em {
 }
 .fa-bars:before {
     content: "\f0c9"; /* unicode for menu*/
+    font-family: "Font Awesome 5 Free"; /* Specify the Font Awesome font family */
+    font-weight: 900; /* Specify the font weight */
+}
+/* Profile Icon */
+.profile-icon {
+    content: "\f007"; /* Unicode for user icon */
+    font-family: "Font Awesome 5 Free"; /* Specify the Font Awesome font family */
+    font-weight: 900; /* Specify the font weight */
+}
+/* Cart Icon */
+.cart-icon {
+    content: "\f07a"; /* Unicode for shopping cart icon */
     font-family: "Font Awesome 5 Free"; /* Specify the Font Awesome font family */
     font-weight: 900; /* Specify the font weight */
 }
@@ -2150,38 +2167,7 @@ body{
         margin-top:30px
     }
 }
-.main-nav-container{
-    position:relative;
-    margin:0;
-    display:block;
-    width:auto;
-    z-index:200
-}
-.toggle-nav-bt{
-    background:rgba(0,0,0,0);
-    margin:0 auto;
-    position:relative;
-    border:none;
-    padding:0;
-    display:block;
-    outline:none;
-    color:#000;
-    border-radius:0;
-    z-index:30
-}
-.toggle-nav-bt .tn-bt-ico{
-    text-align:left;
-    display:inline-block;
-    position:relative;
-    font-size:15px
-}
-.toggle-nav-bt .tn-bt-ico .tn-bt-ico-open{
-    display:inline-block
-}
-.toggle-nav-bt .tn-bt-ico .tn-bt-ico-close{
-    display:none
-}
-.toggle-nav-bt .tn-bt-text{
+.toggle-nav-bt .tn-bt-text {
     display:none;
     text-align:left
 }

@@ -205,6 +205,14 @@ function updateSummary() {
     document.getElementById('masse-summary').innerText = 'Maße: ' + masse;
 }
 
+function openProfile(){
+
+}
+
+function openCart(){
+
+}
+
 // function getSelectedOption(category) {
 //     var selectedOption = ''; // Replace with logic to get the selected option
 //     return selectedOption;
