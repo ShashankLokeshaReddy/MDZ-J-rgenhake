@@ -103,6 +103,9 @@ function selectKabelvariante(productName) {
     masse(productName);
     schnittstelle(productName);
     kabelSelected = true;
+    schnittstellenSelected = false;
+    removeAllSelectedSchnittstellen()
+    masseSelected = false;
     updateProgressBar();
 }
 
@@ -123,9 +126,6 @@ function masse(productName){
     } else {
         console.log('No matching slider found for:', productName);
     }
-
-    masseSelected = true;
-    updateProgressBar();
 }
 
 function schnittstelle(productName){
@@ -183,6 +183,13 @@ function selectschnittstellenvariante(productName, splitIndex) {
     updateProgressBar();
 }
 
+function removeAllSelectedSchnittstellen() {
+    var selectors = document.querySelectorAll('.schnittstelle-selector');
+    selectors.forEach(function (selector) {
+        selector.classList.remove('selected');
+    });
+}
+
 function updateProgressBar() {
     // Update the stepper based on selected sections
     var stepperItems = document.querySelectorAll('.stepper-item');
@@ -205,12 +212,55 @@ function updateSummary() {
     document.getElementById('masse-summary').innerText = 'Maße: ' + masse;
 }
 
+function masseChange(value) {
+    masseSelected = true;
+    updateProgressBar();
+    console.log("Main Length changed to: " + value);
+}
+
 function openProfile(){
 
 }
 
 function openCart(){
 
+}
+
+function goToSection(selectedSectionId) {
+    var sections = [
+        'Akkuvariante-Section',
+        'Kabelvariante-Section',
+        'Schnittstellen-Section',
+        'Masse-Section',
+        'Zusammenfassung-Section'
+    ];
+
+    for (var i = 0; i < sections.length; i++) {
+        var sectionId = sections[i];
+        var section = document.getElementById(sectionId);
+        var stepperItem = document.querySelector('.stepper-item[data-counter="' + (i + 1) + '"]');
+
+        if (section) {
+            if (sectionId === selectedSectionId) {
+                // section.style.display = 'block'; // Show the selected section
+                section.classList.remove('hidden');
+                stepperItem.classList.add('active'); // Add "active" class to the stepper item
+                console.log("Going to the section: " + selectedSectionId);
+            } else {
+                // section.style.display = 'none'; // Hide other sections
+                section.classList.add('hidden');
+                stepperItem.classList.remove('active'); // Remove "active" class from other stepper items
+            }
+        } else {
+            console.error("Element with ID '" + sectionId + "' not found.");
+        }
+    }
+}
+
+function addToCart() {
+    // Add logic to navigate to the next section
+    // You can use JavaScript or any client-side framework/library for this
+    console.log("Adding to cart");
 }
 
 // function getSelectedOption(category) {
@@ -221,6 +271,7 @@ function openCart(){
 // Select the first cable variante by default
 // selectKabelvariante(document.querySelector('.kabelvariante-selector:first-child label').textContent.trim());
 updateProgressBar();
+goToSection('Akkuvariante-Section')
 
 // Event listeners for slider values (you can modify these according to your requirements)
 // document.getElementById('straight-length').addEventListener('input', function() {
