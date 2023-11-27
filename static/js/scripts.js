@@ -53,6 +53,31 @@ nachObenButton.addEventListener('click', function() {
     });
 });
 
+// Get the topmost div element
+const topArea = document.getElementById('main-website-top-area');
+
+// Store the last scroll position
+let lastScrollPosition = window.scrollY || document.documentElement.scrollTop;
+
+// Function to handle the scroll event
+function handleScroll() {
+    const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
+
+    if (currentScrollPosition < lastScrollPosition) {
+        // Scrolling up
+        topArea.className = 'main-website-top-area headroom headroom--not-bottom headroom--pinned headroom--top';
+    } else {
+        // Scrolling down
+        topArea.className = 'main-website-top-area headroom headroom--not-bottom headroom--not-top headroom--unpinned';
+    }
+
+    // Update the last scroll position
+    lastScrollPosition = currentScrollPosition;
+}
+
+// Add scroll event listener
+window.addEventListener('scroll', handleScroll);
+
 // var lastScrollTop = 0;
 
 // var mainWebsiteTopArea = document.getElementById('main-website-top-area');

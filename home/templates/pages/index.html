@@ -3,9 +3,31 @@
 {% block content %}
     <!-- Header content -->
 
+    <!-- Progressbar Indicator -->
+    <div class="space space-2"></div>
+
+    <div class="stepper-wrapper">
+        <div class="stepper-item" data-counter="1">
+            <div class="step-counter">1</div>
+            <div class="step-name">Akkuvariante</div>
+        </div>
+        <div class="stepper-item" data-counter="2">
+            <div class="step-counter">2</div>
+            <div class="step-name">Kabelvariante</div>
+        </div>
+        <div class="stepper-item" data-counter="3">
+            <div class="step-counter">3</div>
+            <div class="step-name">Schnittstelle</div>
+        </div>
+        <div class="stepper-item" data-counter="4">
+            <div class="step-counter">4</div>
+            <div class="step-name">Maße</div>
+        </div>
+    </div>
+
     <!-- Akkuvariante Selector -->
     <div id="Akkuvariante-Section">
-        <div class="space space-2"></div>
+        <!-- <div class="space space-2"></div> -->
         <section class="layoutblock lb-10col-width lb-hinweisausgabe">
             <div class="content anlauf_text">
                 <p style="text-align: center;">
@@ -26,13 +48,13 @@
         </div>
         <div class="space space-2"></div>
         <div style="text-align: center;">
-            <button onclick="goToSection('Kabelvariante-Section')">Next</button>
+            <button class="next-button" onclick="goToSection('Kabelvariante-Section')">Nächste</button>
         </div>
     </div>
 
     <!-- Kabelvariante Selector -->
     <div id="Kabelvariante-Section">
-        <div class="space space-2"></div>
+        <!-- <div class="space space-2"></div> -->
         <section class="layoutblock lb-10col-width lb-hinweisausgabe">
             <div class="content anlauf_text">
                 <p style="text-align: center;">
@@ -53,14 +75,14 @@
         </div>
         <div class="space space-2"></div>
         <div style="text-align: center;">
-            <button onclick="goToSection('Akkuvariante-Section')">Previous</button>
-            <button onclick="goToSection('Schnittstellen-Section')">Next</button>
+            <button class="prev-button" onclick="goToSection('Akkuvariante-Section')">Zuruck</button>
+            <button class="next-button" onclick="goToSection('Schnittstellen-Section')">Nächste</button>
         </div>
     </div>
 
     <!-- Schnittstellen Selector -->
     <div id="Schnittstellen-Section">
-        <div class="space space-2"></div>
+        <!-- <div class="space space-2"></div> -->
         <section class="layoutblock lb-10col-width lb-hinweisausgabe">
             <div class="content anlauf_text">
                 <p style="text-align: center;">
@@ -114,14 +136,14 @@
         </div>
         <div class="space space-2"></div>
         <div style="text-align: center;">
-            <button onclick="goToSection('Kabelvariante-Section')">Previous</button>
-            <button onclick="goToSection('Masse-Section')">Next</button>
+            <button class="prev-button" onclick="goToSection('Kabelvariante-Section')">Zuruck</button>
+            <button class="next-button" onclick="goToSection('Masse-Section')">Nächste</button>
         </div>
     </div>
 
     <!-- Maße Slider Container -->
     <div id="Masse-Section">
-        <div class="space space-2"></div>
+        <!-- <div class="space space-2"></div> -->
         <section class="layoutblock lb-10col-width lb-hinweisausgabe">
             <div class="content anlauf_text">
                 <p style="text-align: center;">
@@ -160,14 +182,14 @@
         </div>
         <div class="space space-2"></div>
         <div style="text-align: center;">
-            <button onclick="goToSection('Schnittstellen-Section')">Previous</button>
-            <button onclick="goToSection('Zusammenfassung-Section')">Next</button>
+            <button class="prev-button" onclick="goToSection('Schnittstellen-Section')">Zuruck</button>
+            <button class="next-button" onclick="goToSection('Zusammenfassung-Section')">Nächste</button>
         </div>
     </div>
         
     <!-- Zusammenfassung Container -->
     <div id="Zusammenfassung-Section">
-        <div class="space space-2"></div>
+        <!-- <div class="space space-2"></div> -->
         <section class="layoutblock lb-10col-width lb-hinweisausgabe">
             <div class="content anlauf_text">
                 <p style="text-align: center;">
@@ -185,8 +207,8 @@
         </div>
         <div class="space space-2"></div>
         <div style="text-align: center;">
-            <button onclick="goToSection('Masse-Section')">Previous</button>
-            <button onclick="addToCart()">Add to Cart</button>
+            <button class="prev-button" onclick="goToSection('Masse-Section')">Zuruck</button>
+            <button class="next-button" onclick="addToCart()">Add to Cart</button>
         </div>
     </div>
 
