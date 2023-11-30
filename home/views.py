@@ -2,9 +2,11 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from .models import CustomerProfile, Akkuvariante, Kabelvariante, Schnittstelle, Color, UILabel, Image
-from .forms import UserRegisterForm
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 @csrf_exempt
 def register(request):
@@ -13,10 +15,6 @@ def register(request):
 
         if userRegisterForm.is_valid():
             userRegisterForm.save()
-            customerProfile = CustomerProfile(
-                ust_id=userRegisterForm.cleaned_data['username'],
-                email=userRegisterForm.cleaned_data['email'])
-            customerProfile.save()
             return redirect('login')
         else:
             render(request, 'accounts/register.html', {'userRegisterForm': userRegisterForm})
@@ -51,16 +49,37 @@ def index(request):
         'image_paths': image_paths,
     })
 
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        userUpdateForm = UserUpdateForm(request.POST, instance=request.user)
+        profileUpdateForm = ProfileUpdateForm(
+            request.POST, request.FILES, instance=request.user.customerprofile)
+        if userUpdateForm.is_valid() and profileUpdateForm.is_valid():
+            userUpdateForm.save()
+            profileUpdateForm.save()
+            messages.success(request, f'Your profile changes have been saved!')
+            return redirect('profile')
+    else:
+        userUpdateForm = UserUpdateForm(instance=request.user)
+        profileUpdateForm = ProfileUpdateForm(instance=request.user.customerprofile)
+
+    context = {
+        'u_form': userUpdateForm,
+        'p_form': profileUpdateForm
+    }
+    return render(request, 'pages/profile.html', context)
+
 def purchase(request):
     return render(request, 'pages/purchase.html')
 
 def get_customer_profiles(request):
     customer_profiles = CustomerProfile.objects.all()
-    data = [{'ust_id': profile.ust_id,
+    data = [{'ust_id': profile.user.username,
              'unternehmensname': profile.unternehmensname,
              'land': profile.land,
              'address': profile.address,
-             'email': profile.email,
+             'email': profile.user.email,
              'telefonnummer': profile.telefonnummer,
              'ansprechpartner': profile.ansprechpartner} for profile in customer_profiles]
     return JsonResponse(data, safe=False)

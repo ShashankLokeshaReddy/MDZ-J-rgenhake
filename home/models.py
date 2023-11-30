@@ -1,16 +1,18 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class CustomerProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     ust_id = models.CharField(max_length=50, primary_key=True)
+    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
     unternehmensname = models.CharField(max_length=255, null=True)
     land = models.CharField(max_length=100, null=True)
     address = models.TextField(null=True)
-    email = models.EmailField(null=True)
     telefonnummer = models.CharField(max_length=20, null=True)
     ansprechpartner = models.CharField(max_length=255, null=True)
 
     def __str__(self):
-        return self.ust_id  # or any other field to represent the object as a string
+        return self.user.username  # or any other field to represent the object as a string
 
 class Akkuvariante(models.Model):
     akkuvariante_name = models.CharField(max_length=255, primary_key=True)
