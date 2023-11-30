@@ -5,4 +5,7 @@ whitenoise
 django-admin-material-dashboard==1.0.10
 
 psycopg2-binary
+Pillow
+django-crispy-forms
+crispy-bootstrap5
 # mysqlclient
