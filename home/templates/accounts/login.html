@@ -1,23 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
-
-<body>
-    <h2>Login</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit">Log In</button>
-    </form>
-    <div>
-        <small>Need an account? <a href="{% url 'register' %}">Register</a></small>
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container mt-4">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Login</legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group mb-4">
+                <button class="btn btn-outline-info" type="submit">
+                    Log In
+                </button>
+            </div>
+        </form>
+        <div class="border-top pt-3">
+            <small class="text-muted">Need an account? <a class="ml-2" href="{% url 'register' %}">Register</a></small>
+        </div>
     </div>
-</body>
-
-</html>
+{% endblock %}

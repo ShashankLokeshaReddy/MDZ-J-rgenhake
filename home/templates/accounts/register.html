@@ -1,23 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-</head>
-
-<body>
-    <h2>Register</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ userRegisterForm.as_p }}
-        <button type="submit">Register</button>
-    </form>
-    <div>
-        <small>Already have an account? <a href="{% url 'login' %}">Login</a></small>
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container mt-4">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Join Today</legend>
+                {{ userRegisterForm|crispy }}
+            </fieldset>
+            <div class="form-group mb-4">
+                <button class="btn btn-outline-info" type="submit">
+                    Register
+                </button>
+            </div>
+        </form>
+        <div class="border-top pt-3">
+            <small class="text-muted">Already have an account? <a class="ml-2" href="{% url 'login' %}">Login</a></small>
+        </div>
     </div>
-</body>
-
-</html>
+{% endblock %}
