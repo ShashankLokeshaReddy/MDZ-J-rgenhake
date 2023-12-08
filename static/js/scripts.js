@@ -73,28 +73,13 @@ function handleScroll() {
 
     // Update the last scroll position
     lastScrollPosition = currentScrollPosition;
+
+    // Reset the flag after handling the scroll
+    isScrollByGoToSection = false;
 }
 
 // Add scroll event listener
 window.addEventListener('scroll', handleScroll);
-
-// var lastScrollTop = 0;
-
-// var mainWebsiteTopArea = document.getElementById('main-website-top-area');
-
-// window.addEventListener('scroll', function() {
-//     var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    
-//     if (scrollTop > lastScrollTop) {
-//         // Scrolling down
-//         mainWebsiteTopArea.classList.remove('headroom--pinned');
-//     } else {
-//         // Scrolling up
-//         mainWebsiteTopArea.classList.add('headroom--pinned');
-//     }
-    
-//     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-// });
 
 function selectAkkuvariante(productName) {
     console.log('Selected Akkuvariante:', productName);
@@ -251,6 +236,7 @@ function openCart(){
 
 }
 
+// Function to handle the scroll for goToSection
 function goToSection(selectedSectionId) {
     var sections = [
         'Akkuvariante-Section',
@@ -266,20 +252,59 @@ function goToSection(selectedSectionId) {
         var stepperItem = document.querySelector('.stepper-item[data-counter="' + (i + 1) + '"]');
 
         if (section) {
-            if (sectionId === selectedSectionId) {
-                // section.style.display = 'block'; // Show the selected section
-                section.classList.remove('hidden');
-                stepperItem.classList.add('active'); // Add "active" class to the stepper item
-                console.log("Going to the section: " + selectedSectionId);
+            if (i === 0) {
+                // For the first section (Akkuvariante-Section), scroll to the top of the page
+                if (i <= sections.indexOf(selectedSectionId)) {
+                    section.classList.remove('hidden');
+                    
+                    if (stepperItem) {
+                        stepperItem.classList.add('active');
+                    }
+
+                    // Auto-scroll to the top of the page
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    section.classList.add('hidden');
+                    if (stepperItem && stepperItem.classList.contains('active')) {
+                        stepperItem.classList.remove('active');
+                    }
+                }
             } else {
-                // section.style.display = 'none'; // Hide other sections
-                section.classList.add('hidden');
-                stepperItem.classList.remove('active'); // Remove "active" class from other stepper items
+                // For the rest of the sections, apply target position logic
+                if (i <= sections.indexOf(selectedSectionId)) {
+                    section.classList.remove('hidden');
+
+                    if (stepperItem) {
+                        stepperItem.classList.add('active');
+                    }
+
+                    // Calculate the target position as 30% of the screen height
+                    var targetPosition = section.offsetTop;
+
+                    // Set the flag to indicate that scroll is triggered by goToSection
+                    isScrollByGoToSection = true;
+
+                    // Auto-scroll to the target position
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    section.classList.add('hidden');
+                    if (stepperItem && stepperItem.classList.contains('active')) {
+                        stepperItem.classList.remove('active');
+                    }
+                }
             }
         } else {
             console.error("Element with ID '" + sectionId + "' not found.");
         }
     }
+
+    console.log("Going to the section: " + selectedSectionId);
 }
 
 function addToCart() {
