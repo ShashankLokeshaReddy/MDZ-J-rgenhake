@@ -17,7 +17,7 @@
                 {% for color_entry in colors %}
                     <div>
                         <label for="{{ color_entry.color_name }}ColorPicker">{{ color_entry.color_name|capfirst }} Color:</label>
-                        <input type="text" id="{{ color_entry.color_name }}ColorInput" name="{{ color_entry.color_name }}_color" value="{{ color_entry.color_value }}">
+                        <input type="text" id="{{ color_entry.color_name }}ColorInput" name="{{ color_entry.color_name }}_color" value="{{ color_entry.color_value }}" onchange="updateColorPicker(this)">
                         <input type="color" id="{{ color_entry.color_name }}ColorPicker" name="{{ color_entry.color_name }}_color_picker" value="#{{ color_entry.color_value }}" onchange="updateColorInput(this)">
                     </div>
                 {% endfor %}
@@ -29,6 +29,14 @@
         </div>
     </div>
     <script>
+
+        function updateColorPicker(ColorInput) {
+            // Update the corresponding ColorInput with the selected color
+            var colorPickerId = ColorInput.id.replace("ColorInput", "ColorPicker");
+            var colorPicker = document.getElementById(colorPickerId);
+            colorPicker.value = '#' + cleanColorValue(ColorInput.value);
+        }
+ 
         function updateColorInput(colorPicker) {
             // Update the corresponding ColorInput with the selected color
             var colorInputId = colorPicker.id.replace("ColorPicker", "ColorInput");
