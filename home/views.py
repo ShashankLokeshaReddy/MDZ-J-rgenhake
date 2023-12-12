@@ -113,21 +113,27 @@ def update_colors(request):
         json_data = json.loads(request.body)
 
         for entry in json_data:
-            print("entry", entry)
             color_name = entry['color_name']
             color_value = entry['color_value']
-            
+
             # Try to update the existing entry
             result = Color.objects.filter(color_name=color_name).update(color_value=color_value)
-            
+
             # If no rows were updated, create a new entry
             if result == 0:
                 Color.objects.create(color_name=color_name, color_value=color_value)
 
-        return JsonResponse({'success': True, 'message': 'Color values updated successfully.'})
+        # Fetch and return the updated colors
+        updated_colors = get_colors_dict()
+        return JsonResponse({'success': True, 'message': 'Color values updated successfully.', 'colors': updated_colors})
 
     except Exception as e:
         return JsonResponse({'success': False, 'message': f'Error updating color values: {str(e)}'})
+
+def get_colors_dict():
+    # Helper function to fetch colors as a dictionary
+    colors = Color.objects.all()
+    return {color.color_name: color.color_value for color in colors}
 
 def purchase(request):
     return render(request, 'pages/purchase.html')
@@ -176,6 +182,15 @@ def get_colors(request):
     colors = Color.objects.all()
     data = [{'color_name': color.color_name, 'color_value': color.color_value} for color in colors]
     return data # JsonResponse(data, safe=False)
+
+def colors_url(request):
+    if request.method == 'GET':
+        colors_data = get_colors(request)
+        formatted_data = {color['color_name']: color['color_value'] for color in colors_data}
+
+        return JsonResponse(formatted_data)
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
 
 def get_ui_labels(request):
     ui_labels = UILabel.objects.all()

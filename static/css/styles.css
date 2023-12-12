@@ -678,6 +678,13 @@ svg:not(:root) {
     border-radius: 20px;
 }
 
+.input-pair input[type="color"] {
+    height: 30px; 
+    padding: 0;
+    margin-left: 5px; 
+    vertical-align: middle;
+}
+
 .schnittstelle-slider-container-class {
     margin-top: 20px;
     text-align: center;
