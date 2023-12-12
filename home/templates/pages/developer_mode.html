@@ -1,0 +1,93 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+    <div id="Colors-Developer-Section">
+        <section class="layoutblock lb-10col-width lb-hinweisausgabe">
+            <div class="content anlauf_text">
+                <p style="text-align: center;">
+                    Manage Colors
+                </p>
+            </div>
+        </section>
+        <div class="space space-2"></div>
+        <div class="input-pair">
+            <form id="colorForm" method="post">
+                {% csrf_token %}
+                
+                {% for color_entry in colors %}
+                    <div>
+                        <label for="{{ color_entry.color_name }}ColorPicker">{{ color_entry.color_name|capfirst }} Color:</label>
+                        <input type="text" id="{{ color_entry.color_name }}ColorInput" name="{{ color_entry.color_name }}_color" value="{{ color_entry.color_value }}" onchange="updateColorPicker(this)">
+                        <input type="color" id="{{ color_entry.color_name }}ColorPicker" name="{{ color_entry.color_name }}_color_picker" value="#{{ color_entry.color_value }}" onchange="updateColorInput(this)">
+                    </div>
+                {% endfor %}
+                <div class="space space-2"></div>
+                <div style="text-align: center;">
+                    <button class="next-button" type="button" onclick="ChangeColorsPOST()">Update Colors</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+
+        function updateColorPicker(ColorInput) {
+            // Update the corresponding ColorInput with the selected color
+            var colorPickerId = ColorInput.id.replace("ColorInput", "ColorPicker");
+            var colorPicker = document.getElementById(colorPickerId);
+            colorPicker.value = '#' + cleanColorValue(ColorInput.value);
+        }
+ 
+        function updateColorInput(colorPicker) {
+            // Update the corresponding ColorInput with the selected color
+            var colorInputId = colorPicker.id.replace("ColorPicker", "ColorInput");
+            var colorInput = document.getElementById(colorInputId);
+            colorInput.value = colorPicker.value;
+        }
+
+        function ChangeColorsPOST() {
+            // Collect color data from the form inputs
+            var colorData = [];
+            var colorInputs = document.querySelectorAll('input[name$="_color"]');
+            colorInputs.forEach(function(input) {
+                var colorName = input.name.replace('_color', '');
+                var colorValue = input.value.replace('#', '');  // Remove '#' from the color value
+                colorData.push({'color_name': colorName, 'color_value': colorValue});
+            });
+
+            console.log('colorData:', colorData);
+
+            // Simulate a POST request to the update_colors endpoint
+            fetch('/update_colors/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
+                },
+                body: JSON.stringify(colorData),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response data as needed
+                console.log('Response:', data);
+                updateColors(data.colors);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+
+        function updateColors(colors) {
+            // Update CSS variables with the received colors
+            setCSSVariableValue('--color-primary', '#' + cleanColorValue(colors.primary));
+            setCSSVariableValue('--color-secondary', '#' + cleanColorValue(colors.secondary));
+            setCSSVariableValue('--color-text', '#' + cleanColorValue(colors.text));
+        }
+    
+    </script>
+
+{% endblock %}

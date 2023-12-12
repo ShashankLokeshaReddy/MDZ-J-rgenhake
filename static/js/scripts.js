@@ -8,6 +8,53 @@
 //     sidebar.classList.toggle('active');
 // });
 
+// Function to make a GET request to fetch colors from the server
+async function fetchColors() {
+    try {
+        const response = await fetch('/colors_url/');
+        if (!response.ok) {
+            throw new Error('Failed to fetch colors');
+        }
+
+        const colors = await response.json();
+        return colors;
+    } catch (error) {
+        console.error('Error fetching colors:', error);
+        return null;
+    }
+}
+
+// Function to update CSS variables based on the colors fetched from the server
+async function updateColors() {
+    // Fetch colors from the server
+    const colors = await fetchColors();
+
+    // If colors are fetched successfully, update CSS variables
+    if (colors) {
+        setCSSVariableValue('--color-primary', '#' + cleanColorValue(colors.primary));
+        setCSSVariableValue('--color-secondary', '#' + cleanColorValue(colors.secondary));
+        setCSSVariableValue('--color-text', '#' + cleanColorValue(colors.text));
+    }
+}
+
+function cleanColorValue(colorValue) {
+    // Remove any leading '#' and return a clean color value
+    return colorValue.replace(/^#/, '');
+}
+
+// Function to get the value of a CSS variable
+function getCSSVariableValue(variableName) {
+    return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+}
+
+// Function to set the value of a CSS variable
+function setCSSVariableValue(variableName, variableValue) {
+    document.documentElement.style.setProperty(variableName, variableValue);
+}
+
+// Call the updateColors function when the page loads
+document.addEventListener('DOMContentLoaded', updateColors);
+
 var akkuSelected = false;
 var kabelSelected = false;
 var schnittstellenSelected = false;
@@ -321,7 +368,7 @@ function addToCart() {
 // Select the first cable variante by default
 // selectKabelvariante(document.querySelector('.kabelvariante-selector:first-child label').textContent.trim());
 updateProgressBar();
-goToSection('Akkuvariante-Section')
+// goToSection('Akkuvariante-Section')
 
 // Event listeners for slider values (you can modify these according to your requirements)
 // document.getElementById('straight-length').addEventListener('input', function() {
