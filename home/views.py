@@ -1,10 +1,13 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-from .models import CustomerProfile, Akkuvariante, Kabelvariante, Schnittstelle, Color, UILabel, Image
+from django.views.decorators.http import require_POST
+from .models import CustomerProfile, Akkuvariante, Kabelvariante, Schnittstelle, Color, UILabel, Image, Order
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+import json
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -30,6 +33,7 @@ def index(request):
     colors = get_colors(request)
     ui_labels = get_ui_labels(request)
     image_paths = get_image_path(request)
+    orders = get_orders(request)
     print("kabelvarianten in index", kabelvarianten)
     for kabelvariante in kabelvarianten:
         kabelvariante['splits'] = int(kabelvariante['splits'])
@@ -47,6 +51,7 @@ def index(request):
         'colors': colors,
         'ui_labels': ui_labels,
         'image_paths': image_paths,
+        'orders': orders,
     })
 
 @login_required
@@ -69,6 +74,60 @@ def profile(request):
         'p_form': profileUpdateForm
     }
     return render(request, 'pages/profile.html', context)
+
+@login_required(login_url='/login/')
+@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
+def developer_mode(request):
+    customer_profiles = get_customer_profiles(request)
+    akkuvarianten = get_akkuvarianten(request)
+    kabelvarianten = get_kabelvarianten(request)
+    schnittstellen = get_schnittstellen(request)
+    colors = get_colors(request)
+    ui_labels = get_ui_labels(request)
+    image_paths = get_image_path(request)
+    orders = get_orders(request)
+    for kabelvariante in kabelvarianten:
+        kabelvariante['splits'] = int(kabelvariante['splits'])
+        kabelvariante['main_part_min_length'] = int(kabelvariante['main_part_min_length'])
+        kabelvariante['main_part_max_length'] = int(kabelvariante['main_part_max_length'])
+        kabelvariante['split_part_min_length'] = int(kabelvariante['split_part_min_length'])
+        kabelvariante['split_part_max_length'] = int(kabelvariante['split_part_max_length'])
+        kabelvariante['kabel_price_per_meter'] = float(kabelvariante['kabel_price_per_meter'])
+
+    return render(request, 'pages/developer_mode.html', {
+        'customer_profiles': customer_profiles,
+        'akkuvarianten': akkuvarianten,
+        'kabelvarianten': kabelvarianten,
+        'schnittstellen': schnittstellen,
+        'colors': colors,
+        'ui_labels': ui_labels,
+        'image_paths': image_paths,
+        'orders': orders,
+    })
+
+# @login_required(login_url='/login/')
+# @user_passes_test(lambda u: u.is_superuser, login_url='/login/')
+@require_POST
+def update_colors(request):
+    try:
+        json_data = json.loads(request.body)
+
+        for entry in json_data:
+            print("entry", entry)
+            color_name = entry['color_name']
+            color_value = entry['color_value']
+            
+            # Try to update the existing entry
+            result = Color.objects.filter(color_name=color_name).update(color_value=color_value)
+            
+            # If no rows were updated, create a new entry
+            if result == 0:
+                Color.objects.create(color_name=color_name, color_value=color_value)
+
+        return JsonResponse({'success': True, 'message': 'Color values updated successfully.'})
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'Error updating color values: {str(e)}'})
 
 def purchase(request):
     return render(request, 'pages/purchase.html')
@@ -115,12 +174,12 @@ def get_schnittstellen(request):
 
 def get_colors(request):
     colors = Color.objects.all()
-    data = [{'color_name': color.color_name} for color in colors]
+    data = [{'color_name': color.color_name, 'color_value': color.color_value} for color in colors]
     return data # JsonResponse(data, safe=False)
 
 def get_ui_labels(request):
     ui_labels = UILabel.objects.all()
-    data = [{'label_name': label.label_name} for label in ui_labels]
+    data = [{'label_key': label.label_key, 'label_value': label.label_value} for label in ui_labels]
     return data # JsonResponse(data, safe=False)
 
 def get_image_path(request):

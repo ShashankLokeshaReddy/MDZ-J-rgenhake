@@ -50,15 +50,17 @@ class Schnittstelle(models.Model):
 
 class Color(models.Model):
     color_name = models.CharField(max_length=255, primary_key=True)
+    color_value = models.CharField(max_length=255,null=True)
 
     def __str__(self):
         return self.color_name  # or any other field to represent the object as a string
 
 class UILabel(models.Model):
-    label_name = models.CharField(max_length=255, primary_key=True)
+    label_key = models.CharField(max_length=255, primary_key=True)
+    label_value = models.CharField(max_length=255,null=True)
 
     def __str__(self):
-        return self.label_name  # or any other field to represent the object as a string
+        return self.label_key  # or any other field to represent the object as a string
 
 class Image(models.Model):
     image_path = models.CharField(max_length=255, primary_key=True)

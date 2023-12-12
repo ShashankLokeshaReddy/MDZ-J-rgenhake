@@ -18,4 +18,6 @@ urlpatterns = [
     path('ui-labels/', views.get_ui_labels, name='get_ui_labels'),
     path('images/', views.get_image_path, name='get_image_path'),
     path('orders/', views.get_image_path, name='get_orders'),
+    path('developer_mode/', views.developer_mode, name='developer_mode'),
+    path('update_colors/', views.update_colors, name='update_colors'),
 ]

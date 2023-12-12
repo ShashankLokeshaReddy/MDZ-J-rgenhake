@@ -56,12 +56,14 @@ class Migration(migrations.Migration):
             name='Color',
             fields=[
                 ('color_name', models.CharField(max_length=255, primary_key=True, serialize=False)),
+                ('color_value', models.CharField(max_length=255)),
             ],
         ),
         migrations.CreateModel(
             name='UILabel',
             fields=[
-                ('label_name', models.CharField(max_length=255, primary_key=True, serialize=False)),
+                ('label_key', models.CharField(max_length=255, primary_key=True, serialize=False)),
+                ('label_value', models.CharField(max_length=255)),
             ],
         ),
         migrations.CreateModel(

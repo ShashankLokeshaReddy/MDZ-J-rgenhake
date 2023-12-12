@@ -43,6 +43,9 @@ if RENDER_EXTERNAL_HOSTNAME:
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_NAME = 'juergenhake_session'
+
 # Application definition
 
 INSTALLED_APPS = [

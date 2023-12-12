@@ -1,0 +1,62 @@
+<!-- developer_mode.html -->
+
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+
+    <!-- Your existing content -->
+
+    <h2>Manage Colors</h2>
+    <form id="colorForm" method="post">
+        {% csrf_token %}
+        
+        {% for color_entry in colors %}
+            <div>
+                <label for="{{ color_entry.color_name }}ColorPicker">{{ color_entry.color_name|capfirst }} Color:</label>
+                <input type="text" id="{{ color_entry.color_name }}ColorInput" name="{{ color_entry.color_name }}_color" value="{{ color_entry.color_value }}">
+                <input type="color" id="{{ color_entry.color_name }}ColorPicker" name="{{ color_entry.color_name }}_color_picker" value="{{ color_entry.color_value }}" onchange="updateColorInput(this)">
+            </div>
+        {% endfor %}
+    
+        <button type="button" onclick="simulateDummyPost()">Update Colors</button>
+    </form>
+
+    <script>
+        function updateColorInput(colorPicker) {
+            // Update the corresponding ColorInput with the selected color
+            var colorInputId = colorPicker.id.replace("ColorPicker", "ColorInput");
+            var colorInput = document.getElementById(colorInputId);
+            colorInput.value = colorPicker.value;
+        }
+
+        function simulateDummyPost() {
+            // Prepare the dummy data (you can replace this with your actual data)
+            var dummyData = [{'color_name': 'primary', 'color_value': 'ccc'}, {'color_name': 'secondary', 'color_value': 'd66800'}, {'color_name': 'text', 'color_value': '000'}];
+            
+            console.log('dummyData:', dummyData);
+            // Simulate a POST request to an imaginary endpoint
+            fetch('/update_colors/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
+                },
+                body: JSON.stringify(dummyData),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response data as needed
+                console.log('Response:', data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+    </script>
+
+{% endblock %}

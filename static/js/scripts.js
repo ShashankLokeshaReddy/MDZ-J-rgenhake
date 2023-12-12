@@ -8,6 +8,28 @@
 //     sidebar.classList.toggle('active');
 // });
 
+// Function to get CSS variable value
+function getCSSVariableValue(variableName) {
+    return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+}
+
+function setCSSVariableValue(variableName, variableValue) {
+    document.documentElement.style.setProperty(variableName, variableValue);
+}
+
+var primaryColor = getCSSVariableValue('--color-primary');
+var secondaryColor = getCSSVariableValue('--color-secondary');
+var textColor = getCSSVariableValue('--color-text');
+
+// Ex script for changing some important colors 
+// var primaryColor = "black";
+// var secondaryColor = "green";
+// var textColor = "red";
+
+// setCSSVariableValue('--color-primary', primaryColor);
+// setCSSVariableValue('--color-secondary', secondaryColor);
+// setCSSVariableValue('--color-text', textColor);
+
 var akkuSelected = false;
 var kabelSelected = false;
 var schnittstellenSelected = false;
@@ -321,7 +343,7 @@ function addToCart() {
 // Select the first cable variante by default
 // selectKabelvariante(document.querySelector('.kabelvariante-selector:first-child label').textContent.trim());
 updateProgressBar();
-goToSection('Akkuvariante-Section')
+// goToSection('Akkuvariante-Section')
 
 // Event listeners for slider values (you can modify these according to your requirements)
 // document.getElementById('straight-length').addEventListener('input', function() {
