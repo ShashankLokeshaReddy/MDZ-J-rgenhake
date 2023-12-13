@@ -14,7 +14,7 @@ Once, the above container appears in the Docker Desktop, it can be started and s
 ## Admin console of Django Server and Super User Creation
 Step 1: Open the terminal of the "folder_name-app-seed" container in the Docker Desktop.
 
-Step 2: Enter cmd "python manage.py migrate" to migrate the database.
+Step 2: Enter cmds "python manage.py makemigrations" and "python manage.py migrate" to setup and migrate the database.
 
 Step 3: Create super user with the cmd "python manage.py createsuperuser --username=some_username --email=some_email" and also enter the passwords after that.
 
@@ -22,4 +22,6 @@ Step 4: Upon successful creation of super user, navigate to this url "http://loc
 
 Step 5: Once done, the frontend app can be started successfully in 5085 port. The db entries for various models like Akkuvariante, Kabelvariante, color, etc., can be added into the database either through the admin console or directly through the developer mode in the front end app "http://localhost:5085/developer_mode".
 
+Upon migrating the db, it will appear in the volumes of Docker Desktop as shown below
 
+![Container](static/images/readme/docker-container.PNG)
