@@ -24,4 +24,4 @@ Step 5: Once done, the frontend app can be started successfully in 5085 port. Th
 
 Upon migrating the db, it will appear in the volumes of Docker Desktop as shown below
 
-![Container](static/images/readme/docker-container.PNG)
+![Container](static/images/readme/docker-volume.PNG)
