@@ -116,12 +116,16 @@ def update_colors(request):
             color_name = entry['color_name']
             color_value = entry['color_value']
 
-            # Try to update the existing entry
-            result = Color.objects.filter(color_name=color_name).update(color_value=color_value)
+            if color_value == '':
+                # If color value is empty, delete the entry from the database
+                Color.objects.filter(color_name=color_name).delete()
+            else:
+                # Try to update the existing entry
+                result = Color.objects.filter(color_name=color_name).update(color_value=color_value)
 
-            # If no rows were updated, create a new entry
-            if result == 0:
-                Color.objects.create(color_name=color_name, color_value=color_value)
+                # If no rows were updated, create a new entry
+                if result == 0:
+                    Color.objects.create(color_name=color_name, color_value=color_value)
 
         # Fetch and return the updated colors
         updated_colors = get_colors_dict()

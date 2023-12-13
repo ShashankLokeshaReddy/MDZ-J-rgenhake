@@ -31,9 +31,13 @@ async function updateColors() {
 
     // If colors are fetched successfully, update CSS variables
     if (colors) {
-        setCSSVariableValue('--color-primary', '#' + cleanColorValue(colors.primary));
-        setCSSVariableValue('--color-secondary', '#' + cleanColorValue(colors.secondary));
-        setCSSVariableValue('--color-text', '#' + cleanColorValue(colors.text));
+        for (var key in colors) {
+            if (colors.hasOwnProperty(key)) {
+                var cssVariableName = '--color-' + key;
+                var cssVariableValue = '#' + cleanColorValue(colors[key]);
+                setCSSVariableValue(cssVariableName, cssVariableValue);
+            }
+        }
     }
 }
 

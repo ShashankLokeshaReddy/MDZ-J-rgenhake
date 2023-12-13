@@ -15,21 +15,73 @@
                 {% csrf_token %}
                 
                 {% for color_entry in colors %}
-                    <div>
+                    <div class="color-entry">
                         <label for="{{ color_entry.color_name }}ColorPicker">{{ color_entry.color_name|capfirst }} Color:</label>
                         <input type="text" id="{{ color_entry.color_name }}ColorInput" name="{{ color_entry.color_name }}_color" value="{{ color_entry.color_value }}" onchange="updateColorPicker(this)">
                         <input type="color" id="{{ color_entry.color_name }}ColorPicker" name="{{ color_entry.color_name }}_color_picker" value="#{{ color_entry.color_value }}" onchange="updateColorInput(this)">
+                        <button type="button" onclick="removeColorEntry(this)">Remove</button>
                     </div>
                 {% endfor %}
+
                 <div class="space space-2"></div>
+                
                 <div style="text-align: center;">
+                    <button class="next-button" type="button" onclick="addColorEntry()">Add Color</button>
                     <button class="next-button" type="button" onclick="ChangeColorsPOST()">Update Colors</button>
                 </div>
             </form>
         </div>
     </div>
     <script>
+        function removeColorEntry(button) {
+            var colorEntryDiv = button.parentNode;
+            colorEntryDiv.parentNode.removeChild(colorEntryDiv);
 
+            // Make a POST request to remove the color entry from the database
+            var colorName = colorEntryDiv.querySelector('input[type="text"]').name.replace('_color', '');
+            sendColorData([{ 'color_name': colorName, 'color_value': '' }]);
+        }
+
+        function addColorEntry() {
+            var colorName = prompt("Enter Color Name");
+            if (!colorName) return;
+            var newColorValue = prompt("Enter Color Value (e.g., #RRGGBB)");
+            sendColorData([{ 'color_name': colorName, 'color_value': newColorValue }]);
+        }
+        
+        function sendColorData(data) {
+            // Simulate a POST request to the update_colors endpoint
+            fetch('/update_colors/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                    location.reload();
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response data as needed
+                console.log('Response:', data);
+                location.reload();
+                updateColors(data.colors);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+                location.reload();
+            });
+        }
+
+        String.prototype.capitalize = function() {
+            return this.charAt(0).toUpperCase() + this.slice(1);
+        };
+        
         function updateColorPicker(ColorInput) {
             // Update the corresponding ColorInput with the selected color
             var colorPickerId = ColorInput.id.replace("ColorInput", "ColorPicker");
@@ -82,12 +134,16 @@
         }
 
         function updateColors(colors) {
-            // Update CSS variables with the received colors
-            setCSSVariableValue('--color-primary', '#' + cleanColorValue(colors.primary));
-            setCSSVariableValue('--color-secondary', '#' + cleanColorValue(colors.secondary));
-            setCSSVariableValue('--color-text', '#' + cleanColorValue(colors.text));
+            // Loop over keys in the colors object and update CSS variables
+            for (var key in colors) {
+                if (colors.hasOwnProperty(key)) {
+                    var cssVariableName = '--color-' + key;
+                    var cssVariableValue = '#' + cleanColorValue(colors[key]);
+                    setCSSVariableValue(cssVariableName, cssVariableValue);
+                }
+            }
         }
-    
+
     </script>
 
 {% endblock %}
