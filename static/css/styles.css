@@ -73,6 +73,19 @@
     --color-secondary: #cccccc;
     --color-primary: #c84f1c;
     --color-text: #000;
+
+    /* Bootstrap customizations to match app theme */
+    --bs-info: var(--color-annotation-highlight);
+    .btn-outline-info {
+        --bs-btn-color: var(--color-annotation-highlight);
+        --bs-btn-active-bg: var(--color-annotation-highlight);
+        --bs-btn-border-color: var(--color-annotation-highlight);
+        --bs-btn-hover-bg: var(--color-annotation-highlight);
+        --bs-btn-hover-border-color: var(--color-annotation-highlight);
+        --bs-btn-active-border-color: var(--color-annotation-highlight);
+        --bs-btn-disabled-border-color: var(--color-annotation-highlight);
+        --bs-btn-disabled-color: var(--color-annotation-highlight);
+    }
 }
 
 html, body, input, textarea, button {
