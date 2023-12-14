@@ -372,7 +372,7 @@ function addToCart() {
 // Select the first cable variante by default
 // selectKabelvariante(document.querySelector('.kabelvariante-selector:first-child label').textContent.trim());
 updateProgressBar();
-// goToSection('Akkuvariante-Section')
+goToSection('Akkuvariante-Section')
 
 // Event listeners for slider values (you can modify these according to your requirements)
 // document.getElementById('straight-length').addEventListener('input', function() {

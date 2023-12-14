@@ -71,20 +71,23 @@
     --color-annotation-quickreference: #d52b1e;
     --color-annotation-highlight: #d66800;
     --color-secondary: #cccccc;
-    --color-primary: #c84f1c;
-    --color-text: #000;
+    --color-primary: #c85019;
+    --color-text: #000000;
+    /* TODO: Decide upon the primary and secondary colors*/
+    /* --color-primary: #c84f1c;
+    --color-secondary: #868685; */
 
     /* Bootstrap customizations to match app theme */
-    --bs-info: var(--color-annotation-highlight);
+    --bs-info: var(--color-primary);
     .btn-outline-info {
-        --bs-btn-color: var(--color-annotation-highlight);
-        --bs-btn-active-bg: var(--color-annotation-highlight);
-        --bs-btn-border-color: var(--color-annotation-highlight);
-        --bs-btn-hover-bg: var(--color-annotation-highlight);
-        --bs-btn-hover-border-color: var(--color-annotation-highlight);
-        --bs-btn-active-border-color: var(--color-annotation-highlight);
-        --bs-btn-disabled-border-color: var(--color-annotation-highlight);
-        --bs-btn-disabled-color: var(--color-annotation-highlight);
+        --bs-btn-color: var(--color-primary);
+        --bs-btn-active-bg: var(--color-primary);
+        --bs-btn-border-color: var(--color-primary);
+        --bs-btn-hover-bg: var(--color-primary);
+        --bs-btn-hover-border-color: var(--color-primary);
+        --bs-btn-active-border-color: var(--color-primary);
+        --bs-btn-disabled-border-color: var(--color-primary);
+        --bs-btn-disabled-color: var(--color-primary);
     }
 }
 
