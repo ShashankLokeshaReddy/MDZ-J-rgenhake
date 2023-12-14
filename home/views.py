@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 from .models import CustomerProfile, Akkuvariante, Kabelvariante, Schnittstelle, Color, UILabel, Image, Order
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ProfileImageUpdateForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
@@ -57,19 +57,24 @@ def index(request):
 @login_required
 def profile(request):
     if request.method == 'POST':
+        profileImageUpdateForm = ProfileImageUpdateForm(
+            request.POST, request.FILES, instance=request.user.customerprofile)
         userUpdateForm = UserUpdateForm(request.POST, instance=request.user)
         profileUpdateForm = ProfileUpdateForm(
-            request.POST, request.FILES, instance=request.user.customerprofile)
-        if userUpdateForm.is_valid() and profileUpdateForm.is_valid():
+            request.POST, instance=request.user.customerprofile)
+        if profileImageUpdateForm.is_valid() and userUpdateForm.is_valid() and profileUpdateForm.is_valid():
+            profileImageUpdateForm.save()
             userUpdateForm.save()
             profileUpdateForm.save()
             messages.success(request, f'Your profile changes have been saved!')
             return redirect('profile')
     else:
+        profileImageUpdateForm = ProfileImageUpdateForm(instance=request.user.customerprofile)
         userUpdateForm = UserUpdateForm(instance=request.user)
         profileUpdateForm = ProfileUpdateForm(instance=request.user.customerprofile)
 
     context = {
+        'i_form': profileImageUpdateForm,
         'u_form': userUpdateForm,
         'p_form': profileUpdateForm
     }

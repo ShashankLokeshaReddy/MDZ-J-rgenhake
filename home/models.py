@@ -1,10 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+from PIL import Image as PILImage
 
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     ust_id = models.CharField(max_length=50, primary_key=True)
-    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+    image = models.ImageField(default='default.png', upload_to='profile_pics')
     unternehmensname = models.CharField(max_length=255, null=True)
     land = models.CharField(max_length=100, null=True)
     address = models.TextField(null=True)
@@ -13,6 +14,16 @@ class CustomerProfile(models.Model):
 
     def __str__(self):
         return self.user.username  # or any other field to represent the object as a string
+    
+    def save(self):
+        super().save()
+
+        img = PILImage.open(self.image.path)
+
+        if img.height > 100 or img.width > 100:
+            output_size = (100, 100)
+            img.thumbnail(output_size)
+            img.save(self.image.path)
 
 class Akkuvariante(models.Model):
     akkuvariante_name = models.CharField(max_length=255, primary_key=True)

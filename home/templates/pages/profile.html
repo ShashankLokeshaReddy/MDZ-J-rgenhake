@@ -2,14 +2,23 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <div class="container mt-4">
-        <form method="POST" enctype="multipart/form-data">
+        <form class="mt-4" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Edit your Profile</legend>
-                {{ u_form|crispy }}
-                {{ p_form|crispy }}
+                <div class="row justify-content-evenly">
+                
+                    <div class="col-4 text-center">
+                        <img class="rounded-circle account-img" src="{{ user.customerprofile.image.url }}">
+                        {% crispy i_form %}
+                    </div>
+                    <div class="col-8">
+                        {% crispy u_form %}
+                        {% crispy p_form %}
+                    </div>
+                </div>
             </fieldset>
-            <div class="form-group">
+            <div class="row">
                 <button class="btn btn-outline-info" type="submit">
                     Save
                 </button>
