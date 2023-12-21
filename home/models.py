@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image as PILImage
+from colorfield.fields import ColorField
 
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
@@ -61,7 +62,7 @@ class Schnittstelle(models.Model):
 
 class Color(models.Model):
     color_name = models.CharField(max_length=255, primary_key=True)
-    color_value = models.CharField(max_length=255,null=True)
+    color_value = ColorField(format="hex") # hex or hexa (https://pypi.org/project/django-colorfield/)
 
     def __str__(self):
         return self.color_name  # or any other field to represent the object as a string

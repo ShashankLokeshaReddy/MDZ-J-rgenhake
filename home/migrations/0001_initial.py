@@ -1,5 +1,5 @@
 from django.db import migrations, models
-
+from colorfield.fields import ColorField
 
 class Migration(migrations.Migration):
 
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
             name='Color',
             fields=[
                 ('color_name', models.CharField(max_length=255, primary_key=True, serialize=False)),
-                ('color_value', models.CharField(max_length=255)),
+                ('color_value', ColorField(format="hex")),
             ],
         ),
         migrations.CreateModel(
