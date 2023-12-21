@@ -18,7 +18,7 @@
             {% for akkuvariante in akkuvarianten %}
                 <div class="akkuvariante-selector" onclick="selectAkkuvariante('{{ akkuvariante.akkuvariante_name }}')">
                     <label>{{ akkuvariante.akkuvariante_name }}</label>
-                    <img src="static\images\Akkuvariante\{{ akkuvariante.akkuvariante_image_path }}" alt="{{ akkuvariante.akkuvariante_name }}">
+                    <img src="media\{{ akkuvariante.akkuvariante_image_path }}" alt="{{ akkuvariante.akkuvariante_name }}">
                 </div>
             {% empty %}
                 <p>No Akkuvarianten available.</p>
@@ -53,7 +53,7 @@
             {% for kabelvariante in kabelvarianten %}
                 <div class="kabelvariante-selector" onclick="selectKabelvariante('{{ kabelvariante.kabelvariante_name }}')">
                     <label>{{ kabelvariante.kabelvariante_name }}</label>
-                    <img src="static\images\Kabelvariante\{{ kabelvariante.kabelvariante_image_path }}" alt="{{ kabelvariante.kabelvariante_name }}">
+                    <img src="media\{{ kabelvariante.kabelvariante_image_path }}" alt="{{ kabelvariante.kabelvariante_name }}">
                 </div>
             {% empty %}
                 <p>No Kabelvarianten available.</p>
@@ -81,7 +81,7 @@
         <div id="schnittstelle-slider-container">
             {% for kabelvariante in kabelvarianten %}
                 <div class="schnittstelle-slider-container-class" id="{{ kabelvariante.kabelvariante_name|slugify }}-schnittstelle-slider">
-                    <img class="schnittstelle-image" src="static\images\Maße\{{ kabelvariante.masse_image_path }}">
+                    <img class="schnittstelle-image" src="media\{{ kabelvariante.masse_image_path }}">
                     {% if kabelvariante.splits > 1 %}
                         {% with splits=kabelvariante.splits %}
                             {% for i in splits|create_range_schnittstellen %}
@@ -93,7 +93,7 @@
                                         {% for schnittstelle in schnittstellen %}
                                             <div class="schnittstelle-selector" id="{{ schnittstelle.schnittstelle_name|slugify }}-S{{ i }}" data-split-index="{{ i }}" onclick="selectschnittstellenvariante('{{ schnittstelle.schnittstelle_name }}', '{{ i }}')">
                                                 <label>{{ schnittstelle.schnittstelle_name }}</label>
-                                                <img src="static\images\Schnittstellen\{{ schnittstelle.schnittstelle_image_path }}" alt="{{ schnittstelle.schnittstelle_name }}">
+                                                <img src="media\{{ schnittstelle.schnittstelle_image_path }}" alt="{{ schnittstelle.schnittstelle_name }}">
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -108,7 +108,7 @@
                             {% for schnittstelle in schnittstellen %}
                                 <div class="schnittstelle-selector" id="{{ schnittstelle.schnittstelle_name|slugify }}-S" data-split-index="S" onclick="selectschnittstellenvariante('{{ schnittstelle.schnittstelle_name }}', 'S')">
                                     <label>{{ schnittstelle.schnittstelle_name }}</label>
-                                    <img src="static\images\Schnittstellen\{{ schnittstelle.schnittstelle_image_path }}" alt="{{ schnittstelle.schnittstelle_name }}">
+                                    <img src="media\{{ schnittstelle.schnittstelle_image_path }}" alt="{{ schnittstelle.schnittstelle_name }}">
                                 </div>
                             {% endfor %}
                         </div>
@@ -141,7 +141,7 @@
         <div id="masse-slider-container">
             {% for kabelvariante in kabelvarianten %}
                 <div class="masse-slider-container-class" id="{{ kabelvariante.kabelvariante_name|slugify }}-messe-slider">
-                    <img class="masse-image" src="static\images\Maße\{{ kabelvariante.masse_image_path }}">
+                    <img class="masse-image" src="media\{{ kabelvariante.masse_image_path }}">
                     {% if kabelvariante.splits > 1 %}
                         <div class="input-pair">
                             <label for="{{ kabelvariante.kabelvariante_name|slugify }}-main-length">Main Length (cm): </label>

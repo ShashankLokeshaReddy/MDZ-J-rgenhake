@@ -27,24 +27,4 @@ class Migration(migrations.Migration):
             name='user',
             field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
         ),
-        migrations.AlterField(
-            model_name='kabelvariante',
-            name='kabelvariante_image_path',
-            field=models.CharField(max_length=255, null=True),
-        ),
-        migrations.AlterField(
-            model_name='kabelvariante',
-            name='masse_image_path',
-            field=models.CharField(max_length=255, null=True),
-        ),
-        migrations.AlterField(
-            model_name='kabelvariante',
-            name='schnittstelle_image_path',
-            field=models.CharField(max_length=255, null=True),
-        ),
-        migrations.AlterField(
-            model_name='schnittstelle',
-            name='schnittstelle_image_path',
-            field=models.CharField(max_length=255, null=True),
-        ),
     ]
