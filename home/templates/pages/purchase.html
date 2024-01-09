@@ -53,55 +53,6 @@
             </div>
         </div>
 
-        <!-- Delete Order Modal -->
-        <div class="modal fade" id="deleteOrderModal" tabindex="-1" role="dialog" aria-labelledby="deleteOrderModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteOrderModalLabel">Confirm Deletion</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete this order?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <form id="deleteOrderForm" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="order_number" id="deleteOrderNumber">
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Submit Order Modal -->
-        <div class="modal fade" id="submitOrderModal" tabindex="-1" role="dialog" aria-labelledby="submitOrderModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="submitOrderModalLabel">Submit Order</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to submit the selected orders?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <form id="submitOrderForm" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Pagination -->
         <div class="pagination">
             <span class="step-links">
@@ -173,74 +124,68 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('inCartTable').addEventListener('click', function (event) {
-            if (event.target.classList.contains('delete-order')) {
-                var orderRow = event.target.closest('.order-row');
-                var orderNumber = orderRow.dataset.orderNumber;
+            // Event listener for the delete order button
+            document.getElementById('inCartTable').addEventListener('click', function (event) {
+                if (event.target.classList.contains('delete-order')) {
+                    var orderRow = event.target.closest('.order-row');
+                    var orderNumber = orderRow.dataset.orderNumber;
 
-                // Set the order number in the delete form
-                document.getElementById('deleteOrderNumber').value = orderNumber;
-
-                // Show the delete order modal
-                $('#deleteOrderModal').modal('show');
-            }
-        });
-
-        // Event listener for the submit button
-        document.getElementById('submit-order').addEventListener('click', function () {
-            // Show the submit order modal
-            $('#submitOrderModal').modal('show');
-        });
-
-        // Add event listener to handle form submission in modal
-        document.getElementById('deleteOrderForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission
-            // Handle delete order action
-            // Fetch DELETE request or use AJAX to perform the action
-            // Close the modal if needed
-            $('#deleteOrderModal').modal('hide');
-        });
-
-        document.getElementById('submitOrderForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission
-            // Handle submit order action
-            // Fetch POST request or use AJAX to perform the action
-            // Close the modal if needed
-            $('#submitOrderModal').modal('hide');
-        });
-
-        // Event listener for increasing quantity
-        document.querySelectorAll('.increase-quantity').forEach(function (button) {
-            button.addEventListener('click', function () {
-                var row = this.closest('.order-row');
-                updateQuantity(row, 1);
+                    // Prompt user for confirmation
+                    if (confirm("Are you sure you want to delete this order?")) {
+                        // If confirmed, trigger DELETE request to delete the order
+                        fetch('/delete_order/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
+                            },
+                            body: JSON.stringify({'order_number': orderNumber}),
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Remove the row from the table
+                            orderRow.remove();
+                            updateTotalPrice();
+                        })
+                        .catch(error => {
+                            console.error('Error deleting order:', error);
+                        });
+                    }
+                }
             });
-        });
 
-        // Event listener for decreasing quantity
-        document.querySelectorAll('.decrease-quantity').forEach(function (button) {
-            button.addEventListener('click', function () {
-                var row = this.closest('.order-row');
-                updateQuantity(row, -1);
-            });
-        });
+            // Event listener for the submit order button
+            document.getElementById('submit-order').addEventListener('click', function () {
+                // Prompt user for confirmation
+                if (confirm("Are you sure you want to submit the selected orders?")) {
+                    var orderUpdates = [];
 
-        // Event listener for deleting order
-        document.querySelectorAll('.delete-order').forEach(function (button) {
-            button.addEventListener('click', function () {
-                var row = this.closest('.order-row');
-                var orderNumber = row.getAttribute('data-order-number');
+                    // Collect order details for submission
+                    document.querySelectorAll('.order-row').forEach(function (row) {
+                        var orderNumber = row.getAttribute('data-order-number');
+                        var quantity = parseInt(row.querySelector('.quantity').textContent);
+                        var total = parseInt(row.querySelector('.total-price').textContent);
 
-                // Confirm deletion
-                if (confirm("Are you sure you want to delete this order?")) {
-                    // Trigger POST request to delete the order
-                    fetch('/delete_order/', {
+                        orderUpdates.push({
+                            'order_number': orderNumber,
+                            'quantity': quantity,
+                            'total': total
+                        });
+                    });
+
+                    // Trigger POST request to update orders
+                    fetch('/update_orders/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
                         },
-                        body: JSON.stringify({'order_number': orderNumber}),
+                        body: JSON.stringify({'order_updates': orderUpdates}),
                     })
                     .then(response => {
                         if (!response.ok) {
@@ -249,97 +194,69 @@
                         return response.json();
                     })
                     .then(data => {
-                        // Remove the row from the table
-                        row.remove();
-                        updateTotalPrice();
+                        // Handle the response data as needed
+                        console.log('Response:', data);
+                        location.reload();
+                        updateColors(data.colors);
                     })
                     .catch(error => {
-                        console.error('Error deleting order:', error);
+                        console.error('There was a problem with the fetch operation:', error);
                     });
                 }
             });
-        });
 
-        // Event listener for submitting order
-        document.getElementById('submit-order').addEventListener('click', function () {
-            var orderUpdates = [];
-
-            // Collect order details for submission
-            document.querySelectorAll('.order-row').forEach(function (row) {
-                var orderNumber = row.getAttribute('data-order-number');
-                var quantity = parseInt(row.querySelector('.quantity').textContent);
-                var total = parseInt(row.querySelector('.total-price').textContent);
-
-                orderUpdates.push({
-                    'order_number': orderNumber,
-                    'quantity': quantity,
-                    'total': total
+            // Event listener for increasing quantity
+            document.querySelectorAll('.increase-quantity').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var row = this.closest('.order-row');
+                    updateQuantity(row, 1);
                 });
             });
 
-            // Trigger POST request to update orders
-            fetch('/update_orders/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
-                },
-                body: JSON.stringify({'order_updates': orderUpdates}),
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Handle the response data as needed
-                console.log('Response:', data);
-                location.reload();
-                updateColors(data.colors);
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
+            // Event listener for decreasing quantity
+            document.querySelectorAll('.decrease-quantity').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var row = this.closest('.order-row');
+                    updateQuantity(row, -1);
+                });
             });
-        });
 
-        // Function to update the quantity and total price
-        function updateQuantity(row, quantityChange) {
-            // Ensure row is a jQuery object
-            var $row = $(row);
+            // Function to update the quantity and total price
+            function updateQuantity(row, quantityChange) {
+                // Ensure row is a jQuery object
+                var $row = $(row);
 
-            var quantityElement = $row.find('.quantity');
-            var totalPriceElement = $row.find('.total-price');
-            var price = parseFloat($row.data('price'));
-            var currentQuantity = parseInt(quantityElement.text());
-            var newQuantity = currentQuantity + quantityChange;
+                var quantityElement = $row.find('.quantity');
+                var totalPriceElement = $row.find('.total-price');
+                var price = parseFloat($row.data('price'));
+                var currentQuantity = parseInt(quantityElement.text());
+                var newQuantity = currentQuantity + quantityChange;
 
-            // Check if the new quantity is at least 0
-            if (newQuantity >= 0) {
-                quantityElement.text(newQuantity);
-                totalPriceElement.text((newQuantity * price).toFixed(2));
-                updateTotalPrice();
-            } else {
-                // Display a confirmation prompt to delete the order
-                if (confirm("Are you sure you want to delete this order?")) {
-                    $row.remove();
+                // Check if the new quantity is at least 0
+                if (newQuantity >= 0) {
+                    quantityElement.text(newQuantity);
+                    totalPriceElement.text((newQuantity * price).toFixed(2));
                     updateTotalPrice();
+                } else {
+                    // Display a confirmation prompt to delete the order
+                    if (confirm("Are you sure you want to delete this order?")) {
+                        $row.remove();
+                        updateTotalPrice();
+                    }
                 }
             }
-        }
 
-        // Function to update the total price based on the quantity and price of each order
-        function updateTotalPrice() {
-            var totalPrice = 0;
-            $('.order-row').each(function () {
-                var quantity = parseInt($(this).find('.quantity').text());
-                var price = parseFloat($(this).data('price'));
-                totalPrice += quantity * price;
-            });
+            // Function to update the total price based on the quantity and price of each order
+            function updateTotalPrice() {
+                var totalPrice = 0;
+                $('.order-row').each(function () {
+                    var quantity = parseInt($(this).find('.quantity').text());
+                    var price = parseFloat($(this).data('price'));
+                    totalPrice += quantity * price;
+                });
 
-            $('#total-price').text(totalPrice.toFixed(2));
-        }
-    });
-
-    </script>
+                $('#total-price').text(totalPrice.toFixed(2));
+            }
+        });
+   </script>
 {% endblock %}
