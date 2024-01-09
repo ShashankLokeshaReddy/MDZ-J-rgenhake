@@ -2,7 +2,344 @@
 
 {% block content %}
     <div class="container mt-4">
-        <h1>Purchase Page</h1>
-        <!-- Add your purchase content here -->
+        <h2 class="mt-4">In Cart Orders</h2>
+        <form id="deleteOrderForm" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="order_number" id="deleteOrderNumber">
+        </form>
+        <table class="table" id="inCartTable">
+            <thead>
+                <tr>
+                    <th scope="col">Order Number</th>
+                    <th scope="col">Order Date</th>
+                    <th scope="col">Order Details</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Order Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in in_cart_orders %}
+                <tr class="order-row" data-order-number="{{ order.order_number }}" data-price="{{ order.price }}">
+                    <td>{{ order.order_number }}</td>
+                    <td>{{ order.order_date }}</td>
+                    <td>{{ order.order_details }}</td>
+                    <td class="price">{{ order.price }}</td>
+                    <td class="quantity">{{ order.quantity }}</td>
+                    <td class="total-price">{{ order.total }}</td>
+                    <td>{{ order.order_status }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-success increase-quantity">+</button>
+                        <button class="btn btn-sm btn-danger decrease-quantity">-</button>
+                        <button class="btn btn-sm btn-warning delete-order" data-toggle="modal" data-target="#deleteOrderModal">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Total Price and Submit Button -->
+        <div class="row">
+            <div class="col">
+                <p>Total Price: <span id="total-price">0</span></p>
+            </div>
+            <div class="col">
+                <form id="submitOrderForm" method="post">
+                    {% csrf_token %}
+                    <button type="button" id="submit-order" class="btn btn-primary" data-toggle="modal" data-target="#submitOrderModal">Submit Order</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Order Modal -->
+        <div class="modal fade" id="deleteOrderModal" tabindex="-1" role="dialog" aria-labelledby="deleteOrderModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteOrderModalLabel">Confirm Deletion</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this order?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <form id="deleteOrderForm" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_number" id="deleteOrderNumber">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Order Modal -->
+        <div class="modal fade" id="submitOrderModal" tabindex="-1" role="dialog" aria-labelledby="submitOrderModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="submitOrderModalLabel">Submit Order</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to submit the selected orders?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <form id="submitOrderForm" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <span class="step-links">
+                {% if in_cart_orders.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ in_cart_orders.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ in_cart_orders.number }} of {{ in_cart_orders.paginator.num_pages }}.
+                </span>
+
+                {% if in_cart_orders.has_next %}
+                    <a href="?page={{ in_cart_orders.next_page_number }}">next</a>
+                    <a href="?page={{ in_cart_orders.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
     </div>
+
+    <div class="container mt-4">
+        <h2 class="mt-4">Your Orders</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Order Number</th>
+                    <th scope="col">Order Date</th>
+                    <th scope="col">Order Details</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Order Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in other_orders %}
+                <tr>
+                    <td>{{ order.order_number }}</td>
+                    <td>{{ order.order_date }}</td>
+                    <td>{{ order.order_details }}</td>
+                    <td>{{ order.price }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ order.total }}</td>
+                    <td>{{ order.order_status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <span class="step-links">
+                {% if other_orders.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ other_orders.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ other_orders.number }} of {{ other_orders.paginator.num_pages }}.
+                </span>
+
+                {% if other_orders.has_next %}
+                    <a href="?page={{ other_orders.next_page_number }}">next</a>
+                    <a href="?page={{ other_orders.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('inCartTable').addEventListener('click', function (event) {
+            if (event.target.classList.contains('delete-order')) {
+                var orderRow = event.target.closest('.order-row');
+                var orderNumber = orderRow.dataset.orderNumber;
+
+                // Set the order number in the delete form
+                document.getElementById('deleteOrderNumber').value = orderNumber;
+
+                // Show the delete order modal
+                $('#deleteOrderModal').modal('show');
+            }
+        });
+
+        // Event listener for the submit button
+        document.getElementById('submit-order').addEventListener('click', function () {
+            // Show the submit order modal
+            $('#submitOrderModal').modal('show');
+        });
+
+        // Add event listener to handle form submission in modal
+        document.getElementById('deleteOrderForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            // Handle delete order action
+            // Fetch DELETE request or use AJAX to perform the action
+            // Close the modal if needed
+            $('#deleteOrderModal').modal('hide');
+        });
+
+        document.getElementById('submitOrderForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            // Handle submit order action
+            // Fetch POST request or use AJAX to perform the action
+            // Close the modal if needed
+            $('#submitOrderModal').modal('hide');
+        });
+
+        // Event listener for increasing quantity
+        document.querySelectorAll('.increase-quantity').forEach(function (button) {
+            button.addEventListener('click', function () {
+                var row = this.closest('.order-row');
+                updateQuantity(row, 1);
+            });
+        });
+
+        // Event listener for decreasing quantity
+        document.querySelectorAll('.decrease-quantity').forEach(function (button) {
+            button.addEventListener('click', function () {
+                var row = this.closest('.order-row');
+                updateQuantity(row, -1);
+            });
+        });
+
+        // Event listener for deleting order
+        document.querySelectorAll('.delete-order').forEach(function (button) {
+            button.addEventListener('click', function () {
+                var row = this.closest('.order-row');
+                var orderNumber = row.getAttribute('data-order-number');
+
+                // Confirm deletion
+                if (confirm("Are you sure you want to delete this order?")) {
+                    // Trigger POST request to delete the order
+                    fetch('/delete_order/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
+                        },
+                        body: JSON.stringify({'order_number': orderNumber}),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Remove the row from the table
+                        row.remove();
+                        updateTotalPrice();
+                    })
+                    .catch(error => {
+                        console.error('Error deleting order:', error);
+                    });
+                }
+            });
+        });
+
+        // Event listener for submitting order
+        document.getElementById('submit-order').addEventListener('click', function () {
+            var orderUpdates = [];
+
+            // Collect order details for submission
+            document.querySelectorAll('.order-row').forEach(function (row) {
+                var orderNumber = row.getAttribute('data-order-number');
+                var quantity = parseInt(row.querySelector('.quantity').textContent);
+                var total = parseInt(row.querySelector('.total-price').textContent);
+
+                orderUpdates.push({
+                    'order_number': orderNumber,
+                    'quantity': quantity,
+                    'total': total
+                });
+            });
+
+            // Trigger POST request to update orders
+            fetch('/update_orders/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
+                },
+                body: JSON.stringify({'order_updates': orderUpdates}),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response data as needed
+                console.log('Response:', data);
+                location.reload();
+                updateColors(data.colors);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        });
+
+        // Function to update the quantity and total price
+        function updateQuantity(row, quantityChange) {
+            // Ensure row is a jQuery object
+            var $row = $(row);
+
+            var quantityElement = $row.find('.quantity');
+            var totalPriceElement = $row.find('.total-price');
+            var price = parseFloat($row.data('price'));
+            var currentQuantity = parseInt(quantityElement.text());
+            var newQuantity = currentQuantity + quantityChange;
+
+            // Check if the new quantity is at least 0
+            if (newQuantity >= 0) {
+                quantityElement.text(newQuantity);
+                totalPriceElement.text((newQuantity * price).toFixed(2));
+                updateTotalPrice();
+            } else {
+                // Display a confirmation prompt to delete the order
+                if (confirm("Are you sure you want to delete this order?")) {
+                    $row.remove();
+                    updateTotalPrice();
+                }
+            }
+        }
+
+        // Function to update the total price based on the quantity and price of each order
+        function updateTotalPrice() {
+            var totalPrice = 0;
+            $('.order-row').each(function () {
+                var quantity = parseInt($(this).find('.quantity').text());
+                var price = parseFloat($(this).data('price'));
+                totalPrice += quantity * price;
+            });
+
+            $('#total-price').text(totalPrice.toFixed(2));
+        }
+    });
+
+    </script>
 {% endblock %}

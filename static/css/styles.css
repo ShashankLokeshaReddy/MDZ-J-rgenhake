@@ -2604,3 +2604,11 @@ body{
     background-color: var(--color-primary);
     color: black;
 }
+#CustomSolution-Section {
+    background-image: url('/static/images/CustomSolutionPicture.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    /* Set a height to make sure the background is visible */
+    height: 300px; /* Adjust as needed */
+}

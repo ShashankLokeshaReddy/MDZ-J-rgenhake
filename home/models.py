@@ -33,42 +33,65 @@ class Akkuvariante(models.Model):
     akkuvariante_price = models.FloatField(null=True)
 
     def save(self, *args, **kwargs):
+        # Check if there's an existing object with the same name
+        existing_object = Akkuvariante.objects.filter(akkuvariante_name=self.akkuvariante_name).first()
+
+        # If there's an existing object, delete its image before saving the new one
+        if existing_object and existing_object.akkuvariante_image_path:
+            existing_image_path = existing_object.akkuvariante_image_path.path
+            if os.path.exists(existing_image_path):
+                os.remove(existing_image_path)
+
         # Ensure the uploaded image has the filename 'akkuvariante_name.png'
         if self.akkuvariante_image_path:
             filename = f"{self.akkuvariante_name}.png"
-            self.akkuvariante_image_path.name = os.path.join(filename)
+            self.akkuvariante_image_path.name = os.path.join('Akkuvariante', filename)
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.akkuvariante_name  # or any other field to represent the object as a string
+        return self.akkuvariante_name
 
 class Kabelvariante(models.Model):
     kabelvariante_name = models.CharField(max_length=255, primary_key=True)
     kabelvariante_image_path = models.ImageField(default='default.png', upload_to='Kabelvariante')
-    # Maße
     main_part_min_length = models.IntegerField(null=True)
     main_part_max_length = models.IntegerField(null=True)
     split_part_min_length = models.IntegerField(null=True)
     split_part_max_length = models.IntegerField(null=True)
-    masse_image_path =models.ImageField(default='default.png', upload_to='Maße')
-    # Splits in the cabel
-    splits = models.IntegerField(null=True) # No. of splits x2 is 1 for straight and 2 for Y
+    masse_image_path = models.ImageField(default='default.png', upload_to='Maße')
+    splits = models.IntegerField(null=True)
     kabel_price_per_meter = models.FloatField(null=True)
 
     def save(self, *args, **kwargs):
+        # Check if there's an existing object with the same name
+        existing_object = Kabelvariante.objects.filter(kabelvariante_name=self.kabelvariante_name).first()
+
+        # If there's an existing object, delete its images before saving the new ones
+        if existing_object:
+            if existing_object.kabelvariante_image_path:
+                existing_image_path = existing_object.kabelvariante_image_path.path
+                if os.path.exists(existing_image_path):
+                    os.remove(existing_image_path)
+
+            if existing_object.masse_image_path:
+                existing_masse_image_path = existing_object.masse_image_path.path
+                if os.path.exists(existing_masse_image_path):
+                    os.remove(existing_masse_image_path)
+
+        # Ensure the uploaded images have the correct filenames
         if self.kabelvariante_image_path:
             filename = f"{self.kabelvariante_name}.png"
-            self.kabelvariante_image_path.name = os.path.join(filename)
+            self.kabelvariante_image_path.name = os.path.join('Kabelvariante', filename)
 
         if self.masse_image_path:
             filename = f"{self.kabelvariante_name}Maße.png"
-            self.masse_image_path.name = os.path.join(filename)
+            self.masse_image_path.name = os.path.join('Maße', filename)
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.kabelvariante_name  # or any other field to represent the object as a string
+        return self.kabelvariante_name
 
 class Schnittstelle(models.Model):
     schnittstelle_name = models.CharField(max_length=255, primary_key=True)
@@ -76,14 +99,24 @@ class Schnittstelle(models.Model):
     schnittstelle_price = models.FloatField(null=True)
 
     def save(self, *args, **kwargs):
+        # Check if there's an existing object with the same name
+        existing_object = Schnittstelle.objects.filter(schnittstelle_name=self.schnittstelle_name).first()
+
+        # If there's an existing object, delete its image before saving the new one
+        if existing_object and existing_object.schnittstelle_image_path:
+            existing_image_path = existing_object.schnittstelle_image_path.path
+            if os.path.exists(existing_image_path):
+                os.remove(existing_image_path)
+
+        # Ensure the uploaded image has the filename 'schnittstelle_name.png'
         if self.schnittstelle_image_path:
             filename = f"{self.schnittstelle_name}.png"
-            self.schnittstelle_image_path.name = os.path.join(filename)
+            self.schnittstelle_image_path.name = os.path.join('Schnittstellen', filename)
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.schnittstelle_name  # or any other field to represent the object as a string
+        return self.schnittstelle_name
 
 class Color(models.Model):
     color_name = models.CharField(max_length=255, primary_key=True)
@@ -106,11 +139,46 @@ class Image(models.Model):
         return self.image_path  # or any other field to represent the object as a string
 
 class Order(models.Model):
+    ORDER_STATUS_CHOICES = [
+        ('InCart', 'In Cart'),
+        ('Ordered', 'Ordered'),
+        ('Delivered', 'Delivered'),
+    ]
+
     order_number = models.CharField(max_length=255, primary_key=True)
     ust_id = models.CharField(max_length=50, null=True)
     order_date = models.DateTimeField(null=True)
-    order_details = models.CharField(max_length=255,null=True)
+    order_details = models.CharField(max_length=255, null=True)
+    order_status = models.CharField(max_length=255, null=True, choices=ORDER_STATUS_CHOICES, default='InCart')
+    quantity = models.FloatField(null=True)
     price = models.FloatField(null=True)
+    total = models.FloatField(null=True)
 
     def __str__(self):
-        return self.image_path  # or any other field to represent the object as a string
+        return self.order_number
+
+    def update_status(self, new_status):
+        """
+        Update the order status and save the instance.
+        """
+        self.order_status = new_status
+        self.save()
+
+    def add_to_cart(self):
+        """
+        Set the order status to 'InCart'.
+        """
+        self.update_status('InCart')
+
+    def place_order(self):
+        """
+        Set the order status to 'Ordered'.
+        """
+        self.update_status('Ordered')
+
+    def deliver_order(self):
+        """
+        Set the order status to 'Delivered'.
+        """
+        self.update_status('Delivered')
+        
