@@ -79,7 +79,10 @@ class Migration(migrations.Migration):
                 ('ust_id', models.CharField(max_length=50, null=True)),
                 ('order_date', models.DateTimeField(null=True)),
                 ('order_details', models.CharField(max_length=255,null=True)),
+                ('order_status', models.CharField(max_length=255,null=True)),
+                ('quantity', models.FloatField(null=True)),
                 ('price', models.FloatField(null=True)),
+                ('total', models.FloatField(null=True)),
             ],
         ),
     ]

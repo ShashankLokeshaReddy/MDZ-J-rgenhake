@@ -20,4 +20,6 @@ urlpatterns = [
     path('developer_mode/', views.developer_mode, name='developer_mode'),
     path('update_colors/', views.update_colors, name='update_colors'),
     path('colors_url/', views.colors_url, name='colors_url'),
+    path('delete_order/', views.delete_order, name='delete_order'),
+    path('update_orders/', views.update_orders, name='update_orders'),
 ]

@@ -10,6 +10,7 @@ from django.http import JsonResponse
 import json
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @csrf_exempt
 def register(request):
@@ -144,8 +145,38 @@ def get_colors_dict():
     colors = Color.objects.all()
     return {color.color_name: color.color_value for color in colors}
 
+@login_required
 def purchase(request):
-    return render(request, 'pages/purchase.html')
+    # Filter orders based on the current user's ust_id
+    user_orders = Order.objects.filter(ust_id=request.user.customerprofile.ust_id).order_by('-order_date')
+    in_cart_orders = [order for order in user_orders if order.order_status == 'InCart']
+    other_orders = [order for order in user_orders if order.order_status != 'InCart']
+
+    # Pagination for both tables
+    page = request.GET.get('page', 1)
+    paginator_in_cart = Paginator(in_cart_orders, 10)
+    paginator_other = Paginator(other_orders, 10)
+
+    try:
+        in_cart_orders = paginator_in_cart.page(page)
+    except PageNotAnInteger:
+        in_cart_orders = paginator_in_cart.page(1)
+    except EmptyPage:
+        in_cart_orders = paginator_in_cart.page(paginator_in_cart.num_pages)
+
+    try:
+        other_orders = paginator_other.page(page)
+    except PageNotAnInteger:
+        other_orders = paginator_other.page(1)
+    except EmptyPage:
+        other_orders = paginator_other.page(paginator_other.num_pages)
+
+    context = {
+        'in_cart_orders': in_cart_orders,
+        'other_orders': other_orders,
+    }
+
+    return render(request, 'pages/purchase.html', context)
 
 def get_customer_profiles(request):
     customer_profiles = CustomerProfile.objects.all()
@@ -218,6 +249,48 @@ def get_orders(request):
              'ust_id': order.ust_id,
              'order_date': order.order_date,
              'order_details': order.order_details,
+             'order_status' : order.order_status,
              'price': order.price} for order in orders]
-    print("get_image_path",data)
     return data
+
+@require_POST
+def delete_order(request):
+    try:
+        json_data = json.loads(request.body)
+        order_number = json_data['order_number']
+
+        # Delete the order with the given order_number
+        Order.objects.filter(order_number=order_number).delete()
+
+        return JsonResponse({'success': True, 'message': 'Order deleted successfully.'})
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'Error deleting order: {str(e)}'})
+
+@require_POST
+def update_orders(request):
+    try:
+        json_data = json.loads(request.body)
+        order_updates = json_data['order_updates']
+
+        # Print the request data to the console or log file
+        print(f"Received json_data request data: {json_data}")
+        print(f"Received order_updates request data: {order_updates}")
+
+        for entry in order_updates:
+            print(f"Received entry: {entry}")
+            order_number = entry['order_number']
+            quantity = entry['quantity']
+            total = entry['total']
+            order_status = 'Ordered'
+
+            # Update both quantity and total for the order with the given order_number
+            Order.objects.filter(order_number=order_number).update(quantity=quantity, total=total, order_status=order_status)
+
+        print("Update orders success")
+        return JsonResponse({'success': True, 'message': 'Orders updated successfully'})
+
+    except Exception as e:
+        print("Update orders not success")
+        print(f"Error updating orders: {str(e)}")
+        return JsonResponse({'success': False, 'message': f'Error updating orders: {str(e)}'})
