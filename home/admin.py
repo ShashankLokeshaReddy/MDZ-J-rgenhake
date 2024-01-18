@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomerProfile, Akkuvariante, Kabelvariante, Schnittstelle, Color, UILabel, Image, Order
+from .models import CustomerProfile, Akkuvariante, Kabelvariante, Schnittstelle, Color, UILabel, Image, Order, PreisListe
 
 admin.site.register(CustomerProfile)
 admin.site.register(Akkuvariante)
@@ -9,3 +9,4 @@ admin.site.register(Color)
 admin.site.register(UILabel)
 admin.site.register(Image)
 admin.site.register(Order)
+admin.site.register(PreisListe)

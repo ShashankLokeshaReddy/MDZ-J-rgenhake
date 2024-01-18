@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
-from .models import CustomerProfile, Akkuvariante, Kabelvariante, Schnittstelle, Color, UILabel, Image, Order
+from .models import CustomerProfile, PreisListe, Akkuvariante, Kabelvariante, Schnittstelle, Color, UILabel, Image, Order
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ProfileImageUpdateForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -30,29 +30,52 @@ def index(request):
     customer_profiles = get_customer_profiles(request)
     akkuvarianten = get_akkuvarianten(request)
     kabelvarianten = get_kabelvarianten(request)
+    kabelvarianten_namen = [kabelvariante.get('kabelvariante_name') for kabelvariante in kabelvarianten]
+    kabelvarianten_namen_json = json.dumps(kabelvarianten_namen)
     schnittstellen = get_schnittstellen(request)
     colors = get_colors(request)
     ui_labels = get_ui_labels(request)
     image_paths = get_image_path(request)
     orders = get_orders(request)
-    print("kabelvarianten in index", kabelvarianten)
+    preisliste = get_preisliste(request)
+
     for kabelvariante in kabelvarianten:
-        kabelvariante['splits'] = int(kabelvariante['splits'])
-        kabelvariante['main_part_min_length'] = int(kabelvariante['main_part_min_length'])
-        kabelvariante['main_part_max_length'] = int(kabelvariante['main_part_max_length'])
-        kabelvariante['split_part_min_length'] = int(kabelvariante['split_part_min_length'])
-        kabelvariante['split_part_max_length'] = int(kabelvariante['split_part_max_length'])
-        kabelvariante['kabel_price_per_meter'] = float(kabelvariante['kabel_price_per_meter'])
+        kabelvariante['kabelvariante_image_path'] = str(kabelvariante['kabelvariante_image_path'])
+        kabelvariante['masse_image_path'] = str(kabelvariante['masse_image_path'])
+        kabelvariante['splits'] = str(kabelvariante['splits'])
+        kabelvariante['main_part_min_length'] = str(kabelvariante['main_part_min_length'])
+        kabelvariante['main_part_max_length'] = str(kabelvariante['main_part_max_length'])
+        kabelvariante['split_part_min_length'] = str(kabelvariante['split_part_min_length'])
+        kabelvariante['split_part_max_length'] = str(kabelvariante['split_part_max_length'])
+
+    for preislist in preisliste:
+        preislist['qty_1'] = str(preislist['qty_1'])
+        preislist['qty_25'] = str(preislist['qty_25'])
+        preislist['qty_50'] = str(preislist['qty_50'])
+        preislist['qty_100'] = str(preislist['qty_100'])
+        preislist['qty_250'] = str(preislist['qty_250'])
+        preislist['qty_500'] = str(preislist['qty_500'])
+        preislist['qty_1000'] = str(preislist['qty_1000'])      
+        preislist['qty_2000'] = str(preislist['qty_2000'])     
+
+    preisliste_json = json.dumps(preisliste)
+    kabelvarianten_json = json.dumps(kabelvarianten)
+
+    # print("kabelvariante type:",type(kabelvariante), type(kabelvariante_json))
+    print("kabelvariante:",kabelvarianten)
+    print("kabelvariante:",kabelvarianten_json)
 
     return render(request, 'pages/index.html', {
         'customer_profiles': customer_profiles,
         'akkuvarianten': akkuvarianten,
-        'kabelvarianten': kabelvarianten,
+        'kabelvarianten': kabelvarianten_json,
+        'kabelvarianten_namen': kabelvarianten_namen_json,
         'schnittstellen': schnittstellen,
         'colors': colors,
         'ui_labels': ui_labels,
         'image_paths': image_paths,
         'orders': orders,
+        'preisliste': preisliste_json,
     })
 
 @login_required
@@ -98,8 +121,7 @@ def developer_mode(request):
         kabelvariante['main_part_max_length'] = int(kabelvariante['main_part_max_length'])
         kabelvariante['split_part_min_length'] = int(kabelvariante['split_part_min_length'])
         kabelvariante['split_part_max_length'] = int(kabelvariante['split_part_max_length'])
-        kabelvariante['kabel_price_per_meter'] = float(kabelvariante['kabel_price_per_meter'])
-
+       
     return render(request, 'pages/developer_mode.html', {
         'customer_profiles': customer_profiles,
         'akkuvarianten': akkuvarianten,
@@ -189,11 +211,28 @@ def get_customer_profiles(request):
              'ansprechpartner': profile.ansprechpartner} for profile in customer_profiles]
     return JsonResponse(data, safe=False)
 
+def get_preisliste(request):
+    preisliste = PreisListe.objects.all()
+    data = [{'kabelvariante': preislist.kabelvariante,
+             'gehause': preislist.gehause,
+             'leitung': preislist.leitung,
+             'lange': preislist.lange,
+             'qty_1': preislist.qty_1,
+             'qty_25': preislist.qty_25,
+             'qty_50': preislist.qty_50,
+             'qty_100': preislist.qty_100,
+             'qty_250': preislist.qty_250,
+             'qty_500': preislist.qty_500,
+             'qty_1000': preislist.qty_1000,
+             'qty_2000': preislist.qty_2000
+             } for preislist in preisliste]
+
+    return data # JsonResponse(data, safe=False)
+
 def get_akkuvarianten(request):
     akkuvarianten = Akkuvariante.objects.all()
     data = [{'akkuvariante_name': akkuvariante.akkuvariante_name,
-             'akkuvariante_image_path': akkuvariante.akkuvariante_image_path,
-             'akkuvariante_price': akkuvariante.akkuvariante_price} for akkuvariante in akkuvarianten]
+             'akkuvariante_image_path': akkuvariante.akkuvariante_image_path} for akkuvariante in akkuvarianten]
     print("get_akkuvarianten",data)
     return data # JsonResponse(data, safe=False)
 
@@ -207,15 +246,13 @@ def get_kabelvarianten(request):
              'split_part_max_length': kabelvariante.split_part_max_length,
              'masse_image_path': kabelvariante.masse_image_path,
             #  'schnittstelle_image_path': kabelvariante.schnittstelle_image_path,
-             'splits': kabelvariante.splits,
-             'kabel_price_per_meter': kabelvariante.kabel_price_per_meter} for kabelvariante in kabelvarianten]
+             'splits': kabelvariante.splits} for kabelvariante in kabelvarianten]
     return data # JsonResponse(data, safe=False)
 
 def get_schnittstellen(request):
     schnittstellen = Schnittstelle.objects.all()
     data = [{'schnittstelle_name': schnittstelle.schnittstelle_name,
-             'schnittstelle_image_path': schnittstelle.schnittstelle_image_path,
-             'schnittstelle_price': schnittstelle.schnittstelle_price} for schnittstelle in schnittstellen]
+             'schnittstelle_image_path': schnittstelle.schnittstelle_image_path} for schnittstelle in schnittstellen]
     return data # JsonResponse(data, safe=False)
 
 def get_colors(request):

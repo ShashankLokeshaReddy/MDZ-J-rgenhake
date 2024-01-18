@@ -30,7 +30,6 @@ class CustomerProfile(models.Model):
 class Akkuvariante(models.Model):
     akkuvariante_name = models.CharField(max_length=255, primary_key=True)
     akkuvariante_image_path = models.ImageField(default='default.png', upload_to='Akkuvariante')
-    akkuvariante_price = models.FloatField(null=True)
 
     def save(self, *args, **kwargs):
         # Check if there's an existing object with the same name
@@ -61,7 +60,6 @@ class Kabelvariante(models.Model):
     split_part_max_length = models.IntegerField(null=True)
     masse_image_path = models.ImageField(default='default.png', upload_to='Maße')
     splits = models.IntegerField(null=True)
-    kabel_price_per_meter = models.FloatField(null=True)
 
     def save(self, *args, **kwargs):
         # Check if there's an existing object with the same name
@@ -96,7 +94,6 @@ class Kabelvariante(models.Model):
 class Schnittstelle(models.Model):
     schnittstelle_name = models.CharField(max_length=255, primary_key=True)
     schnittstelle_image_path = models.ImageField(default='default.png', upload_to='Schnittstellen')
-    schnittstelle_price = models.FloatField(null=True)
 
     def save(self, *args, **kwargs):
         # Check if there's an existing object with the same name
@@ -182,3 +179,16 @@ class Order(models.Model):
         """
         self.update_status('Delivered')
         
+class PreisListe(models.Model):
+    kabelvariante = models.CharField(max_length=50, null=True)
+    gehause = models.CharField(max_length=50, null=True)
+    leitung = models.CharField(max_length=50, null=True)
+    lange = models.CharField(max_length=50, null=True)
+    qty_1 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    qty_25 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    qty_50 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    qty_100 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    qty_250 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    qty_500 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    qty_1000 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    qty_2000 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
