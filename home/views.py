@@ -30,8 +30,6 @@ def index(request):
     customer_profiles = get_customer_profiles(request)
     akkuvarianten = get_akkuvarianten(request)
     kabelvarianten = get_kabelvarianten(request)
-    kabelvarianten_namen = [kabelvariante.get('kabelvariante_name') for kabelvariante in kabelvarianten]
-    kabelvarianten_namen_json = json.dumps(kabelvarianten_namen)
     schnittstellen = get_schnittstellen(request)
     colors = get_colors(request)
     ui_labels = get_ui_labels(request)
@@ -48,6 +46,9 @@ def index(request):
         kabelvariante['split_part_min_length'] = str(kabelvariante['split_part_min_length'])
         kabelvariante['split_part_max_length'] = str(kabelvariante['split_part_max_length'])
 
+    for schnittstelle in schnittstellen:
+        schnittstelle['schnittstelle_image_path'] = str(schnittstelle['schnittstelle_image_path'])
+        
     for preislist in preisliste:
         preislist['qty_1'] = str(preislist['qty_1'])
         preislist['qty_25'] = str(preislist['qty_25'])
@@ -60,6 +61,7 @@ def index(request):
 
     preisliste_json = json.dumps(preisliste)
     kabelvarianten_json = json.dumps(kabelvarianten)
+    schnittstellen_json = json.dumps(schnittstellen)
 
     # print("kabelvariante type:",type(kabelvariante), type(kabelvariante_json))
     print("kabelvariante:",kabelvarianten)
@@ -69,8 +71,7 @@ def index(request):
         'customer_profiles': customer_profiles,
         'akkuvarianten': akkuvarianten,
         'kabelvarianten': kabelvarianten_json,
-        'kabelvarianten_namen': kabelvarianten_namen_json,
-        'schnittstellen': schnittstellen,
+        'schnittstellen': schnittstellen_json,
         'colors': colors,
         'ui_labels': ui_labels,
         'image_paths': image_paths,

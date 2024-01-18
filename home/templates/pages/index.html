@@ -112,48 +112,7 @@
             </div>
         </section>
         <div class="space space-2"></div>
-        {% load custom_filters %}
         <div id="schnittstelle-slider-container">
-            {% for kabelvariante in kabelvarianten %}
-                <div class="schnittstelle-slider-container-class" id="{{ kabelvariante.kabelvariante_name|slugify }}-schnittstelle-slider">
-                    <img class="schnittstelle-image" src="media\{{ kabelvariante.masse_image_path }}">
-                    {% if kabelvariante.splits > 1 %}
-                        {% with splits=kabelvariante.splits %}
-                            {% for i in splits|create_range_schnittstellen %}
-                                <div class="schnittstelle-row">
-                                    <div class="schnittstelle-heading">
-                                        <div class="schnittstelle-heading-option">Schnittstelle S{{ i }}</div>
-                                    </div>
-                                    <div class="schnittstelle-selectors">
-                                        {% for schnittstelle in schnittstellen %}
-                                            <div class="schnittstelle-selector" id="{{ schnittstelle.schnittstelle_name|slugify }}-S{{ i }}" data-split-index="{{ i }}" onclick="selectschnittstellenvariante('{{ schnittstelle.schnittstelle_name }}', '{{ i }}')">
-                                                <label>{{ schnittstelle.schnittstelle_name }}</label>
-                                                <img src="media\{{ schnittstelle.schnittstelle_image_path }}" alt="{{ schnittstelle.schnittstelle_name }}">
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        {% endwith %}
-                    {% elif kabelvariante.splits == 1 %}
-                        <div class="schnittstelle-heading">
-                            <div class="schnittstelle-heading-option">Schnittstelle S</div>
-                        </div>
-                        <div class="schnittstelle-selectors">
-                            {% for schnittstelle in schnittstellen %}
-                                <div class="schnittstelle-selector" id="{{ schnittstelle.schnittstelle_name|slugify }}-S" data-split-index="S" onclick="selectschnittstellenvariante('{{ schnittstelle.schnittstelle_name }}', 'S')">
-                                    <label>{{ schnittstelle.schnittstelle_name }}</label>
-                                    <img src="media\{{ schnittstelle.schnittstelle_image_path }}" alt="{{ schnittstelle.schnittstelle_name }}">
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <p>No valid Kabelvarianten available.</p>
-                    {% endif %}
-                </div>
-            {% empty %}
-                <p>No Kabelvarianten available.</p>
-            {% endfor %}
         </div>
         <div class="space space-2"></div>
         <div style="text-align: center;">
@@ -174,32 +133,6 @@
         </section>
         <div class="space space-2"></div>
         <div id="masse-slider-container">
-            {% for kabelvariante in kabelvarianten %}
-                <div class="masse-slider-container-class" id="{{ kabelvariante.kabelvariante_name|slugify }}-messe-slider">
-                    <img class="masse-image" src="media\{{ kabelvariante.masse_image_path }}">
-                    {% if kabelvariante.splits > 1 %}
-                        <div class="input-pair">
-                            <label for="{{ kabelvariante.kabelvariante_name|slugify }}-main-length">Main Length (cm): </label>
-                            <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-main-length" min="{{ kabelvariante.main_part_min_length }}" max="{{ kabelvariante.main_part_max_length }}" step="1" value="{{ kabelvariante.main_part_min_length }}" oninput="masseChange(this.value)">
-                        </div>
-                        {% for i in kabelvariante.splits|create_range_masse %}
-                            <div class="input-pair">
-                                <label for="{{ kabelvariante.kabelvariante_name|slugify }}-branch{{ forloop.counter }}-length">Branch {{ forloop.counter }} Length (cm): </label>
-                                <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-branch{{ forloop.counter }}-length" min="{{ kabelvariante.split_part_min_length }}" max="{{ kabelvariante.split_part_max_length }}" step="1" value="{{ kabelvariante.split_part_min_length }}" oninput="masseChange(this.value)">
-                            </div>
-                        {% endfor %}
-                    {% elif kabelvariante.splits == 1 %}
-                        <div class="input-pair">
-                            <label for="{{ kabelvariante.kabelvariante_name|slugify }}-main-length-input">Main length (cm):</label>
-                            <input type="number" id="{{ kabelvariante.kabelvariante_name|slugify }}-main-length-input" min="{{ kabelvariante.main_part_min_length }}" max="{{ kabelvariante.main_part_max_length }}" step="1" value="{{ kabelvariante.main_part_min_length }}" oninput="masseChange(this.value)">
-                        </div>
-                    {% else %}
-                        <p>No valid Kabelvarianten available.</p>
-                    {% endif %}
-                </div>
-            {% empty %}
-                <p>No Kabelvarianten available.</p>
-            {% endfor %}
         </div>
         <div class="space space-2"></div>
         <div style="text-align: center;">
@@ -235,8 +168,6 @@
 
     <div class="space space-2"></div>
 
-    <input id="filteredKabelvariantenInput">></input>
-
     <script>
         var akkuSelected = false;
         var kabelSelected = false;
@@ -247,7 +178,7 @@
         var selected_schnittstellen_name = "";
         var selected_masse_name = "";
         var kabelvarianten = JSON.parse('{{ kabelvarianten | safe | escapejs }}');
-        var kabelvarianten_names = JSON.parse('{{ kabelvarianten_namen | safe }}');
+        var schnittstellenOptions = JSON.parse('{{ schnittstellen | safe | escapejs }}');
         var preisliste = JSON.parse('{{ preisliste | safe }}');
 
         goToSection('Akkuvariante-Section')
@@ -283,8 +214,20 @@
                 }
             });
 
-            masse(productName);
-            schnittstelle(productName);
+            var filteredKabelvarianten = [];
+
+            for (let i = 0; i < kabelvarianten.length; i++) {
+                if (kabelvarianten[i]["kabelvariante_name"] === productName) {
+                    // var preislist_kabelvariante = preisliste[i]["kabelvariante"];
+                    if (!filteredKabelvarianten.includes(kabelvarianten[i])) {
+                        filteredKabelvarianten.push(kabelvarianten[i]);
+                    }
+                }
+            }
+
+            filteredKabelvarianten.forEach(populateSchnittstellenSelectors);
+            // masse(productName);
+            // schnittstelle(productName);
             kabelSelected = true;
             schnittstellenSelected = false;
             removeAllSelectedSchnittstellen()
@@ -333,33 +276,33 @@
         }
 
         function selectschnittstellenvariante(productName, splitIndex) {
+            var splitIndex = parseInt(splitIndex.split('-S')[1]);
             console.log('Selected schnittstelle:', productName, splitIndex);
-
             var productSelectors = document.querySelectorAll('.schnittstelle-selector');
 
             productSelectors.forEach(function(selector) {
-                if (splitIndex === 'S'){
-                    var label = selector.querySelector('label');
-                    var selectorSplitIndex = selector.getAttribute('data-split-index');
-                    if (label.textContent.trim() === productName && selectorSplitIndex === splitIndex) {
-                        selector.classList.add('selected');
-                    }
-                    if (label.textContent.trim() !== productName && selectorSplitIndex === splitIndex) {
-                        selector.classList.remove('selected');
-                    }
-                }
-                else{
+                // if (splitIndex === 'S'){
+                //     var label = selector.querySelector('label');
+                //     var selectorSplitIndex = selector.getAttribute('data-split-index');
+                //     if (label.textContent.trim() === productName && selectorSplitIndex === splitIndex) {
+                //         selector.classList.add('selected');
+                //     }
+                //     if (label.textContent.trim() !== productName && selectorSplitIndex === splitIndex) {
+                //         selector.classList.remove('selected');
+                //     }
+                // }
+                // else{
                     for (var i = 0; i <= splitIndex; i++) {
                         var label = selector.querySelector('label');
                         var selectorSplitIndex = selector.getAttribute('data-split-index');
-                        if (label.textContent.trim() === productName && selectorSplitIndex === splitIndex) {
+                        if (label.textContent.trim() === productName && selectorSplitIndex === 'S' + splitIndex) {
                             selector.classList.add('selected');
                         }
-                        if (label.textContent.trim() !== productName && selectorSplitIndex === splitIndex) {
+                        if (label.textContent.trim() !== productName && selectorSplitIndex === 'S' + splitIndex) {
                             selector.classList.remove('selected');
                         }
                     }
-                }
+                // }
             });
 
             schnittstellenSelected = true;
@@ -519,6 +462,85 @@
                 });
             }
         }
+
+        function populateSchnittstellenSelectors(kabelvariante) {
+            var container = document.getElementById('schnittstelle-slider-container');
+            // Clear existing content in the container
+            container.innerHTML = '';
+            var sliderContainer = document.createElement('div');
+            sliderContainer.className = 'schnittstelle-slider-container-class';
+            sliderContainer.id = kabelvariante.kabelvariante_name + '-schnittstelle-slider';
+
+            var img = document.createElement('img');
+            img.className = 'schnittstelle-image';
+            img.src = "media\\" + kabelvariante.masse_image_path;
+
+            sliderContainer.appendChild(img);
+
+            if (kabelvariante.splits > 0) {
+                for (var k = 1; k <= kabelvariante.splits; k++) {
+                    console.log("k:",k);
+                    var rowDiv = document.createElement('div');
+                    rowDiv.className = 'schnittstelle-row';
+
+                    var headingDiv = document.createElement('div');
+                    headingDiv.className = 'schnittstelle-heading';
+                    headingDiv.innerHTML = '<div class="schnittstelle-heading-option">Schnittstelle S' + k + '</div>';
+                    rowDiv.appendChild(headingDiv);
+
+                    var selectorsDiv = document.createElement('div');
+                    selectorsDiv.className = 'schnittstelle-selectors';
+
+                    var filteredschnittstellenOptions = [];
+
+                    for (let i = 0; i < preisliste.length; i++) {
+                        if (preisliste[i]["gehause"] === selected_akkuvariante_name) {
+                            var preislist_schnittstellen_name = preisliste[i]["leitung"];
+                            for (let j = 0; j < schnittstellenOptions.length; j++) {
+                                if (preislist_schnittstellen_name === schnittstellenOptions[j]["schnittstelle_name"]) {
+                                    preislist_schnittstellenOption = schnittstellenOptions[j];
+                                    if (!filteredschnittstellenOptions.includes(preislist_schnittstellenOption)) {
+                                        filteredschnittstellenOptions.push(preislist_schnittstellenOption);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    filteredschnittstellenOptions.forEach(function (schnittstelle) {
+                        var selectorDiv = document.createElement('div');
+                        selectorDiv.className = 'schnittstelle-selector';
+                        selectorDiv.id = schnittstelle.schnittstelle_name + '-S' + k;
+                        selectorDiv.setAttribute('data-split-index', 'S' + k);
+                        selectorDiv.onclick = function () {
+                            selectschnittstellenvariante(schnittstelle.schnittstelle_name, selectorDiv.id);
+                        };
+
+                        var label = document.createElement('label');
+                        label.textContent = schnittstelle.schnittstelle_name;
+                        selectorDiv.appendChild(label);
+
+                        var img = document.createElement('img');
+                        img.src = "media\\" + schnittstelle.schnittstelle_image_path;
+                        img.alt = schnittstelle.schnittstelle_name;
+                        selectorDiv.appendChild(img);
+
+                        selectorsDiv.appendChild(selectorDiv);
+                    });
+
+                    rowDiv.appendChild(selectorsDiv);
+                    sliderContainer.appendChild(rowDiv);
+                }
+            } 
+            else {
+                var noOptionsParagraph = document.createElement('p');
+                noOptionsParagraph.textContent = 'No valid Kabelvarianten available.';
+                sliderContainer.appendChild(noOptionsParagraph);
+            }
+
+            container.appendChild(sliderContainer);
+        }
+
 
     </script>
 {% endblock %}
