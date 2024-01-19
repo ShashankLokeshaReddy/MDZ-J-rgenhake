@@ -85,14 +85,6 @@
         </section>
         <div class="space space-2"></div>
         <div class="kabelvariante-selectors-container">
-            <!-- {% for kabelvariante in kabelvarianten %}
-                <div class="kabelvariante-selector" onclick="selectKabelvariante('{{ kabelvariante.kabelvariante_name }}')">
-                    <label>{{ kabelvariante.kabelvariante_name }}</label>
-                    <img src="media\{{ kabelvariante.kabelvariante_image_path }}" alt="{{ kabelvariante.kabelvariante_name }}">
-                </div>
-            {% empty %}
-                <p>No Kabelvarianten available.</p>
-            {% endfor %} -->
         </div>
         <div class="space space-2"></div>
         <div style="text-align: center;">
@@ -200,6 +192,7 @@
             akkuSelected = true;
             selected_akkuvariante_name = productName;
             populateKabelvariantenSelectors(kabelvarianten); 
+            updateSummary();
             updateProgressBar();
         }
 
@@ -231,8 +224,9 @@
             kabelSelected = true;
             selected_kabel_name = productName;
             schnittstellenSelected = false;
-            removeAllSelectedSchnittstellen()
+            removeAllSelectedSchnittstellen();
             masseSelected = false;
+            updateSummary();
             updateProgressBar();
         }
 
@@ -255,26 +249,26 @@
             }
         }
 
-        function schnittstelle(productName){
-            console.log('Selected Kabelvariante in Schnittstellen:', productName);
-            selected_kabel_name = productName;
+        // function schnittstelle(productName){
+        //     console.log('Selected Kabelvariante in Schnittstellen:', productName);
+        //     selected_kabel_name = productName;
 
-            // Hide all sliders initially
-            var sliders = document.querySelectorAll('.schnittstelle-slider-container-class');
-            sliders.forEach(function(slider) {
-                slider.classList.add('hidden');
-            });
+        //     // Hide all sliders initially
+        //     var sliders = document.querySelectorAll('.schnittstelle-slider-container-class');
+        //     sliders.forEach(function(slider) {
+        //         slider.classList.add('hidden');
+        //     });
 
-            // Show the selected slider based on cable type
-            var selectedSliderId = productName.toLowerCase() + '-schnittstelle-slider';
-            var selectedSlider = document.getElementById(selectedSliderId);
-            if (selectedSlider) {
-                selectedSlider.classList.remove('hidden');
-            } else {
-                console.log('No matching slider found for:', productName);
-            }
+        //     // Show the selected slider based on cable type
+        //     var selectedSliderId = productName.toLowerCase() + '-schnittstelle-slider';
+        //     var selectedSlider = document.getElementById(selectedSliderId);
+        //     if (selectedSlider) {
+        //         selectedSlider.classList.remove('hidden');
+        //     } else {
+        //         console.log('No matching slider found for:', productName);
+        //     }
 
-        }
+        // }
 
         function selectschnittstellenvariante(productName, splitIndex) {
             var splitIndex = parseInt(splitIndex.split('-S')[1]);
@@ -319,6 +313,7 @@
             }
 
             filteredKabelvarianten.forEach(populateMasseSelectors);
+            updateSummary();
             updateProgressBar();
         }
 
@@ -332,17 +327,44 @@
         function updateSummary() {
             var akkuvariante = selected_akkuvariante_name;
             var kabelvariante = selected_kabel_name;
-            var schnittstelle = selected_schnittstellen_name;
-            var masse = selected_masse_name;
+            var schnittstelle = getSelectedSchnittstellen();
+            var masse = getMasseInputValues();
+            var preis = "";
+
+            var preiseliste_sorted = preisliste.sort(function(a, b) {
+                var langeA = parseInt(a.lange.replace(/\D/g, ''), 10);
+                var langeB = parseInt(b.lange.replace(/\D/g, ''), 10);
+                return langeA - langeB;
+            });
+
+            outerLoop: for (let i = 0; i < preiseliste_sorted.length; i++) {
+                if (preiseliste_sorted[i]["gehause"] === selected_akkuvariante_name) {
+                    if (preiseliste_sorted[i]["kabelvariante"] === selected_kabel_name) {
+                        if (selected_kabel_name === 'Straight'){
+                            if (preiseliste_sorted[i]["leitung"]+'-S1' === schnittstelle[0]) {
+                                var preisliste_intValue = parseInt(preiseliste_sorted[i]["lange"].replace(/\D/g, ''), 10);
+                                var masse_intValue = parseInt(masse[0].replace(/\D/g, ''), 10);
+
+                                if (masse_intValue <= preisliste_intValue) {
+                                    preis = "\u20ac" + preiseliste_sorted[i]["qty_1"];
+                                    break outerLoop;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             document.getElementById('akkuvariante-summary').innerText = 'Akkuvariante: ' + akkuvariante;
             document.getElementById('kabelvariante-summary').innerText = 'Kabelvariante: ' + kabelvariante;
             document.getElementById('schnittstelle-summary').innerText = 'Schnittstelle: ' + schnittstelle;
             document.getElementById('masse-summary').innerText = 'Maße: ' + masse;
+            document.getElementById('gesamtpreis-summary').innerText = 'Gesamtpreis: ' + preis;
         }
 
         function masseChange(value) {
             masseSelected = true;
+            updateSummary();
             updateProgressBar();
             console.log("Main Length changed to: " + value);
         }
@@ -451,8 +473,32 @@
                 // No Kabel options available, display a message
                 var messageDiv = document.createElement('div');
                 messageDiv.textContent = "No Kabel options available for the selected akkuvariante type.";
+                selected_kabel_name = '';
+                kabelSelected = false;
                 container.appendChild(messageDiv);
-            } else {
+
+                // No Schnittstellen options available, display a message
+                var schnittstellen_empty_container = document.getElementById('schnittstelle-slider-container');
+                schnittstellen_empty_container.innerHTML = '';
+                var sliderContainer = document.createElement('div');
+                var messageDiv = document.createElement('div');
+                messageDiv.textContent = "No Schnittstellen options available for the selected akkuvariante type.";
+                schnittstellen_empty_container.appendChild(messageDiv);
+                selected_schnittstellen_name = '';
+                schnittstellenSelected = false;
+
+                // No Masse options available, display a message
+                var masse_empty_container = document.getElementById('masse-slider-container');
+                masse_empty_container.innerHTML = '';
+                var sliderContainer = document.createElement('div');
+                var messageDiv = document.createElement('div');
+                messageDiv.textContent = "No maße options available for the selected akkuvariante type.";
+                masse_empty_container.appendChild(messageDiv);
+                selected_masse_name = '';
+                masseSelected = false;
+
+            } 
+            else {
                 kabelvarianten.forEach(function (kabelvariante) {
                     if (filteredKabelvarianten.includes(kabelvariante.kabelvariante_name)) {
                         var div = document.createElement('div');
@@ -472,6 +518,15 @@
 
                         container.appendChild(div);
                     }
+                    var productSelectors = document.querySelectorAll('.kabelvariante-selector');
+
+                    productSelectors.forEach(function(selector) {
+                        selector.classList.remove('selected');
+                        var label = selector.querySelector('label');
+                        if (label.textContent.trim() === selected_kabel_name) {
+                            selector.classList.add('selected');
+                        }
+                    });
                 });
             }
         }
@@ -547,7 +602,7 @@
             } 
             else {
                 var noOptionsParagraph = document.createElement('p');
-                noOptionsParagraph.textContent = 'No valid Kabelvarianten available.';
+                noOptionsParagraph.textContent = 'No valid Schnittstellen available.';
                 sliderContainer.appendChild(noOptionsParagraph);
             }
 
@@ -613,7 +668,7 @@
 
             var label = document.createElement('label');
             label.htmlFor = kabelvariante.kabelvariante_name + '-masse-' + identifier + '-length';
-            label.textContent = identifier.charAt(0).toUpperCase() + identifier.slice(1) + ' Length (cm): ';
+            label.textContent = identifier.charAt(0).toUpperCase() + identifier.slice(1) + ' Length (mm): ';
 
             var input = document.createElement('input');
             input.type = 'number';
@@ -653,7 +708,31 @@
             selected_schnittstellen_name = selectedSchnittstellenIds
             return selectedSchnittstellenIds;
         }
-
     
+        function getMasseInputValues() {
+            var inputPairs = document.querySelectorAll('.input-pair input');
+            
+            // Convert NodeList to an array for easier handling
+            var inputPairsArray = Array.from(inputPairs);
+
+            // Create an array to store input strings
+            var inputValuesArray = [];
+
+            // Now you can iterate through inputPairsArray and access their properties
+            inputPairsArray.forEach(function (input) {
+                // Access the id and value attributes of each input
+                var inputId = input.id;
+                var inputValue = input.value;
+
+                // Create a string for each input and push it to the array
+                var inputString = `${inputId}: ${inputValue} mm`;
+                inputValuesArray.push(inputString);
+            });
+
+            selected_masse_name = inputValuesArray;
+            console.log("selected_masse_name", selected_masse_name);
+            return inputValuesArray;
+        }
+
     </script>
 {% endblock %}
