@@ -518,13 +518,42 @@
 
                         container.appendChild(div);
                     }
+
+                    // trigger schnittsellen & masse populate functions or apply filters to them 
+                    // like check for the available schnittstellen & masse and select them only 
+                    // if available, else assign them to empty strings, update step pogress
+                    // for masse if the earlier value for Akku 1 is valid for the new Akku selection
+                    // keeep it as it is else change it to minimum, update step pogress
+               
                     var productSelectors = document.querySelectorAll('.kabelvariante-selector');
 
                     productSelectors.forEach(function(selector) {
                         selector.classList.remove('selected');
                         var label = selector.querySelector('label');
                         if (label.textContent.trim() === selected_kabel_name) {
-                            selector.classList.add('selected');
+                            // selector.classList.add('selected');
+
+                            selected_kabel_name = '';
+
+                            // No Schnittstellen options available, display a message
+                            var schnittstellen_empty_container = document.getElementById('schnittstelle-slider-container');
+                            schnittstellen_empty_container.innerHTML = '';
+                            var sliderContainer = document.createElement('div');
+                            var messageDiv = document.createElement('div');
+                            messageDiv.textContent = "Akkuvariante option changed, Please reselect the kabels.";
+                            schnittstellen_empty_container.appendChild(messageDiv);
+                            selected_schnittstellen_name = '';
+                            schnittstellenSelected = false;
+
+                            // No Masse options available, display a message
+                            var masse_empty_container = document.getElementById('masse-slider-container');
+                            masse_empty_container.innerHTML = '';
+                            var sliderContainer = document.createElement('div');
+                            var messageDiv = document.createElement('div');
+                            messageDiv.textContent = "Akkuvariante option changed, Please reselect the kabels.";
+                            masse_empty_container.appendChild(messageDiv);
+                            selected_masse_name = '';
+                            masseSelected = false;
                         }
                     });
                 });
