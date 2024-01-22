@@ -1,0 +1,193 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+    {% with in_cart_items=in_cart_items %}
+    {{block.super}}
+    {% endwith %}
+    <div class="container mt-4">
+        <h2 class="mt-4">Your Orders</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Order Number</th>
+                    <th scope="col">Order Date</th>
+                    <th scope="col">Order Details</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Order Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in other_orders %}
+                <tr>
+                    <td>{{ order.order_number }}</td>
+                    <td>{{ order.order_date }}</td>
+                    <td>{{ order.order_details }}</td>
+                    <td>{{ order.price }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ order.total }}</td>
+                    <td>{{ order.order_status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <span class="step-links">
+                {% if other_orders.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ other_orders.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ other_orders.number }} of {{ other_orders.paginator.num_pages }}.
+                </span>
+
+                {% if other_orders.has_next %}
+                    <a href="?page={{ other_orders.next_page_number }}">next</a>
+                    <a href="?page={{ other_orders.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Event listener for the delete order button
+            document.getElementById('inCartTable').addEventListener('click', function (event) {
+                if (event.target.classList.contains('delete-order')) {
+                    var orderRow = event.target.closest('.order-row');
+                    var orderNumber = orderRow.dataset.orderNumber;
+
+                    // Prompt user for confirmation
+                    if (confirm("Are you sure you want to delete this order?")) {
+                        // If confirmed, trigger DELETE request to delete the order
+                        fetch('/delete_order/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
+                            },
+                            body: JSON.stringify({'order_number': orderNumber}),
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Remove the row from the table
+                            orderRow.remove();
+                            updateTotalPrice();
+                        })
+                        .catch(error => {
+                            console.error('Error deleting order:', error);
+                        });
+                    }
+                }
+            });
+
+            // Event listener for the submit order button
+            document.getElementById('submit-order').addEventListener('click', function () {
+                // Prompt user for confirmation
+                if (confirm("Are you sure you want to submit the selected orders?")) {
+                    var orderUpdates = [];
+
+                    // Collect order details for submission
+                    document.querySelectorAll('.order-row').forEach(function (row) {
+                        var orderNumber = row.getAttribute('data-order-number');
+                        var quantity = parseInt(row.querySelector('.quantity').textContent);
+                        var total = parseInt(row.querySelector('.total-price').textContent);
+
+                        orderUpdates.push({
+                            'order_number': orderNumber,
+                            'quantity': quantity,
+                            'total': total
+                        });
+                    });
+
+                    // Trigger POST request to update orders
+                    fetch('/update_orders/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
+                        },
+                        body: JSON.stringify({'order_updates': orderUpdates}),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Handle the response data as needed
+                        console.log('Response:', data);
+                        location.reload();
+                        updateColors(data.colors);
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
+                }
+            });
+
+            // Event listener for increasing quantity
+            document.querySelectorAll('.increase-quantity').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var row = this.closest('.order-row');
+                    updateQuantity(row, 1);
+                });
+            });
+
+            // Event listener for decreasing quantity
+            document.querySelectorAll('.decrease-quantity').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var row = this.closest('.order-row');
+                    updateQuantity(row, -1);
+                });
+            });
+
+            // Function to update the quantity and total price
+            function updateQuantity(row, quantityChange) {
+                // Ensure row is a jQuery object
+                var $row = $(row);
+
+                var quantityElement = $row.find('.quantity');
+                var totalPriceElement = $row.find('.total-price');
+                var price = parseFloat($row.data('price'));
+                var currentQuantity = parseInt(quantityElement.text());
+                var newQuantity = currentQuantity + quantityChange;
+
+                // Check if the new quantity is at least 0
+                if (newQuantity >= 0) {
+                    quantityElement.text(newQuantity);
+                    totalPriceElement.text((newQuantity * price).toFixed(2));
+                    updateTotalPrice();
+                } else {
+                    // Display a confirmation prompt to delete the order
+                    if (confirm("Are you sure you want to delete this order?")) {
+                        $row.remove();
+                        updateTotalPrice();
+                    }
+                }
+            }
+
+            // Function to update the total price based on the quantity and price of each order
+            function updateTotalPrice() {
+                var totalPrice = 0;
+                $('.order-row').each(function () {
+                    var quantity = parseInt($(this).find('.quantity').text());
+                    var price = parseFloat($(this).data('price'));
+                    totalPrice += quantity * price;
+                });
+
+                $('#total-price').text(totalPrice.toFixed(2));
+            }
+        });
+   </script>
+{% endblock %}
