@@ -1,6 +1,9 @@
 {% extends 'layouts/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
+    {% with in_cart_items=in_cart_items %}
+    {{block.super}}
+    {% endwith %}
     <div class="container mt-4">
         <form class="mt-4" method="POST" enctype="multipart/form-data">
             {% csrf_token %}

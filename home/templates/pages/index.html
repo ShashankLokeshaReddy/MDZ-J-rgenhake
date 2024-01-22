@@ -1,6 +1,9 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
+    {% with in_cart_items=in_cart_items %}
+    {{block.super}}
+    {% endwith %}
     <!-- Header content -->
 
     <!-- Custom Solution Selector -->

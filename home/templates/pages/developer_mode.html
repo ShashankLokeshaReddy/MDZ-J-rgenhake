@@ -1,6 +1,9 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
+    {% with in_cart_items=in_cart_items %}
+    {{block.super}}
+    {% endwith %}
     <div id="Colors-Developer-Section">
         <section class="layoutblock lb-10col-width lb-hinweisausgabe">
             <div class="content anlauf_text">

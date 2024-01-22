@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     "home",
     "colorfield",
+    'django_bootstrap_icons',
 ]
 
 MIDDLEWARE = [
