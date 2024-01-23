@@ -59,15 +59,6 @@ function setCSSVariableValue(variableName, variableValue) {
 // Call the updateColors function when the page loads
 document.addEventListener('DOMContentLoaded', updateColors);
 
-var akkuSelected = false;
-var kabelSelected = false;
-var schnittstellenSelected = false;
-var masseSelected = false;
-var selected_akkuvariante_name = "";
-var selected_kabel_name = "";
-var selected_schnittstellen_name = "";
-var selected_masse_name = "";
-
 // Toggle Dropdown Functionality
 const dropdownToggle = document.querySelectorAll('.dropdown-toggle');
 
@@ -132,236 +123,12 @@ function handleScroll() {
 // Add scroll event listener
 window.addEventListener('scroll', handleScroll);
 
-function selectAkkuvariante(productName) {
-    console.log('Selected Akkuvariante:', productName);
-
-    var productSelectors = document.querySelectorAll('.akkuvariante-selector');
-
-    productSelectors.forEach(function(selector) {
-        selector.classList.remove('selected');
-        var label = selector.querySelector('label');
-        if (label.textContent.trim() === productName) {
-            selector.classList.add('selected');
-        }
-    });
-
-    akkuSelected = true;
-    selected_akkuvariante_name = productName;
-    updateProgressBar();
-}
-
-function selectKabelvariante(productName) {
-    var productSelectors = document.querySelectorAll('.kabelvariante-selector');
-
-    productSelectors.forEach(function(selector) {
-        selector.classList.remove('selected');
-        var label = selector.querySelector('label');
-        if (label.textContent.trim() === productName) {
-            selector.classList.add('selected');
-        }
-    });
-
-    masse(productName);
-    schnittstelle(productName);
-    kabelSelected = true;
-    schnittstellenSelected = false;
-    removeAllSelectedSchnittstellen()
-    masseSelected = false;
-    updateProgressBar();
-}
-
-function masse(productName){
-    console.log('Selected Kabelvariante in masse:', productName);
-
-    // Hide all sliders initially
-    var sliders = document.querySelectorAll('.masse-slider-container-class');
-    sliders.forEach(function(slider) {
-        slider.classList.add('hidden');
-    });
-
-    // Show the selected slider based on cable type
-    var selectedSliderId = productName.toLowerCase() + '-messe-slider';
-    var selectedSlider = document.getElementById(selectedSliderId);
-    if (selectedSlider) {
-        selectedSlider.classList.remove('hidden');
-    } else {
-        console.log('No matching slider found for:', productName);
-    }
-}
-
-function schnittstelle(productName){
-    console.log('Selected Kabelvariante in Schnittstellen:', productName);
-    selected_kabel_name = productName;
-
-    // Hide all sliders initially
-    var sliders = document.querySelectorAll('.schnittstelle-slider-container-class');
-    sliders.forEach(function(slider) {
-        slider.classList.add('hidden');
-    });
-
-    // Show the selected slider based on cable type
-    var selectedSliderId = productName.toLowerCase() + '-schnittstelle-slider';
-    var selectedSlider = document.getElementById(selectedSliderId);
-    if (selectedSlider) {
-        selectedSlider.classList.remove('hidden');
-    } else {
-        console.log('No matching slider found for:', productName);
-    }
-
-}
-
-function selectschnittstellenvariante(productName, splitIndex) {
-    console.log('Selected schnittstelle:', productName, splitIndex);
-
-    var productSelectors = document.querySelectorAll('.schnittstelle-selector');
-
-    productSelectors.forEach(function(selector) {
-        if (splitIndex === 'S'){
-            var label = selector.querySelector('label');
-            var selectorSplitIndex = selector.getAttribute('data-split-index');
-            if (label.textContent.trim() === productName && selectorSplitIndex === splitIndex) {
-                selector.classList.add('selected');
-            }
-            if (label.textContent.trim() !== productName && selectorSplitIndex === splitIndex) {
-                selector.classList.remove('selected');
-            }
-        }
-        else{
-            for (var i = 0; i <= splitIndex; i++) {
-                var label = selector.querySelector('label');
-                var selectorSplitIndex = selector.getAttribute('data-split-index');
-                if (label.textContent.trim() === productName && selectorSplitIndex === splitIndex) {
-                    selector.classList.add('selected');
-                }
-                if (label.textContent.trim() !== productName && selectorSplitIndex === splitIndex) {
-                    selector.classList.remove('selected');
-                }
-            }
-        }
-    });
-
-    schnittstellenSelected = true;
-    updateProgressBar();
-}
-
-function removeAllSelectedSchnittstellen() {
-    var selectors = document.querySelectorAll('.schnittstelle-selector');
-    selectors.forEach(function (selector) {
-        selector.classList.remove('selected');
-    });
-}
-
-function updateProgressBar() {
-    // Update the stepper based on selected sections
-    var stepperItems = document.querySelectorAll('.stepper-item');
-
-    stepperItems[0].classList.toggle('completed', akkuSelected);
-    stepperItems[1].classList.toggle('completed', kabelSelected);
-    stepperItems[2].classList.toggle('completed', schnittstellenSelected);
-    stepperItems[3].classList.toggle('completed', masseSelected);
-}
-
-function updateSummary() {
-    var akkuvariante = selected_akkuvariante_name;
-    var kabelvariante = selected_kabel_name;
-    var schnittstelle = selected_schnittstellen_name;
-    var masse = selected_masse_name;
-
-    document.getElementById('akkuvariante-summary').innerText = 'Akkuvariante: ' + akkuvariante;
-    document.getElementById('kabelvariante-summary').innerText = 'Kabelvariante: ' + kabelvariante;
-    document.getElementById('schnittstelle-summary').innerText = 'Schnittstelle: ' + schnittstelle;
-    document.getElementById('masse-summary').innerText = 'Maße: ' + masse;
-}
-
-function masseChange(value) {
-    masseSelected = true;
-    updateProgressBar();
-    console.log("Main Length changed to: " + value);
-}
-
 function openProfile(){
 
 }
 
 function openCart(){
 
-}
-
-// Function to handle the scroll for goToSection
-function goToSection(selectedSectionId) {
-    var sections = [
-        'Akkuvariante-Section',
-        'Kabelvariante-Section',
-        'Schnittstellen-Section',
-        'Masse-Section',
-        'Zusammenfassung-Section'
-    ];
-
-    for (var i = 0; i < sections.length; i++) {
-        var sectionId = sections[i];
-        var section = document.getElementById(sectionId);
-        var stepperItem = document.querySelector('.stepper-item[data-counter="' + (i + 1) + '"]');
-
-        if (section) {
-            if (i === 0) {
-                // For the first section (Akkuvariante-Section), scroll to the top of the page
-                if (i <= sections.indexOf(selectedSectionId)) {
-                    section.classList.remove('hidden');
-                    
-                    if (stepperItem) {
-                        stepperItem.classList.add('active');
-                    }
-
-                    // Auto-scroll to the top of the page
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                } else {
-                    section.classList.add('hidden');
-                    if (stepperItem && stepperItem.classList.contains('active')) {
-                        stepperItem.classList.remove('active');
-                    }
-                }
-            } else {
-                // For the rest of the sections, apply target position logic
-                if (i <= sections.indexOf(selectedSectionId)) {
-                    section.classList.remove('hidden');
-
-                    if (stepperItem) {
-                        stepperItem.classList.add('active');
-                    }
-
-                    // Calculate the target position as 30% of the screen height
-                    var targetPosition = section.offsetTop;
-
-                    // Set the flag to indicate that scroll is triggered by goToSection
-                    isScrollByGoToSection = true;
-
-                    // Auto-scroll to the target position
-                    window.scrollTo({
-                        top: targetPosition,
-                        behavior: 'smooth'
-                    });
-                } else {
-                    section.classList.add('hidden');
-                    if (stepperItem && stepperItem.classList.contains('active')) {
-                        stepperItem.classList.remove('active');
-                    }
-                }
-            }
-        } else {
-            console.error("Element with ID '" + sectionId + "' not found.");
-        }
-    }
-
-    console.log("Going to the section: " + selectedSectionId);
-}
-
-function addToCart() {
-    // Add logic to navigate to the next section
-    // You can use JavaScript or any client-side framework/library for this
-    console.log("Adding to cart");
 }
 
 // function getSelectedOption(category) {
@@ -371,8 +138,6 @@ function addToCart() {
 
 // Select the first cable variante by default
 // selectKabelvariante(document.querySelector('.kabelvariante-selector:first-child label').textContent.trim());
-updateProgressBar();
-goToSection('Akkuvariante-Section')
 
 // Event listeners for slider values (you can modify these according to your requirements)
 // document.getElementById('straight-length').addEventListener('input', function() {

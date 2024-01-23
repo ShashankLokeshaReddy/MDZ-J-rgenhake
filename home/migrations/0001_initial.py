@@ -26,7 +26,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('akkuvariante_name', models.CharField(max_length=255, primary_key=True, serialize=False)),
                 ('akkuvariante_image_path', models.ImageField(default='default.png', upload_to='Akkuvariante')),
-                ('akkuvariante_price', models.FloatField(null=True)),
             ],
         ),
         migrations.CreateModel(
@@ -35,13 +34,10 @@ class Migration(migrations.Migration):
                 ('kabelvariante_name', models.CharField(max_length=255, primary_key=True, serialize=False)),
                 ('kabelvariante_image_path', models.ImageField(default='default.png', upload_to='Kabelvariante')),
                 ('main_part_min_length', models.IntegerField(null=True)),
-                ('main_part_max_length', models.IntegerField(null=True)),
                 ('split_part_min_length', models.IntegerField(null=True)),
-                ('split_part_max_length', models.IntegerField(null=True)),
                 ('masse_image_path', models.ImageField(default='default.png', upload_to='Maße')),
                 # ('schnittstelle_image_path', models.ImageField(default='default.png', upload_to='Maße')),
                 ('splits', models.IntegerField(null=True)),
-                ('kabel_price_per_meter', models.FloatField(null=True)),
             ],
         ),
         migrations.CreateModel(
@@ -49,7 +45,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('schnittstelle_name', models.CharField(max_length=255, primary_key=True, serialize=False)),
                 ('schnittstelle_image_path', models.ImageField(default='default.png', upload_to='Schnittstellen')),
-                ('schnittstelle_price', models.FloatField(null=True)),
             ],
         ),
         migrations.CreateModel(
@@ -84,5 +79,27 @@ class Migration(migrations.Migration):
                 ('price', models.FloatField(null=True)),
                 ('total', models.FloatField(null=True)),
             ],
+        ),
+        migrations.CreateModel(
+            name='PreisListe',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('kabelvariante', models.CharField(max_length=50, null=True)),
+                ('gehause', models.CharField(max_length=50, null=True)),
+                ('leitung', models.CharField(max_length=50, null=True)),
+                ('lange', models.CharField(max_length=50, null=True)),
+                ('qty_1', models.DecimalField(max_digits=10, decimal_places=2, null=True)),
+                ('qty_25', models.DecimalField(max_digits=10, decimal_places=2, null=True)),
+                ('qty_50', models.DecimalField(max_digits=10, decimal_places=2, null=True)),
+                ('qty_100', models.DecimalField(max_digits=10, decimal_places=2, null=True)),
+                ('qty_250', models.DecimalField(max_digits=10, decimal_places=2, null=True)),
+                ('qty_500', models.DecimalField(max_digits=10, decimal_places=2, null=True)),
+                ('qty_1000', models.DecimalField(max_digits=10, decimal_places=2, null=True)),
+                ('qty_2000', models.DecimalField(max_digits=10, decimal_places=2, null=True)),
+            ],
+            options={
+                'ordering': ('kabelvariante', 'gehause', 'leitung', 'lange'),
+                'unique_together': {('kabelvariante', 'gehause', 'leitung', 'lange')},  # Add unique constraint
+            },
         ),
     ]

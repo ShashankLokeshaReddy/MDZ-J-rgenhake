@@ -639,7 +639,7 @@ svg:not(:root) {
 }
 
 /* CSS for Product Selector Container */
-.akkuvariante-selectors-container, .kabelvariante-selectors-container, .schnittstelle-selectors {
+.akkuvariante-selectors-container, .kabelvariante-selectors-container, .schnittstelle-selectors, #schnittstelle-slider-container {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;

@@ -13,19 +13,11 @@
                 </a>
             </li>
             <!-- Cart Icon -->
-            <li class="topper-action_item topper-action_right topper-action_item-impr">
+            <li class="topper-action_item topper-action_right">
                 <a href="/purchase"  onclick="openCart()">
                     <span class="tn-bt-ico">
                         <i class="fal fa-shopping-cart"></i>
                         <span class='badge badge-warning' id='lblCartCount'>{{in_cart_items|length}}</span>
-                    </span>
-                </a>
-            </li>
-            <!-- Burger Icon -->
-            <li class="topper-action_item topper-action_right">
-                <a href="#"  onclick="openPopupMenu()">
-                    <span class="tn-bt-ico">
-                        <i class="fal fa-bars"></i>
                     </span>
                 </a>
             </li>
@@ -34,23 +26,13 @@
     
     <section id="main-header-wrapper" class="main-header-wrapper">
         <div class="main-header-content-wrapper con-width" id="main-header-content-wrapper">
-            <div id="stepper-wrapper" class="stepper-wrapper">
-                <div class="stepper-item" data-counter="1">
-                    <div class="step-counter">1</div>
-                    <div class="step-name">Akkuvariante</div>
-                </div>
-                <div class="stepper-item" data-counter="2">
-                    <div class="step-counter">2</div>
-                    <div class="step-name">Kabelvariante</div>
-                </div>
-                <div class="stepper-item" data-counter="3">
-                    <div class="step-counter">3</div>
-                    <div class="step-name">Schnittstelle</div>
-                </div>
-                <div class="stepper-item" data-counter="4">
-                    <div class="step-counter">4</div>
-                    <div class="step-name">Maße</div>
-                </div>
+            <div class="tn-bt-ico">
+                <!-- Burger Icon -->
+                <a href="#"  onclick="openPopupMenu()">
+                    <span class="tn-bt-ico-open">
+                        <i class="fal fa-bars"></i>
+                    </span>
+                </a>
             </div>
             <div id="logo" class="logo">
                 <a href="/">

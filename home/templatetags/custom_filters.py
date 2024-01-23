@@ -10,3 +10,8 @@ def create_range_masse(value):
 @register.filter(name='create_range_schnittstellen')
 def create_range_schnittstellen(value):
     return range(value)
+
+@register.simple_tag
+def get_media_prefix():
+    from django.conf import settings
+    return settings.MEDIA_URL
