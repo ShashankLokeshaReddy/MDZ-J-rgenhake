@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from PIL import Image as PILImage
 from colorfield.fields import ColorField
 import os
+import uuid
 
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
@@ -55,9 +56,7 @@ class Kabelvariante(models.Model):
     kabelvariante_name = models.CharField(max_length=255, primary_key=True)
     kabelvariante_image_path = models.ImageField(default='default.png', upload_to='Kabelvariante')
     main_part_min_length = models.IntegerField(null=True)
-    main_part_max_length = models.IntegerField(null=True)
     split_part_min_length = models.IntegerField(null=True)
-    split_part_max_length = models.IntegerField(null=True)
     masse_image_path = models.ImageField(default='default.png', upload_to='Maße')
     splits = models.IntegerField(null=True)
 
@@ -135,24 +134,29 @@ class Image(models.Model):
     def __str__(self):
         return self.image_path  # or any other field to represent the object as a string
 
-class Order(models.Model):
-    ORDER_STATUS_CHOICES = [
-        ('InCart', 'In Cart'),
-        ('Ordered', 'Ordered'),
-        ('Delivered', 'Delivered'),
-    ]
-
-    order_number = models.CharField(max_length=255, primary_key=True)
+class InCartItem(models.Model):
+    item_number = models.CharField(max_length=255, primary_key=True)
     ust_id = models.CharField(max_length=50, null=True)
-    order_date = models.DateTimeField(null=True)
-    order_details = models.CharField(max_length=255, null=True)
-    order_status = models.CharField(max_length=255, null=True, choices=ORDER_STATUS_CHOICES, default='InCart')
+    item_details = models.CharField(max_length=255, null=True)
     quantity = models.FloatField(null=True)
     price = models.FloatField(null=True)
     total = models.FloatField(null=True)
 
     def __str__(self):
-        return self.order_number
+        return self.item_number
+
+class Order(models.Model):
+    ORDER_STATUS_CHOICES = [
+        ('Ordered', 'Ordered'),
+        ('Delivered', 'Delivered'),
+        ('Cancelled', 'Cancelled'),
+    ]
+
+    order_number = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    ust_id = models.CharField(max_length=50, null=True)
+    order_date = models.DateTimeField(null=True)
+    order_details = models.CharField(max_length=255, null=True)
+    order_status = models.CharField(max_length=255, null=True, choices=ORDER_STATUS_CHOICES, default='Ordered')
 
     def update_status(self, new_status):
         """
@@ -160,12 +164,6 @@ class Order(models.Model):
         """
         self.order_status = new_status
         self.save()
-
-    def add_to_cart(self):
-        """
-        Set the order status to 'InCart'.
-        """
-        self.update_status('InCart')
 
     def place_order(self):
         """
@@ -178,7 +176,16 @@ class Order(models.Model):
         Set the order status to 'Delivered'.
         """
         self.update_status('Delivered')
-        
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, db_constraint=False)
+    item_number = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    ust_id = models.CharField(max_length=50, null=True)
+    item_details = models.CharField(max_length=255, null=True)
+    quantity = models.FloatField(null=True)
+    price = models.FloatField(null=True)
+    total = models.FloatField(null=True)
+
 class PreisListe(models.Model):
     kabelvariante = models.CharField(max_length=50, null=True)
     gehause = models.CharField(max_length=50, null=True)

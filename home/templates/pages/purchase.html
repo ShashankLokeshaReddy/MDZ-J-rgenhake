@@ -1,44 +1,66 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
+    {% with in_cart_items=in_cart_items %}
+    {{block.super}}
+    {% endwith %}
+    {% load bootstrap_icons %}
     <div class="container mt-4">
-        <h2 class="mt-4">In Cart Orders</h2>
+        <h2 class="mt-4">Cart</h2>
         <form id="deleteOrderForm" method="post">
             {% csrf_token %}
             <input type="hidden" name="order_number" id="deleteOrderNumber">
         </form>
-        <table class="table" id="inCartTable">
-            <thead>
-                <tr>
-                    <th scope="col">Order Number</th>
-                    <th scope="col">Order Date</th>
-                    <th scope="col">Order Details</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Total</th>
-                    <th scope="col">Order Status</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in in_cart_orders %}
-                <tr class="order-row" data-order-number="{{ order.order_number }}" data-price="{{ order.price }}">
-                    <td>{{ order.order_number }}</td>
-                    <td>{{ order.order_date }}</td>
-                    <td>{{ order.order_details }}</td>
-                    <td class="price">{{ order.price }}</td>
-                    <td class="quantity">{{ order.quantity }}</td>
-                    <td class="total-price">{{ order.total }}</td>
-                    <td>{{ order.order_status }}</td>
-                    <td>
-                        <button class="btn btn-sm btn-success increase-quantity">+</button>
-                        <button class="btn btn-sm btn-danger decrease-quantity">-</button>
-                        <button class="btn btn-sm btn-warning delete-order" data-toggle="modal" data-target="#deleteOrderModal">Delete</button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="accordion m-3" id="cartAccordion">
+            {% for item in in_cart_items %}
+            <div class="container item-row m-2 p-0" data-item-number="{{ item.item_number }}" data-price="{{ item.price }}">
+                <div class="accordion-item col p-0">
+                    <div class="accordion-header" id="heading{{ item.item_number }}">
+                    <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ item.item_number }}" aria-expanded="false" aria-controls="collapse{{ item.item_number }}">
+                        <div class="container">
+                            <div class="row">
+                                <span class="col">
+                                    <h4>Item #{{ item.item_number }}</h4>
+                                </span>
+                                <span class="col">
+                                    <div class="container">
+                                        <small class="row text-uppercase fw-light">Price</small>
+                                        <b class="row price bold">€{{ item.price }}</b>
+                                    </div>
+                                </span>
+                                <span class="col">
+                                    <div class="container">
+                                        <small class="row text-uppercase fw-light">Quantity</small>
+                                        <b class="row quantity">{{ item.quantity }}</b>
+                                    </div>
+                                </span>
+                                <span class="col">
+                                    <div class="container">
+                                        <small class="row text-uppercase fw-light">Total Price</small>
+                                        <b class="row total-price">{{ item.total }}</b>
+                                    </div>
+                                </span>
+                                <span class="col">
+                                    <button class="btn btn-sm btn-success increase-quantity">+</button>
+                                    <button class="btn btn-sm btn-danger decrease-quantity">-</button>
+                                    <button class="btn btn-sm btn-warning delete-item" data-toggle="modal" data-target="#deleteOrderModal">Delete</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div id="collapse{{ item.item_number }}" class="accordion-collapse collapse" aria-labelledby="heading{{ item.item_number }}" data-bs-parent="#cartAccordion">
+                    <div class="accordion-body item-details">
+                        {{ item.item_details }}
+                    </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% if not in_cart_items %}
+                <div class="text-center m-5">No items in cart.</div>
+            {% endif %}
+        </div>
 
         <!-- Total Price and Submit Button -->
         <div class="row">
@@ -48,7 +70,11 @@
             <div class="col">
                 <form id="submitOrderForm" method="post">
                     {% csrf_token %}
-                    <button type="button" id="submit-order" class="btn btn-primary" data-toggle="modal" data-target="#submitOrderModal">Submit Order</button>
+                    {% if not in_cart_items %}
+                        <button type="button" id="submit-order" class="btn btn-outline-info disabled" data-toggle="modal" data-target="#submitOrderModal" aria-disabled="true">Submit Order</button>
+                    {% else %}
+                        <button type="button" id="submit-order" class="btn btn-outline-info" data-toggle="modal" data-target="#submitOrderModal">Submit Order</button>
+                    {% endif %}
                 </form>
             </div>
         </div>
@@ -56,67 +82,18 @@
         <!-- Pagination -->
         <div class="pagination">
             <span class="step-links">
-                {% if in_cart_orders.has_previous %}
+                {% if in_cart_items.has_previous %}
                     <a href="?page=1">&laquo; first</a>
-                    <a href="?page={{ in_cart_orders.previous_page_number }}">previous</a>
+                    <a href="?page={{ in_cart_items.previous_page_number }}">previous</a>
                 {% endif %}
 
                 <span class="current">
-                    Page {{ in_cart_orders.number }} of {{ in_cart_orders.paginator.num_pages }}.
+                    Page {{ in_cart_items.number }} of {{ in_cart_items.paginator.num_pages }}.
                 </span>
 
-                {% if in_cart_orders.has_next %}
-                    <a href="?page={{ in_cart_orders.next_page_number }}">next</a>
-                    <a href="?page={{ in_cart_orders.paginator.num_pages }}">last &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
-    </div>
-
-    <div class="container mt-4">
-        <h2 class="mt-4">Your Orders</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Order Number</th>
-                    <th scope="col">Order Date</th>
-                    <th scope="col">Order Details</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Total</th>
-                    <th scope="col">Order Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in other_orders %}
-                <tr>
-                    <td>{{ order.order_number }}</td>
-                    <td>{{ order.order_date }}</td>
-                    <td>{{ order.order_details }}</td>
-                    <td>{{ order.price }}</td>
-                    <td>{{ order.quantity }}</td>
-                    <td>{{ order.total }}</td>
-                    <td>{{ order.order_status }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <!-- Pagination -->
-        <div class="pagination">
-            <span class="step-links">
-                {% if other_orders.has_previous %}
-                    <a href="?page=1">&laquo; first</a>
-                    <a href="?page={{ other_orders.previous_page_number }}">previous</a>
-                {% endif %}
-
-                <span class="current">
-                    Page {{ other_orders.number }} of {{ other_orders.paginator.num_pages }}.
-                </span>
-
-                {% if other_orders.has_next %}
-                    <a href="?page={{ other_orders.next_page_number }}">next</a>
-                    <a href="?page={{ other_orders.paginator.num_pages }}">last &raquo;</a>
+                {% if in_cart_items.has_next %}
+                    <a href="?page={{ in_cart_items.next_page_number }}">next</a>
+                    <a href="?page={{ in_cart_items.paginator.num_pages }}">last &raquo;</a>
                 {% endif %}
             </span>
         </div>
@@ -125,21 +102,21 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Event listener for the delete order button
-            document.getElementById('inCartTable').addEventListener('click', function (event) {
-                if (event.target.classList.contains('delete-order')) {
-                    var orderRow = event.target.closest('.order-row');
-                    var orderNumber = orderRow.dataset.orderNumber;
+            document.getElementById('cartAccordion').addEventListener('click', function (event) {
+                if (event.target.classList.contains('delete-item')) {
+                    var itemRow = event.target.closest('.item-row');
+                    var itemNumber = itemRow.dataset.itemNumber;
 
                     // Prompt user for confirmation
-                    if (confirm("Are you sure you want to delete this order?")) {
+                    if (confirm("Are you sure you want to delete this cart item?")) {
                         // If confirmed, trigger DELETE request to delete the order
-                        fetch('/delete_order/', {
+                        fetch('/delete_item/', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
                             },
-                            body: JSON.stringify({'order_number': orderNumber}),
+                            body: JSON.stringify({'item_number': itemNumber}),
                         })
                         .then(response => {
                             if (!response.ok) {
@@ -149,8 +126,9 @@
                         })
                         .then(data => {
                             // Remove the row from the table
-                            orderRow.remove();
-                            updateTotalPrice();
+                            // itemRow.remove();
+                            // updateTotalPrice();
+                            location.reload()
                         })
                         .catch(error => {
                             console.error('Error deleting order:', error);
@@ -163,29 +141,37 @@
             document.getElementById('submit-order').addEventListener('click', function () {
                 // Prompt user for confirmation
                 if (confirm("Are you sure you want to submit the selected orders?")) {
-                    var orderUpdates = [];
+                    var itemsInOrder = [];
 
                     // Collect order details for submission
-                    document.querySelectorAll('.order-row').forEach(function (row) {
-                        var orderNumber = row.getAttribute('data-order-number');
+                    document.querySelectorAll('.item-row').forEach(function (row) {
+                        var itemNumber = row.getAttribute('data-item-number');
+                        var price = row.getAttribute('data-price');
                         var quantity = parseInt(row.querySelector('.quantity').textContent);
                         var total = parseInt(row.querySelector('.total-price').textContent);
+                        var itemDetails = parseInt(row.querySelector('.item-details').textContent);
 
-                        orderUpdates.push({
-                            'order_number': orderNumber,
+                        itemsInOrder.push({
+                            'item_number': itemNumber,
+                            'price': price,
                             'quantity': quantity,
-                            'total': total
+                            'total': total,
+                            'item_details': itemDetails
                         });
                     });
 
                     // Trigger POST request to update orders
-                    fetch('/update_orders/', {
+                    fetch('/create_order_with_items/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
                         },
-                        body: JSON.stringify({'order_updates': orderUpdates}),
+                        body: JSON.stringify(
+                            {
+                                'items_in_order': itemsInOrder
+                            }
+                        ),
                     })
                     .then(response => {
                         if (!response.ok) {
@@ -197,7 +183,6 @@
                         // Handle the response data as needed
                         console.log('Response:', data);
                         location.reload();
-                        updateColors(data.colors);
                     })
                     .catch(error => {
                         console.error('There was a problem with the fetch operation:', error);
@@ -208,7 +193,7 @@
             // Event listener for increasing quantity
             document.querySelectorAll('.increase-quantity').forEach(function (button) {
                 button.addEventListener('click', function () {
-                    var row = this.closest('.order-row');
+                    var row = this.closest('.item-row');
                     updateQuantity(row, 1);
                 });
             });
@@ -216,7 +201,7 @@
             // Event listener for decreasing quantity
             document.querySelectorAll('.decrease-quantity').forEach(function (button) {
                 button.addEventListener('click', function () {
-                    var row = this.closest('.order-row');
+                    var row = this.closest('.item-row');
                     updateQuantity(row, -1);
                 });
             });
@@ -249,7 +234,7 @@
             // Function to update the total price based on the quantity and price of each order
             function updateTotalPrice() {
                 var totalPrice = 0;
-                $('.order-row').each(function () {
+                $('.item-row').each(function () {
                     var quantity = parseInt($(this).find('.quantity').text());
                     var price = parseFloat($(this).data('price'));
                     totalPrice += quantity * price;
@@ -258,5 +243,5 @@
                 $('#total-price').text(totalPrice.toFixed(2));
             }
         });
-   </script>
+    </script>
 {% endblock %}

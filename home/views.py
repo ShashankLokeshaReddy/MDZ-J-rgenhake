@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
-from .models import CustomerProfile, PreisListe, Akkuvariante, Kabelvariante, Schnittstelle, Color, UILabel, Image, Order
+from .models import CustomerProfile, Akkuvariante, Kabelvariante, Schnittstelle, Color, UILabel, Image, Order, InCartItem, OrderItem, PreisListe
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ProfileImageUpdateForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -28,6 +28,22 @@ def register(request):
 
 def index(request):
     customer_profiles = get_customer_profiles(request)
+    colors = get_colors(request)
+    ui_labels = get_ui_labels(request)
+    image_paths = get_image_path(request)
+    orders = get_orders(request)
+
+    return render(request, 'pages/index.html', {
+        'customer_profiles': customer_profiles,
+        'colors': colors,
+        'ui_labels': ui_labels,
+        'image_paths': image_paths,
+        'orders': orders,
+        'in_cart_items': get_in_cart_items(request),
+    })
+
+def configurator(request):
+    customer_profiles = get_customer_profiles(request)
     akkuvarianten = get_akkuvarianten(request)
     kabelvarianten = get_kabelvarianten(request)
     schnittstellen = get_schnittstellen(request)
@@ -42,10 +58,8 @@ def index(request):
         kabelvariante['masse_image_path'] = str(kabelvariante['masse_image_path'])
         kabelvariante['splits'] = str(kabelvariante['splits'])
         kabelvariante['main_part_min_length'] = str(kabelvariante['main_part_min_length'])
-        kabelvariante['main_part_max_length'] = str(kabelvariante['main_part_max_length'])
         kabelvariante['split_part_min_length'] = str(kabelvariante['split_part_min_length'])
-        kabelvariante['split_part_max_length'] = str(kabelvariante['split_part_max_length'])
-
+        
     for schnittstelle in schnittstellen:
         schnittstelle['schnittstelle_image_path'] = str(schnittstelle['schnittstelle_image_path'])
         
@@ -67,7 +81,7 @@ def index(request):
     print("kabelvariante:",kabelvarianten)
     print("kabelvariante:",kabelvarianten_json)
 
-    return render(request, 'pages/index.html', {
+    return render(request, 'pages/configurator.html', {
         'customer_profiles': customer_profiles,
         'akkuvarianten': akkuvarianten,
         'kabelvarianten': kabelvarianten_json,
@@ -76,6 +90,7 @@ def index(request):
         'ui_labels': ui_labels,
         'image_paths': image_paths,
         'orders': orders,
+        'in_cart_items': get_in_cart_items(request),
         'preisliste': preisliste_json,
     })
 
@@ -101,7 +116,9 @@ def profile(request):
     context = {
         'i_form': profileImageUpdateForm,
         'u_form': userUpdateForm,
-        'p_form': profileUpdateForm
+        'p_form': profileUpdateForm,
+        'orders': get_orders(request),
+        'in_cart_items': get_in_cart_items(request),
     }
     return render(request, 'pages/profile.html', context)
 
@@ -119,10 +136,8 @@ def developer_mode(request):
     for kabelvariante in kabelvarianten:
         kabelvariante['splits'] = int(kabelvariante['splits'])
         kabelvariante['main_part_min_length'] = int(kabelvariante['main_part_min_length'])
-        kabelvariante['main_part_max_length'] = int(kabelvariante['main_part_max_length'])
         kabelvariante['split_part_min_length'] = int(kabelvariante['split_part_min_length'])
-        kabelvariante['split_part_max_length'] = int(kabelvariante['split_part_max_length'])
-       
+        
     return render(request, 'pages/developer_mode.html', {
         'customer_profiles': customer_profiles,
         'akkuvarianten': akkuvarianten,
@@ -132,6 +147,7 @@ def developer_mode(request):
         'ui_labels': ui_labels,
         'image_paths': image_paths,
         'orders': orders,
+        'in_cart_items': get_in_cart_items(request),
     })
 
 # @login_required(login_url='/login/')
@@ -169,7 +185,7 @@ def get_colors_dict():
     return {color.color_name: color.color_value for color in colors}
 
 @login_required
-def purchase(request):
+def orders(request):
     # Filter orders based on the current user's ust_id
     user_orders = Order.objects.filter(ust_id=request.user.customerprofile.ust_id).order_by('-order_date')
     in_cart_orders = [order for order in user_orders if order.order_status == 'InCart']
@@ -197,6 +213,28 @@ def purchase(request):
     context = {
         'in_cart_orders': in_cart_orders,
         'other_orders': other_orders,
+    }
+
+    return render(request, 'pages/orders.html', context)
+
+@login_required
+def purchase(request):
+    # Filter in cart items based on the current user's ust_id
+    user_in_cart_items = InCartItem.objects.filter(ust_id=request.user.customerprofile.ust_id)
+
+    # Pagination for both tables
+    page = request.GET.get('page', 1)
+    paginator_in_cart = Paginator(user_in_cart_items, 10)
+
+    try:
+        in_cart_items = paginator_in_cart.page(page)
+    except PageNotAnInteger:
+        in_cart_items = paginator_in_cart.page(1)
+    except EmptyPage:
+        in_cart_items = paginator_in_cart.page(paginator_in_cart.num_pages)
+
+    context = {
+        'in_cart_items': in_cart_items,
     }
 
     return render(request, 'pages/purchase.html', context)
@@ -242,9 +280,7 @@ def get_kabelvarianten(request):
     data = [{'kabelvariante_name': kabelvariante.kabelvariante_name,
              'kabelvariante_image_path': kabelvariante.kabelvariante_image_path,
              'main_part_min_length': kabelvariante.main_part_min_length,
-             'main_part_max_length': kabelvariante.main_part_max_length,
              'split_part_min_length': kabelvariante.split_part_min_length,
-             'split_part_max_length': kabelvariante.split_part_max_length,
              'masse_image_path': kabelvariante.masse_image_path,
             #  'schnittstelle_image_path': kabelvariante.schnittstelle_image_path,
              'splits': kabelvariante.splits} for kabelvariante in kabelvarianten]
@@ -287,9 +323,24 @@ def get_orders(request):
              'ust_id': order.ust_id,
              'order_date': order.order_date,
              'order_details': order.order_details,
-             'order_status' : order.order_status,
-             'price': order.price} for order in orders]
+             'order_status' : order.order_status} for order in orders]
     return data
+
+def get_in_cart_items(request):
+    inCartItems = InCartItem.objects.all()
+    try:
+        data = [{'item_number': inCartItem.item_number,
+             'ust_id': inCartItem.ust_id,
+             'item_details': inCartItem.item_details,
+             'quantity' : inCartItem.quantity,
+             'price': inCartItem.price,
+             'total': inCartItem.total} for inCartItem in inCartItems.filter(ust_id=request.user.customerprofile.ust_id)]
+    except Exception as e:
+        print(f"Error getting user in cart items: {str(e)}")
+        return []
+    else:
+        print("Successfully fetched user in cart items.")
+        return data
 
 @require_POST
 def delete_order(request):
@@ -332,3 +383,56 @@ def update_orders(request):
         print("Update orders not success")
         print(f"Error updating orders: {str(e)}")
         return JsonResponse({'success': False, 'message': f'Error updating orders: {str(e)}'})
+
+@require_POST
+def delete_item(request):
+    try:
+        json_data = json.loads(request.body)
+        item_number = json_data['item_number']
+
+        # Delete the item with the given item_number
+        InCartItem.objects.filter(item_number=item_number).delete()
+
+        return JsonResponse({'success': True, 'message': 'Cart item deleted successfully.'})
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'Error deleting cart item: {str(e)}'})
+
+@require_POST
+def create_order_with_items(request):
+    try:
+        json_data = json.loads(request.body)
+        items_in_order = json_data['items_in_order']
+        ust_id = request.user.customerprofile.ust_id
+        order_status = 'Ordered'
+
+        # Print the request data to the console or log file
+        print(f"Received json_data request data: {json_data}")
+        print(f"Received items_in_order request data: {items_in_order}")
+
+        # Create order object
+        order = Order.objects.create(ust_id=ust_id, order_status=order_status)
+        order.save()
+
+        try:
+            for entry in items_in_order:
+                print(f"Received entry: {entry}")
+                item_number = entry['item_number']
+                item_details = entry['item_details']
+                price = entry['price']
+                quantity = entry['quantity']
+                total = entry['total']
+
+                OrderItem.objects.create(order=order, ust_id=ust_id, item_details=item_details, quantity=quantity, price=price, total=total)
+                InCartItem.objects.filter(item_number=item_number).delete()
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Error creating order items: {str(e)} {order}'})
+
+        print("Update orders success")
+        messages.success(request, f'Your orders have been submitted!')
+        return JsonResponse({'success': True, 'message': 'Orders updated successfully'})
+
+    except Exception as e:
+        print("Update orders not success")
+        print(f"Error updating orders: {str(e)}")
+        return JsonResponse({'success': False, 'message': f'Error creating orders: {str(e)}'})
