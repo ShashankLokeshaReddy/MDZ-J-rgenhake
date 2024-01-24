@@ -147,6 +147,20 @@
         </div>
     </div>
 
+    <!-- Modal content -->
+    <div id="customModal" class="modal">
+        <div class="modal-header">
+            <span>Entry has been successfully added.</span>
+            <span class="close-button" onclick="closeModal()">&#10006;</span> <!-- X symbol -->
+        </div>
+        <p>What would you like to do next?</p>
+        <button class="next-button" id="configureButton">Configure Another Cable</button>
+        <button class="next-button" id="viewInCartButton">View in Cart Items</button>
+    </div>
+
+    <!-- Overlay -->
+    <div id="overlay" class="overlay"></div>
+
     <!-- <div class="space space-2"></div> -->
 
     <script>
@@ -162,6 +176,13 @@
         var schnittstellenOptions = JSON.parse('{{ schnittstellen | safe | escapejs }}');
         var preisliste = JSON.parse('{{ preisliste | safe }}');
         var mediaPrefix = "{% get_media_prefix %}";
+        var masseTextElement = document.getElementById("Masse-text");
+        masseTextElement.textContent = "Invalid input values";
+        masseTextElement.style.color = "red";
+        var modal = document.getElementById('customModal');
+        var overlay = document.getElementById('overlay');
+        var configureButton = document.getElementById('configureButton');
+        var viewInCartButton = document.getElementById('viewInCartButton');
 
         goToSection('Akkuvariante-Section')
         updateProgressBar();
@@ -356,13 +377,6 @@
         }
 
         function masseChange(value, min, max) {
-            masseSelected = true;
-            updateSummary();
-            updateProgressBar();
-            console.log("Main Length changed to: " + value);
-
-            var masseTextElement = document.getElementById("Masse-text");
-
             // Explicitly convert to integers
             value = parseInt(value, 10);
             min = parseInt(min, 10);
@@ -374,16 +388,21 @@
                     // All good, click on next in green
                     masseTextElement.textContent = "All good, click on next";
                     masseTextElement.style.color = "green";
+                    masseSelected = true;
                 } else {
                     // The value should be between min and max in red
                     masseTextElement.textContent = "The value should be between " + min + " and " + max;
                     masseTextElement.style.color = "red";
+                    masseSelected = false;
                 }
             } else {
                 // Handle the case where the values are not valid integers
                 masseTextElement.textContent = "Invalid input values";
                 masseTextElement.style.color = "red";
+                masseSelected = false;
             }
+            updateProgressBar();
+            updateSummary();
         }
 
         function goToSection(selectedSectionId) {
@@ -464,7 +483,7 @@
             var preis = document.getElementById("gesamtpreis-summary").textContent.trim();
             var masseText = document.getElementById("Masse-text").textContent.trim();
 
-            if(akkuvariante != "" && kabelvariante != "" && schnittstelle != "" && masse != "" && preis != "") {
+            if (akkuvariante != "" && kabelvariante != "" && schnittstelle != "" && masse != "" && preis != "") {
                 if (masseText === "All good, click on next") {
                     // Make a POST call to add data to InCartItem model
                     var data = {
@@ -485,24 +504,49 @@
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
+                            alert('Network response was not ok');
                         }
                         return response.json();
                     })
                     .then(data => {
                         console.log('Success:', data);
+                        showSuccessPopup();
                     })
                     .catch(error => {
                         console.error('Error:', error);
+                        alert('Error adding entry to cart: ' + error.message);
                     });
                 } else {
                     console.log("Masse-text is not 'All good, click on next'");
+                    alert('Error adding entry to the cart. Ensure that the masse values are within the specified range');
                 }
-            }
-            else {
+            } else {
                 console.log("One or more values are empty");
+                alert('One or more values are empty');
             }
+        }
 
-            console.log("Adding to cart");
+        function showSuccessPopup() {
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
+
+            // Configure another cable button action
+            configureButton.onclick = function() {
+                location.reload(); // Reload the whole page
+            };
+
+            // View in cart items button action
+            viewInCartButton.onclick = function() {
+                window.location.href = '/purchase'; // Navigate to /purchase page
+            };
+        }
+
+        // Close the modal when clicking outside the modal content or on the close button
+        overlay.onclick = closeModal;
+        
+        function closeModal() {
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
         }
 
         function updateProgressBar() {
@@ -766,7 +810,7 @@
             input.min = min;
             input.max = max;
             input.step = 1;
-            input.value = min;
+            input.value = min - 1;
             input.oninput = function () {
                 masseChange(this.value, min, max);
             };

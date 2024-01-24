@@ -2627,6 +2627,7 @@ body{
     background-color: var(--color-primary);
     color: black;
 }
+
 #CustomSolution-Section {
     background-image: url('/static/images/CustomSolutionPicture.png');
     background-size: cover;
@@ -2634,4 +2635,41 @@ body{
     background-repeat: no-repeat;
     /* Set a height to make sure the background is visible */
     height: 300px; /* Adjust as needed */
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    max-width: 500px; /* Set your desired width */
+    max-height: 250px; /* Set your desired width */
+    background-color: rgba(255, 255, 255, 1.0); /* Semi-transparent white background */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.close-button {
+    cursor: pointer;
+}
+
+/* Overlay styles */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black overlay */
+    z-index: 999;
 }
