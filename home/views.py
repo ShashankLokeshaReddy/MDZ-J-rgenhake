@@ -455,6 +455,52 @@ def add_item_to_cart(request):
         match = re.search(r'\d+\.\d+', json_data['preis'])
 
         ust_id = request.user.customerprofile.ust_id
+        akkuvariante = json_data.get('akkuvarianteName', '')
+        kabelvariante = json_data.get('kabelvariante', '')
+        schnittstelle = ', '.join(json_data.get('schnittstelle', []))
+        masse = ', '.join(json_data.get('masse', []))
+        price = float(match.group())
+
+        # Check if the item with matching values exists
+        existing_item = InCartItem.objects.filter(
+            ust_id=ust_id,
+            akkuvariante=akkuvariante,
+            kabelvariante=kabelvariante,
+            schnittstelle=schnittstelle,
+            masse=masse,
+            price=price
+        ).first()
+
+        if existing_item:
+            # Item already exists, update quantity
+            existing_item.quantity += 1
+            existing_item.total = existing_item.quantity * existing_item.price
+            existing_item.save()
+        else:
+            # Item does not exist, create a new entry
+            item_number = str(uuid.uuid4())
+            InCartItem.objects.create(
+                item_number=item_number,
+                ust_id=ust_id,
+                akkuvariante=akkuvariante,
+                kabelvariante=kabelvariante,
+                schnittstelle=schnittstelle,
+                masse=masse,
+                quantity=1,
+                price=price,
+                total=price
+            )
+
+        return JsonResponse({'success': True, 'message': 'Cart item updated/created successfully.'})
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'Error updating/creating cart item: {str(e)}'})
+    try:
+        json_data = json.loads(request.body)
+        json_string = json.dumps(json_data, ensure_ascii=False)
+        match = re.search(r'\d+\.\d+', json_data['preis'])
+
+        ust_id = request.user.customerprofile.ust_id
         item_number = str(uuid.uuid4())
         akkuvariante = json_data.get('akkuvarianteName', '')
         kabelvariante = json_data.get('kabelvariante', '')
@@ -462,7 +508,17 @@ def add_item_to_cart(request):
         masse = ', '.join(json_data.get('masse', []))
         price = float(match.group())
         
-        print("json_data",json_data)
+        inCartItems = InCartItem.objects.all()
+        data = [{'item_number': inCartItem.item_number,
+             'ust_id': inCartItem.ust_id,
+             'akkuvariante': inCartItem.akkuvariante,
+             'kabelvariante': inCartItem.kabelvariante,
+             'schnittstelle ': inCartItem.schnittstelle,
+             'masse ': inCartItem.masse,
+             'quantity' : inCartItem.quantity,
+             'price': inCartItem.price,
+             'total': inCartItem.total} for inCartItem in inCartItems.filter(ust_id=ust_id)]
+    
 
         cart_item = InCartItem.objects.create(
             item_number=item_number,
@@ -480,3 +536,5 @@ def add_item_to_cart(request):
 
     except Exception as e:
         return JsonResponse({'success': False, 'message': f'Error creating cart item: {str(e)}'})
+
+   
