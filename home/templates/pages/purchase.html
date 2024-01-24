@@ -50,11 +50,17 @@
                     </div>
                     </div>
                     <div id="collapse{{ item.item_number }}" class="accordion-collapse collapse" aria-labelledby="heading{{ item.item_number }}" data-bs-parent="#cartAccordion">
-                    <div class="accordion-body item-details">
-                        {{ item.akkuvariante }}
-                        {{ item.kabelvariante }}
-                        {{ item.schnittstelle }}
-                        {{ item.masse }}
+                    <div class="accordion-body item-akkuvariante">
+                        Akkuvariante: {{ item.akkuvariante }}
+                    </div>
+                    <div class="accordion-body item-kabelvariante">
+                        Kabelvariante: {{ item.kabelvariante }}
+                    </div>
+                    <div class="accordion-body item-schnittstelle">
+                        Schnittstelle: {{ item.schnittstelle }}
+                    </div>
+                    <div class="accordion-body item-masse">
+                        Masse: {{ item.masse }}
                     </div>
                     </div>
                 </div>
@@ -152,14 +158,20 @@
                         var price = row.getAttribute('data-price');
                         var quantity = parseInt(row.querySelector('.quantity').textContent);
                         var total = parseInt(row.querySelector('.total-price').textContent);
-                        var itemDetails = parseInt(row.querySelector('.item-details').textContent);
+                        var item_akkuvariante = parseInt(row.querySelector('.item-akkuvariante').textContent);
+                        var item_kabelvariante = parseInt(row.querySelector('.item-kabelvariante').textContent);
+                        var item_schnittstelle = parseInt(row.querySelector('.item-schnittstelle').textContent);
+                        var item_masse = parseInt(row.querySelector('.item-masse').textContent);
 
                         itemsInOrder.push({
                             'item_number': itemNumber,
                             'price': price,
                             'quantity': quantity,
                             'total': total,
-                            'item_details': itemDetails
+                            'akkuvariante': item_akkuvariante,
+                            'kabelvariante': item_kabelvariante,
+                            'schnittstelle': item_schnittstelle,
+                            'masse': item_masse
                         });
                     });
 
