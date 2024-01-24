@@ -34,7 +34,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('item_number', models.CharField(max_length=255, primary_key=True, serialize=False)),
                 ('ust_id', models.CharField(max_length=50, null=True)),
-                ('item_details', models.CharField(max_length=255, null=True)),
+                ('akkuvariante', models.CharField(max_length=255, null=True)),
+                ('kabelvariante', models.CharField(max_length=255, null=True)),
+                ('schnittstelle', models.CharField(max_length=255, null=True)),
+                # ('item_details', models.CharField(max_length=255, null=True)),
                 ('quantity', models.FloatField(null=True)),
                 ('price', models.FloatField(null=True)),
                 ('total', models.FloatField(null=True)),

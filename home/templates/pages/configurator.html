@@ -116,6 +116,7 @@
         </div>
         <div class="space space-2"></div>
         <div style="text-align: center;">
+            <p id="Masse-text" style="text-align: center;"></p>
             <button class="prev-button" onclick="goToSection('Schnittstellen-Section')">Zuruck</button>
             <button class="next-button" onclick="goToSection('Zusammenfassung-Section')">Nächste</button>
         </div>
@@ -171,6 +172,7 @@
             var productSelectors = document.querySelectorAll('.akkuvariante-selector');
 
             productSelectors.forEach(function(selector) {
+                var label = selector.querySelector('label');
                 selector.classList.remove('selected');
                 var label = selector.querySelector('label');
                 if (label.textContent.trim() === productName) {
@@ -178,11 +180,13 @@
                 }
             });
 
-            akkuSelected = true;
-            selected_akkuvariante_name = productName;
-            populateKabelvariantenSelectors(kabelvarianten); 
-            updateSummary();
-            updateProgressBar();
+            if (selected_akkuvariante_name != productName) {
+                akkuSelected = true;
+                selected_akkuvariante_name = productName;
+                populateKabelvariantenSelectors(kabelvarianten); 
+                updateSummary();
+                updateProgressBar();
+            }
         }
 
         function selectKabelvariante(productName) {
@@ -351,11 +355,35 @@
             document.getElementById('gesamtpreis-summary').innerText = 'Gesamtpreis: ' + preis;
         }
 
-        function masseChange(value) {
+        function masseChange(value, min, max) {
             masseSelected = true;
             updateSummary();
             updateProgressBar();
             console.log("Main Length changed to: " + value);
+
+            var masseTextElement = document.getElementById("Masse-text");
+
+            // Explicitly convert to integers
+            value = parseInt(value, 10);
+            min = parseInt(min, 10);
+            max = parseInt(max, 10);
+
+            if (!isNaN(value) && !isNaN(min) && !isNaN(max)) {
+                // Check if the values are valid integers
+                if (value >= min && value <= max) {
+                    // All good, click on next in green
+                    masseTextElement.textContent = "All good, click on next";
+                    masseTextElement.style.color = "green";
+                } else {
+                    // The value should be between min and max in red
+                    masseTextElement.textContent = "The value should be between " + min + " and " + max;
+                    masseTextElement.style.color = "red";
+                }
+            } else {
+                // Handle the case where the values are not valid integers
+                masseTextElement.textContent = "Invalid input values";
+                masseTextElement.style.color = "red";
+            }
         }
 
         function goToSection(selectedSectionId) {
@@ -429,8 +457,51 @@
         }
 
         function addToCart() {
-            // Add logic to navigate to the next section
-            // You can use JavaScript or any client-side framework/library for this
+            var akkuvariante = selected_akkuvariante_name;
+            var kabelvariante = selected_kabel_name;
+            var schnittstelle = getSelectedSchnittstellen();
+            var masse = getMasseInputValues();
+            var preis = document.getElementById("gesamtpreis-summary").textContent.trim();
+            var masseText = document.getElementById("Masse-text").textContent.trim();
+
+            if(akkuvariante != "" && kabelvariante != "" && schnittstelle != "" && masse != "" && preis != "") {
+                if (masseText === "All good, click on next") {
+                    // Make a POST call to add data to InCartItem model
+                    var data = {
+                        akkuvarianteName: akkuvariante,
+                        kabelvariante: kabelvariante,
+                        schnittstelle: schnittstelle,
+                        masse: masse,
+                        preis: preis,
+                    };
+
+                    fetch('/add_item_to_cart/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Success:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                } else {
+                    console.log("Masse-text is not 'All good, click on next'");
+                }
+            }
+            else {
+                console.log("One or more values are empty");
+            }
+
             console.log("Adding to cart");
         }
 
@@ -519,31 +590,31 @@
                     productSelectors.forEach(function(selector) {
                         selector.classList.remove('selected');
                         var label = selector.querySelector('label');
-                        if (label.textContent.trim() === selected_kabel_name) {
+                        // if (label.textContent.trim() === selected_kabel_name) {
                             // selector.classList.add('selected');
 
-                            selected_kabel_name = '';
+                        selected_kabel_name = '';
 
-                            // No Schnittstellen options available, display a message
-                            var schnittstellen_empty_container = document.getElementById('schnittstelle-slider-container');
-                            schnittstellen_empty_container.innerHTML = '';
-                            var sliderContainer = document.createElement('div');
-                            var messageDiv = document.createElement('div');
-                            messageDiv.textContent = "Akkuvariante option changed, Please reselect the kabels.";
-                            schnittstellen_empty_container.appendChild(messageDiv);
-                            selected_schnittstellen_name = '';
-                            schnittstellenSelected = false;
+                        // No Schnittstellen options available, display a message
+                        var schnittstellen_empty_container = document.getElementById('schnittstelle-slider-container');
+                        schnittstellen_empty_container.innerHTML = '';
+                        var sliderContainer = document.createElement('div');
+                        var messageDiv = document.createElement('div');
+                        messageDiv.textContent = "Akkuvariante option changed, Please reselect the kabels.";
+                        schnittstellen_empty_container.appendChild(messageDiv);
+                        selected_schnittstellen_name = '';
+                        schnittstellenSelected = false;
 
-                            // No Masse options available, display a message
-                            var masse_empty_container = document.getElementById('masse-slider-container');
-                            masse_empty_container.innerHTML = '';
-                            var sliderContainer = document.createElement('div');
-                            var messageDiv = document.createElement('div');
-                            messageDiv.textContent = "Akkuvariante option changed, Please reselect the kabels.";
-                            masse_empty_container.appendChild(messageDiv);
-                            selected_masse_name = '';
-                            masseSelected = false;
-                        }
+                        // No Masse options available, display a message
+                        var masse_empty_container = document.getElementById('masse-slider-container');
+                        masse_empty_container.innerHTML = '';
+                        var sliderContainer = document.createElement('div');
+                        var messageDiv = document.createElement('div');
+                        messageDiv.textContent = "Akkuvariante option changed, Please reselect the kabels.";
+                        masse_empty_container.appendChild(messageDiv);
+                        selected_masse_name = '';
+                        masseSelected = false;
+                        // }
                     });
                 });
             }
@@ -648,6 +719,7 @@
 
             // Check for splits and create input pairs accordingly
             if (kabelvariante.splits > 1) {
+                // TODO: Still pending
                 createInputPair(sliderContainer, kabelvariante, 'main', kabelvariante.main_part_min_length, 2000);
 
                 for (var i = 1; i <= kabelvariante.splits; i++) {
@@ -696,7 +768,7 @@
             input.step = 1;
             input.value = min;
             input.oninput = function () {
-                masseChange(this.value);
+                masseChange(this.value, min, max);
             };
 
             inputPairDiv.appendChild(label);

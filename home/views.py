@@ -8,6 +8,8 @@ from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ProfileI
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
+import re
+import uuid
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -42,6 +44,7 @@ def index(request):
         'in_cart_items': get_in_cart_items(request),
     })
 
+@login_required
 def configurator(request):
     customer_profiles = get_customer_profiles(request)
     akkuvarianten = get_akkuvarianten(request)
@@ -331,7 +334,10 @@ def get_in_cart_items(request):
     try:
         data = [{'item_number': inCartItem.item_number,
              'ust_id': inCartItem.ust_id,
-             'item_details': inCartItem.item_details,
+             'akkuvariante': inCartItem.akkuvariante,
+             'kabelvariante': inCartItem.kabelvariante,
+             'schnittstelle ': inCartItem.schnittstelle,
+             'masse ': inCartItem.masse,
              'quantity' : inCartItem.quantity,
              'price': inCartItem.price,
              'total': inCartItem.total} for inCartItem in inCartItems.filter(ust_id=request.user.customerprofile.ust_id)]
@@ -418,12 +424,15 @@ def create_order_with_items(request):
             for entry in items_in_order:
                 print(f"Received entry: {entry}")
                 item_number = entry['item_number']
-                item_details = entry['item_details']
+                akkuvariante = entry['akkuvariante']
+                kabelvariante = entry['kabelvariante']
+                schnittstelle = entry['schnittstelle']
+                masse = entry['masse']
                 price = entry['price']
                 quantity = entry['quantity']
                 total = entry['total']
 
-                OrderItem.objects.create(order=order, ust_id=ust_id, item_details=item_details, quantity=quantity, price=price, total=total)
+                OrderItem.objects.create(order=order, ust_id=ust_id, akkuvariante=akkuvariante, kabelvariante=kabelvariante, schnittstelle=schnittstelle, masse=masse, quantity=quantity, price=price, total=total)
                 InCartItem.objects.filter(item_number=item_number).delete()
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Error creating order items: {str(e)} {order}'})
@@ -436,3 +445,38 @@ def create_order_with_items(request):
         print("Update orders not success")
         print(f"Error updating orders: {str(e)}")
         return JsonResponse({'success': False, 'message': f'Error creating orders: {str(e)}'})
+
+@csrf_exempt
+@require_POST
+def add_item_to_cart(request):
+    try:
+        json_data = json.loads(request.body)
+        json_string = json.dumps(json_data, ensure_ascii=False)
+        match = re.search(r'\d+\.\d+', json_data['preis'])
+
+        ust_id = request.user.customerprofile.ust_id
+        item_number = str(uuid.uuid4())
+        akkuvariante = json_data.get('akkuvarianteName', '')
+        kabelvariante = json_data.get('kabelvariante', '')
+        schnittstelle = ', '.join(json_data.get('schnittstelle', []))
+        masse = ', '.join(json_data.get('masse', []))
+        price = float(match.group())
+        
+        print("json_data",json_data)
+
+        cart_item = InCartItem.objects.create(
+            item_number=item_number,
+            ust_id=ust_id,
+            akkuvariante=akkuvariante,
+            kabelvariante=kabelvariante,
+            schnittstelle=schnittstelle,
+            masse=masse,
+            quantity=1,
+            price=price,
+            total=price
+        )
+
+        return JsonResponse({'success': True, 'message': 'Cart item created successfully.'}, status=201)
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'Error creating cart item: {str(e)}'})
