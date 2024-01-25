@@ -2,7 +2,6 @@
 
 from django.db import migrations, models
 
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -15,6 +14,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('item_number', models.CharField(max_length=255, primary_key=True, serialize=False)),
                 ('ust_id', models.CharField(max_length=50, null=True)),
+                ('mit_120_Ohm_CAN_Bus_Widerstand', models.CharField(max_length=255, null=True, choices=[('Ja','Ja'),('Nein','Nein')], default='Nein')),
                 ('akkuvariante', models.CharField(max_length=255, null=True)),
                 ('kabelvariante', models.CharField(max_length=255, null=True)),
                 ('schnittstelle', models.CharField(max_length=255, null=True)),

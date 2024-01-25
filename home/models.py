@@ -135,10 +135,15 @@ class Image(models.Model):
         return self.image_path  # or any other field to represent the object as a string
 
 class InCartItem(models.Model):
+    CAN_BUS_STATUS_CHOICES = [
+        ('Ja', 'Ja'),
+        ('Nein', 'Nein'),
+    ]
     item_number = models.CharField(max_length=255, primary_key=True)
     ust_id = models.CharField(max_length=50, null=True)
     # item_details = models.CharField(max_length=255, null=True)
     akkuvariante = models.CharField(max_length=255, null=True)
+    mit_120_Ohm_CAN_Bus_Widerstand = models.CharField(max_length=255, null=True, choices=CAN_BUS_STATUS_CHOICES, default='Nein')
     kabelvariante = models.CharField(max_length=255, null=True)
     schnittstelle = models.CharField(max_length=255, null=True)
     masse = models.CharField(max_length=255, null=True)
@@ -182,10 +187,15 @@ class Order(models.Model):
         self.update_status('Delivered')
 
 class OrderItem(models.Model):
+    CAN_BUS_STATUS_CHOICES = [
+        ('Ja', 'Ja'),
+        ('Nein', 'Nein'),
+    ]
     order = models.ForeignKey(Order, on_delete=models.CASCADE, db_constraint=False)
     item_number = models.UUIDField(primary_key=True, default=uuid.uuid4)
     ust_id = models.CharField(max_length=50, null=True)
     # item_details = models.CharField(max_length=255, null=True)
+    mit_120_Ohm_CAN_Bus_Widerstand = models.CharField(max_length=255, null=True, choices=CAN_BUS_STATUS_CHOICES, default='Nein')
     akkuvariante = models.CharField(max_length=255, null=True)
     kabelvariante = models.CharField(max_length=255, null=True)
     schnittstelle = models.CharField(max_length=255, null=True)

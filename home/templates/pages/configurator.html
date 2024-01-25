@@ -49,11 +49,11 @@
             <div class="space space-2"></div>
             <p>Mit 120 Ohm CAN-Bus Widerstand?</p>
             <div>
-                <label for="ja-nein-option">Ja</label>
-                <input type="radio" id="ja-nein-option" name="ja-nein-option" value="ja">
-                <label for="ja-nein-option">Nein</label>
-                <input type="radio" id="ja-nein-option" name="ja-nein-option" value="nein">
-            </div>
+                <label for="ja-nein-option-ja">Ja</label>
+                <input type="radio" id="ja-nein-option-ja" name="ja-nein-option" value="ja">
+                <label for="ja-nein-option-nein">Nein</label>
+                <input type="radio" id="ja-nein-option-nein" name="ja-nein-option" value="nein" checked>
+            </div>            
         </div>
         <div class="space space-2"></div>
         <div style="text-align: center;">
@@ -135,6 +135,7 @@
         <div class="space space-2"></div>
         <div id="summary-container">
             <label id="akkuvariante-summary">Akkuvariante: </label>
+            <label id="CAN-Bus-summary">Mit 120 Ohm CAN-Bus Widerstand?: </label>
             <label id="kabelvariante-summary">Kabelvariante: </label>
             <label id="schnittstelle-summary">Schnittstelle: </label>
             <label id="masse-summary">Maße: </label>
@@ -183,7 +184,13 @@
         var overlay = document.getElementById('overlay');
         var configureButton = document.getElementById('configureButton');
         var viewInCartButton = document.getElementById('viewInCartButton');
+        var jaRadioButton = document.getElementById("ja-nein-option-ja");
+        var neinRadioButton = document.getElementById("ja-nein-option-nein");
+        var CAN_Bus = 'Nein';
 
+        jaRadioButton.addEventListener("change", updateSummary);
+        neinRadioButton.addEventListener("change", updateSummary);
+        
         goToSection('Akkuvariante-Section')
         updateProgressBar();
         
@@ -369,7 +376,14 @@
                 }
             }
 
+            if (jaRadioButton.checked) {
+                CAN_Bus = 'Ja';
+            }
+            if (neinRadioButton.checked) {
+                CAN_Bus = 'Nein';
+            }
             document.getElementById('akkuvariante-summary').innerText = 'Akkuvariante: ' + akkuvariante;
+            document.getElementById('CAN-Bus-summary').innerText = 'Mit 120 Ohm CAN-Bus Widerstand?: ' + CAN_Bus;
             document.getElementById('kabelvariante-summary').innerText = 'Kabelvariante: ' + kabelvariante;
             document.getElementById('schnittstelle-summary').innerText = 'Schnittstelle: ' + schnittstelle;
             document.getElementById('masse-summary').innerText = 'Maße: ' + masse;
@@ -488,6 +502,7 @@
                     // Make a POST call to add data to InCartItem model
                     var data = {
                         akkuvarianteName: akkuvariante,
+                        CAN_Bus: CAN_Bus,
                         kabelvariante: kabelvariante,
                         schnittstelle: schnittstelle,
                         masse: masse,
