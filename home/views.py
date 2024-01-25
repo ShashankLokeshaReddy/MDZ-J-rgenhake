@@ -222,6 +222,18 @@ def orders(request):
 
 @login_required
 def purchase(request):
+    preisliste = get_preisliste(request)
+    for preislist in preisliste:
+        preislist['qty_1'] = str(preislist['qty_1'])
+        preislist['qty_25'] = str(preislist['qty_25'])
+        preislist['qty_50'] = str(preislist['qty_50'])
+        preislist['qty_100'] = str(preislist['qty_100'])
+        preislist['qty_250'] = str(preislist['qty_250'])
+        preislist['qty_500'] = str(preislist['qty_500'])
+        preislist['qty_1000'] = str(preislist['qty_1000'])      
+        preislist['qty_2000'] = str(preislist['qty_2000'])     
+
+    preisliste_json = json.dumps(preisliste)
     # Filter in cart items based on the current user's ust_id
     user_in_cart_items = InCartItem.objects.filter(ust_id=request.user.customerprofile.ust_id)
 
@@ -238,6 +250,7 @@ def purchase(request):
 
     context = {
         'in_cart_items': in_cart_items,
+        'preisliste': preisliste_json,
     }
 
     return render(request, 'pages/purchase.html', context)
@@ -425,6 +438,7 @@ def create_order_with_items(request):
                 print(f"Received entry: {entry}")
                 item_number = entry['item_number']
                 akkuvariante = entry['akkuvariante']
+                mit_120_Ohm_CAN_Bus_Widerstand = entry['mit_120_Ohm_CAN_Bus_Widerstand']
                 kabelvariante = entry['kabelvariante']
                 schnittstelle = entry['schnittstelle']
                 masse = entry['masse']
@@ -432,7 +446,7 @@ def create_order_with_items(request):
                 quantity = entry['quantity']
                 total = entry['total']
 
-                OrderItem.objects.create(order=order, ust_id=ust_id, akkuvariante=akkuvariante, kabelvariante=kabelvariante, schnittstelle=schnittstelle, masse=masse, quantity=quantity, price=price, total=total)
+                OrderItem.objects.create(order=order, ust_id=ust_id, akkuvariante=akkuvariante, mit_120_Ohm_CAN_Bus_Widerstand=mit_120_Ohm_CAN_Bus_Widerstand, kabelvariante=kabelvariante, schnittstelle=schnittstelle, masse=masse, quantity=quantity, price=price, total=total)
                 InCartItem.objects.filter(item_number=item_number).delete()
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Error creating order items: {str(e)} {order}'})
@@ -456,6 +470,7 @@ def add_item_to_cart(request):
 
         ust_id = request.user.customerprofile.ust_id
         akkuvariante = json_data.get('akkuvarianteName', '')
+        CAN_Bus = json_data.get('CAN_Bus', '')
         kabelvariante = json_data.get('kabelvariante', '')
         schnittstelle = ', '.join(json_data.get('schnittstelle', []))
         masse = ', '.join(json_data.get('masse', []))
@@ -465,6 +480,7 @@ def add_item_to_cart(request):
         existing_item = InCartItem.objects.filter(
             ust_id=ust_id,
             akkuvariante=akkuvariante,
+            mit_120_Ohm_CAN_Bus_Widerstand=CAN_Bus,
             kabelvariante=kabelvariante,
             schnittstelle=schnittstelle,
             masse=masse,
@@ -483,6 +499,7 @@ def add_item_to_cart(request):
                 item_number=item_number,
                 ust_id=ust_id,
                 akkuvariante=akkuvariante,
+                mit_120_Ohm_CAN_Bus_Widerstand=CAN_Bus,
                 kabelvariante=kabelvariante,
                 schnittstelle=schnittstelle,
                 masse=masse,
@@ -503,6 +520,7 @@ def add_item_to_cart(request):
         ust_id = request.user.customerprofile.ust_id
         item_number = str(uuid.uuid4())
         akkuvariante = json_data.get('akkuvarianteName', '')
+        CAN_Bus = json_data.get('CAN_Bus', '')
         kabelvariante = json_data.get('kabelvariante', '')
         schnittstelle = ', '.join(json_data.get('schnittstelle', []))
         masse = ', '.join(json_data.get('masse', []))
@@ -512,6 +530,7 @@ def add_item_to_cart(request):
         data = [{'item_number': inCartItem.item_number,
              'ust_id': inCartItem.ust_id,
              'akkuvariante': inCartItem.akkuvariante,
+             'mit_120_Ohm_CAN_Bus_Widerstand':inCartItem.mit_120_Ohm_CAN_Bus_Widerstand,
              'kabelvariante': inCartItem.kabelvariante,
              'schnittstelle ': inCartItem.schnittstelle,
              'masse ': inCartItem.masse,
@@ -519,11 +538,11 @@ def add_item_to_cart(request):
              'price': inCartItem.price,
              'total': inCartItem.total} for inCartItem in inCartItems.filter(ust_id=ust_id)]
     
-
         cart_item = InCartItem.objects.create(
             item_number=item_number,
             ust_id=ust_id,
             akkuvariante=akkuvariante,
+            mit_120_Ohm_CAN_Bus_Widerstand=CAN_Bus,
             kabelvariante=kabelvariante,
             schnittstelle=schnittstelle,
             masse=masse,

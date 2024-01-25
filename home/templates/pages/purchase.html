@@ -53,6 +53,9 @@
                     <div class="accordion-body item-akkuvariante">
                         Akkuvariante: {{ item.akkuvariante }}
                     </div>
+                    <div class="accordion-body item-CAN-Bus">
+                        Mit 120 Ohm CAN-Bus Widerstand?: {{ item.mit_120_Ohm_CAN_Bus_Widerstand }}
+                    </div>
                     <div class="accordion-body item-kabelvariante">
                         Kabelvariante: {{ item.kabelvariante }}
                     </div>
@@ -109,6 +112,8 @@
     </div>
 
     <script>
+        var preisliste = JSON.parse('{{ preisliste | safe }}');
+
         document.addEventListener('DOMContentLoaded', function () {
             // Event listener for the delete order button
             document.getElementById('cartAccordion').addEventListener('click', function (event) {
@@ -159,6 +164,7 @@
                         var quantity = parseInt(row.querySelector('.quantity').textContent);
                         var total = parseInt(row.querySelector('.total-price').textContent);
                         var item_akkuvariante = parseInt(row.querySelector('.item-akkuvariante').textContent);
+                        var item_CAN_Bus = parseInt(row.querySelector('.item-CAN-Bus').textContent);
                         var item_kabelvariante = parseInt(row.querySelector('.item-kabelvariante').textContent);
                         var item_schnittstelle = parseInt(row.querySelector('.item-schnittstelle').textContent);
                         var item_masse = parseInt(row.querySelector('.item-masse').textContent);
@@ -169,6 +175,7 @@
                             'quantity': quantity,
                             'total': total,
                             'akkuvariante': item_akkuvariante,
+                            'mit_120_Ohm_CAN_Bus_Widerstand': item_akkuvariante,
                             'kabelvariante': item_kabelvariante,
                             'schnittstelle': item_schnittstelle,
                             'masse': item_masse
@@ -235,7 +242,38 @@
                 // Check if the new quantity is at least 0
                 if (newQuantity >= 0) {
                     quantityElement.text(newQuantity);
-                    totalPriceElement.text((newQuantity * price).toFixed(2));
+                    var totalPrice = 0
+                    var akkuvariante = $row.find('.item-akkuvariante').text();
+                    
+                    for (let i = 0; i < preisliste.length; i++) {
+                        if ((akkuvariante.includes(preisliste[i]['gehause'])) && (price === parseFloat(preisliste[i]['qty_1']))) {
+                            if (newQuantity < 25) {
+                                totalPrice += newQuantity * price;
+                            }
+                            else if ((newQuantity >= 25) && (newQuantity < 50)) {
+                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_25']);
+                            }
+                            else if ((newQuantity >= 50) && (newQuantity < 100)) {
+                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_50']);
+                            }
+                            else if ((newQuantity >= 100) && (newQuantity < 250)) {
+                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_100']);
+                            }
+                            else if ((newQuantity >= 250) && (newQuantity < 500)) {
+                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_250']);
+                            }
+                            else if ((newQuantity >= 500) && (newQuantity < 1000)) {
+                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_500']);
+                            }
+                            else if ((newQuantity >= 1000) && (newQuantity < 2000)) {
+                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_1000']);
+                            }
+                            else if (newQuantity >= 2000)  {
+                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_2000']);
+                            }
+                        }
+                    }
+                    totalPriceElement.text((totalPrice).toFixed(2));
                     updateTotalPrice();
                 } else {
                     // Display a confirmation prompt to delete the order
@@ -252,7 +290,36 @@
                 $('.item-row').each(function () {
                     var quantity = parseInt($(this).find('.quantity').text());
                     var price = parseFloat($(this).data('price'));
-                    totalPrice += quantity * price;
+                    var akkuvariante = $(this).find('.item-akkuvariante').text();
+
+                    for (let i = 0; i < preisliste.length; i++) {
+                        if ((akkuvariante === preisliste[i]['gehause']) && (price === parseFloat(preisliste[i]['qty_1']))) {
+                            if (quantity < 25) {
+                                totalPrice += quantity * price;
+                            }
+                            else if ((quantity >= 25) && (quantity < 50)) {
+                                totalPrice += quantity * parseFloat(preisliste[i]['qty_25']);
+                            }
+                            else if ((quantity >= 50) && (quantity < 100)) {
+                                totalPrice += quantity * parseFloat(preisliste[i]['qty_50']);
+                            }
+                            else if ((quantity >= 100) && (quantity < 250)) {
+                                totalPrice += quantity * parseFloat(preisliste[i]['qty_100']);
+                            }
+                            else if ((quantity >= 250) && (quantity < 500)) {
+                                totalPrice += quantity * parseFloat(preisliste[i]['qty_250']);
+                            }
+                            else if ((quantity >= 500) && (quantity < 1000)) {
+                                totalPrice += quantity * parseFloat(preisliste[i]['qty_500']);
+                            }
+                            else if ((quantity >= 1000) && (quantity < 2000)) {
+                                totalPrice += quantity * parseFloat(preisliste[i]['qty_1000']);
+                            }
+                            else if (quantity >= 2000)  {
+                                totalPrice += quantity * parseFloat(preisliste[i]['qty_2000']);
+                            }
+                        }
+                    }
                 });
 
                 $('#total-price').text(totalPrice.toFixed(2));
