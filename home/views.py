@@ -16,6 +16,16 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @csrf_exempt
 def register(request):
+    ui_labels_data = get_ui_labels(request)
+    firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
+    firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
+    firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
+    fon = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fon'), '')
+    fax = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fax'), '')
+    email = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'E-Mail'), '')
+    webseite = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'webseite'), '')
+    footer_copyright_info = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'footer-copyright-info'), '')
+
     if request.method == 'POST':
         userRegisterForm = UserRegisterForm(request.POST)
 
@@ -23,10 +33,29 @@ def register(request):
             userRegisterForm.save()
             return redirect('login')
         else:
-            render(request, 'accounts/register.html', {'userRegisterForm': userRegisterForm})
+            render(request, 'accounts/register.html', {
+                'firma': firma,
+                'firma_adresse_1': firma_adresse_1,
+                'firma_adresse_2': firma_adresse_2,
+                'fon': fon,
+                'fax': fax,
+                'email': email,
+                'webseite': webseite,
+                'footer_copyright_info': footer_copyright_info,
+                })
     else:
         userRegisterForm = UserRegisterForm()
-        return render(request, 'accounts/register.html', {'userRegisterForm': userRegisterForm})
+        return render(request, 'accounts/register.html', {
+            'userRegisterForm': userRegisterForm,
+            'firma': firma,
+            'firma_adresse_1': firma_adresse_1,
+            'firma_adresse_2': firma_adresse_2,
+            'fon': fon,
+            'fax': fax,
+            'email': email,
+            'webseite': webseite,
+            'footer_copyright_info': footer_copyright_info,
+            })
 
 def index(request):
     customer_profiles = get_customer_profiles(request)
@@ -34,6 +63,15 @@ def index(request):
     ui_labels = get_ui_labels(request)
     image_paths = get_image_path(request)
     orders = get_orders(request)
+    ui_labels_data = get_ui_labels(request)
+    firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
+    firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
+    firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
+    fon = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fon'), '')
+    fax = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fax'), '')
+    email = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'E-Mail'), '')
+    webseite = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'webseite'), '')
+    footer_copyright_info = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'footer-copyright-info'), '')
 
     return render(request, 'pages/index.html', {
         'customer_profiles': customer_profiles,
@@ -42,6 +80,14 @@ def index(request):
         'image_paths': image_paths,
         'orders': orders,
         'in_cart_items': get_in_cart_items(request),
+        'firma': firma,
+        'firma_adresse_1': firma_adresse_1,
+        'firma_adresse_2': firma_adresse_2,
+        'fon': fon,
+        'fax': fax,
+        'email': email,
+        'webseite': webseite,
+        'footer_copyright_info': footer_copyright_info,
     })
 
 @login_required
@@ -55,6 +101,15 @@ def configurator(request):
     image_paths = get_image_path(request)
     orders = get_orders(request)
     preisliste = get_preisliste(request)
+    ui_labels_data = get_ui_labels(request)
+    firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
+    firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
+    firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
+    fon = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fon'), '')
+    fax = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fax'), '')
+    email = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'E-Mail'), '')
+    webseite = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'webseite'), '')
+    footer_copyright_info = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'footer-copyright-info'), '')
 
     for kabelvariante in kabelvarianten:
         kabelvariante['kabelvariante_image_path'] = str(kabelvariante['kabelvariante_image_path'])
@@ -95,10 +150,28 @@ def configurator(request):
         'orders': orders,
         'in_cart_items': get_in_cart_items(request),
         'preisliste': preisliste_json,
+        'firma': firma,
+        'firma_adresse_1': firma_adresse_1,
+        'firma_adresse_2': firma_adresse_2,
+        'fon': fon,
+        'fax': fax,
+        'email': email,
+        'webseite': webseite,
+        'footer_copyright_info': footer_copyright_info,
     })
 
 @login_required
 def profile(request):
+    ui_labels_data = get_ui_labels(request)
+    firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
+    firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
+    firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
+    fon = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fon'), '')
+    fax = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fax'), '')
+    email = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'E-Mail'), '')
+    webseite = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'webseite'), '')
+    footer_copyright_info = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'footer-copyright-info'), '')
+
     if request.method == 'POST':
         profileImageUpdateForm = ProfileImageUpdateForm(
             request.POST, request.FILES, instance=request.user.customerprofile)
@@ -122,6 +195,14 @@ def profile(request):
         'p_form': profileUpdateForm,
         'orders': get_orders(request),
         'in_cart_items': get_in_cart_items(request),
+        'firma': firma,
+        'firma_adresse_1': firma_adresse_1,
+        'firma_adresse_2': firma_adresse_2,
+        'fon': fon,
+        'fax': fax,
+        'email': email,
+        'webseite': webseite,
+        'footer_copyright_info': footer_copyright_info,
     }
     return render(request, 'pages/profile.html', context)
 
@@ -136,6 +217,16 @@ def developer_mode(request):
     ui_labels = get_ui_labels(request)
     image_paths = get_image_path(request)
     orders = get_orders(request)
+    ui_labels_data = get_ui_labels(request)
+    firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
+    firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
+    firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
+    fon = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fon'), '')
+    fax = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fax'), '')
+    email = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'E-Mail'), '')
+    webseite = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'webseite'), '')
+    footer_copyright_info = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'footer-copyright-info'), '')
+
     for kabelvariante in kabelvarianten:
         kabelvariante['splits'] = int(kabelvariante['splits'])
         kabelvariante['main_part_min_length'] = int(kabelvariante['main_part_min_length'])
@@ -151,6 +242,14 @@ def developer_mode(request):
         'image_paths': image_paths,
         'orders': orders,
         'in_cart_items': get_in_cart_items(request),
+        'firma': firma,
+        'firma_adresse_1': firma_adresse_1,
+        'firma_adresse_2': firma_adresse_2,
+        'fon': fon,
+        'fax': fax,
+        'email': email,
+        'webseite': webseite,
+        'footer_copyright_info': footer_copyright_info,
     })
 
 # @login_required(login_url='/login/')
@@ -189,6 +288,16 @@ def get_colors_dict():
 
 @login_required
 def orders(request):
+    ui_labels_data = get_ui_labels(request)
+    firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
+    firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
+    firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
+    fon = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fon'), '')
+    fax = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fax'), '')
+    email = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'E-Mail'), '')
+    webseite = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'webseite'), '')
+    footer_copyright_info = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'footer-copyright-info'), '')
+
     # Filter orders based on the current user's ust_id
     user_orders = Order.objects.filter(ust_id=request.user.customerprofile.ust_id).order_by('-order_date')
     in_cart_orders = [order for order in user_orders if order.order_status == 'InCart']
@@ -216,12 +325,31 @@ def orders(request):
     context = {
         'in_cart_orders': in_cart_orders,
         'other_orders': other_orders,
+        'userRegisterForm': userRegisterForm,
+        'firma': firma,
+        'firma_adresse_1': firma_adresse_1,
+        'firma_adresse_2': firma_adresse_2,
+        'fon': fon,
+        'fax': fax,
+        'email': email,
+        'webseite': webseite,
+        'footer_copyright_info': footer_copyright_info,
     }
 
     return render(request, 'pages/orders.html', context)
 
 @login_required
 def purchase(request):
+    ui_labels_data = get_ui_labels(request)
+    firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
+    firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
+    firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
+    fon = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fon'), '')
+    fax = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fax'), '')
+    email = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'E-Mail'), '')
+    webseite = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'webseite'), '')
+    footer_copyright_info = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'footer-copyright-info'), '')
+
     preisliste = get_preisliste(request)
     for preislist in preisliste:
         preislist['qty_1'] = str(preislist['qty_1'])
@@ -251,6 +379,14 @@ def purchase(request):
     context = {
         'in_cart_items': in_cart_items,
         'preisliste': preisliste_json,
+        'firma': firma,
+        'firma_adresse_1': firma_adresse_1,
+        'firma_adresse_2': firma_adresse_2,
+        'fon': fon,
+        'fax': fax,
+        'email': email,
+        'webseite': webseite,
+        'footer_copyright_info': footer_copyright_info,
     }
 
     return render(request, 'pages/purchase.html', context)

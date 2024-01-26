@@ -15,12 +15,12 @@
 
             <div class="foo-adresse">
                 <div class="foo-adresse-content">
-                    <p>JÜRGENHAKE</p>
-                    <p>Windmüllerstr. 41<br>D-59557 Lippstadt</p>
-                    <p><span class="tab">fon: </span><a href="tel:+49294128070">+49 2941 2807-0</a><br>
-                        <span class="tab">fax: </span>+49 2941 2807-60<br>
-                        <span class="tab">E-Mail: </span><a href="mailto:info@juergenhake.de">info@juergenhake.de</a></p>
-                    <p class="size-plus2"><a href="https://www.juergenhake.de/">www.juergenhake.de</a></p>
+                    <p>{{firma}}</p>
+                    <p>{{firma_adresse_1}}<br>{{firma_adresse_2}}</p>
+                    <p><span class="tab">fon: </span><a href="tel:{{fon}}">{{fon}}</a><br>
+                        <span class="tab">fax: </span>{{fax}}<br>
+                        <span class="tab">E-Mail: </span><a href="mailto:{{email}}">{{email}}</a></p>
+                    <p class="size-plus2"><a href="https://{{webseite}}/">{{webseite}}</a></p>
                 </div>
             </div>
 
@@ -31,7 +31,7 @@
 
     
     <ul class="foo-imp">
-        <li class="foo-imp-item foo-imp-item-copy">© {% now "Y" %} Jürgenhake Gesellschaft für Kabelkonfektionen und Metallverarbeitung mbH</li>
+        <li class="foo-imp-item foo-imp-item-copy">© {% now "Y" %} {{footer_copyright_info}}</li>
         <!-- <li class="foo-imp-item foo-imp-item-impre"><a href="https://www.juergenhake.de/impressum/">Impressum</a></li>
         <li class="foo-imp-item foo-imp-item-datenschu"><a href="https://www.juergenhake.de/datenschutzerklaerung/">Datenschutzerklärung</a></li>
         <li class="foo-imp-item foo-imp-item-agb"><a href="#" class="borlabs-cookie-preference">Cookie-Einstellungen</a></li>
