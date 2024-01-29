@@ -13,6 +13,10 @@ import uuid
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import smtplib
+import ssl
+from email.message import EmailMessage
+from dotenv import load_dotenv
 
 @csrf_exempt
 def register(request):
@@ -299,33 +303,39 @@ def orders(request):
     footer_copyright_info = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'footer-copyright-info'), '')
 
     # Filter orders based on the current user's ust_id
-    user_orders = Order.objects.filter(ust_id=request.user.customerprofile.ust_id).order_by('-order_date')
-    in_cart_orders = [order for order in user_orders if order.order_status == 'InCart']
-    other_orders = [order for order in user_orders if order.order_status != 'InCart']
+    orders = Order.objects.filter(ust_id=request.user.customerprofile.ust_id).order_by('-order_date')
+    user_orders = [{'order_number': order.order_number,
+             'ust_id': order.ust_id,
+             'order_date': order.order_date,
+             'order_details': order.order_details,
+             'order_status' : order.order_status,
+             'total': sum([item.total for item in order.orderitem_set.all()]),
+             'items': [{
+                 'item_number': item.item_number,
+                 'mit_120_Ohm_CAN_Bus_Widerstand': item.mit_120_Ohm_CAN_Bus_Widerstand,
+                 'akkuvariante': item.akkuvariante,
+                 'kabelvariante': item.kabelvariante,
+                 'schnittstelle': item.schnittstelle,
+                 'masse': item.masse,
+                 'quantity': item.quantity,
+                 'price': item.price,
+                 'total': item.total
+             } for item in order.orderitem_set.all()]
+             } for order in orders]
 
     # Pagination for both tables
     page = request.GET.get('page', 1)
-    paginator_in_cart = Paginator(in_cart_orders, 10)
-    paginator_other = Paginator(other_orders, 10)
+    paginator_orders = Paginator(user_orders, 10)
 
     try:
-        in_cart_orders = paginator_in_cart.page(page)
+        user_orders = paginator_orders.page(page)
     except PageNotAnInteger:
-        in_cart_orders = paginator_in_cart.page(1)
+        user_orders = paginator_orders.page(1)
     except EmptyPage:
-        in_cart_orders = paginator_in_cart.page(paginator_in_cart.num_pages)
-
-    try:
-        other_orders = paginator_other.page(page)
-    except PageNotAnInteger:
-        other_orders = paginator_other.page(1)
-    except EmptyPage:
-        other_orders = paginator_other.page(paginator_other.num_pages)
+        user_orders = paginator_orders.page(paginator_orders.num_pages)
 
     context = {
-        'in_cart_orders': in_cart_orders,
-        'other_orders': other_orders,
-        'userRegisterForm': userRegisterForm,
+        'orders': user_orders,
         'firma': firma,
         'firma_adresse_1': firma_adresse_1,
         'firma_adresse_2': firma_adresse_2,
@@ -470,13 +480,31 @@ def get_image_path(request):
     return data # JsonResponse(data, safe=False)
 
 def get_orders(request):
-    orders = Order.objects.all()
-    data = [{'order_number': order.order_number,
-             'ust_id': order.ust_id,
-             'order_date': order.order_date,
-             'order_details': order.order_details,
-             'order_status' : order.order_status} for order in orders]
-    return data
+    try:
+        orders = Order.objects.filter(ust_id=request.user.customerprofile.ust_id)
+        data = [{'order_number': order.order_number,
+                'ust_id': order.ust_id,
+                'order_date': order.order_date,
+                'order_details': order.order_details,
+                'order_status' : order.order_status,
+                'items': [{
+                    'item_number': item.item_number,
+                    'mit_120_Ohm_CAN_Bus_Widerstand': item.mit_120_Ohm_CAN_Bus_Widerstand,
+                    'akkuvariante': item.akkuvariante,
+                    'kabelvariante': item.kabelvariante,
+                    'schnittstelle': item.schnittstelle,
+                    'masse': item.masse,
+                    'quantity': item.quantity,
+                    'price': item.price,
+                    'total': item.total
+                } for item in orders.orderitem_set.all()]
+                } for order in orders]
+    except Exception as e:
+        print(f"Error getting user orders: {str(e)}")
+        return []
+    else:
+        print("Successfully fetched user orders.")
+        return data
 
 def get_in_cart_items(request):
     inCartItems = InCartItem.objects.all()
@@ -498,46 +526,40 @@ def get_in_cart_items(request):
         return data
 
 @require_POST
-def delete_order(request):
+def cancel_order(request):
     try:
         json_data = json.loads(request.body)
         order_number = json_data['order_number']
 
-        # Delete the order with the given order_number
-        Order.objects.filter(order_number=order_number).delete()
+        # Cancel the order with the given order_number
+        Order.objects.filter(order_number=order_number).update(order_status='Cancelled')
 
-        return JsonResponse({'success': True, 'message': 'Order deleted successfully.'})
-
+        try:
+            send_cancel_notification(request)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Error sending notification about order cancellation: {str(e)}'})
+        else:
+            return JsonResponse({'success': True, 'message': 'Order cancelled successfully.'})
     except Exception as e:
-        return JsonResponse({'success': False, 'message': f'Error deleting order: {str(e)}'})
+        return JsonResponse({'success': False, 'message': f'Error cancelling order: {str(e)}'})
 
 @require_POST
-def update_orders(request):
+def order_again(request):
     try:
         json_data = json.loads(request.body)
-        order_updates = json_data['order_updates']
+        order_number = json_data['order_number']
 
-        # Print the request data to the console or log file
-        print(f"Received json_data request data: {json_data}")
-        print(f"Received order_updates request data: {order_updates}")
+        # Cancel the order with the given order_again
+        Order.objects.filter(order_number=order_number).update(order_status='Ordered')
 
-        for entry in order_updates:
-            print(f"Received entry: {entry}")
-            order_number = entry['order_number']
-            quantity = entry['quantity']
-            total = entry['total']
-            order_status = 'Ordered'
-
-            # Update both quantity and total for the order with the given order_number
-            Order.objects.filter(order_number=order_number).update(quantity=quantity, total=total, order_status=order_status)
-
-        print("Update orders success")
-        return JsonResponse({'success': True, 'message': 'Orders updated successfully'})
-
+        try:
+            send_reorder_notification(request)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Error sending notification about reordering: {str(e)}'})
+        else:
+            return JsonResponse({'success': True, 'message': 'Ordered again successfully.'})
     except Exception as e:
-        print("Update orders not success")
-        print(f"Error updating orders: {str(e)}")
-        return JsonResponse({'success': False, 'message': f'Error updating orders: {str(e)}'})
+        return JsonResponse({'success': False, 'message': f'Error reordering: {str(e)}'})
 
 @require_POST
 def delete_item(request):
@@ -692,4 +714,48 @@ def add_item_to_cart(request):
     except Exception as e:
         return JsonResponse({'success': False, 'message': f'Error creating cart item: {str(e)}'})
 
-   
+def send_cancel_notification(request):
+    json_data = json.loads(request.body)
+    order_number = json_data['order_number']
+
+    order = Order.objects.filter(order_number=order_number, ust_id=request.user.customerprofile.ust_id).first()
+
+    subject = f"Order #{order.order_number} has been cancelled!"
+    body = f"""
+    Your order #{order.order_number} has been cancelled.
+    """
+
+    send_email_notification(request, subject, body)
+    return
+
+def send_reorder_notification(request):
+    json_data = json.loads(request.body)
+    order_number = json_data['order_number']
+
+    order = Order.objects.filter(order_number=order_number, ust_id=request.user.customerprofile.ust_id).first()
+
+    subject = f"Order #{order.order_number} has been reordered!"
+    body = f"""
+    Your cancelled order #{order.order_number} has been reordered again.
+    """
+    send_email_notification(request, subject, body)
+    return
+
+def send_email_notification(request, subject, body):
+    email_sender = 'jurgenhaketest@gmail.com'
+    email_password = 'azuexffmhvurppvu'
+    email_receiver = request.user.email
+
+    em = EmailMessage()
+    em['From'] = email_sender
+    em['To'] = email_receiver
+    em['Subject'] = subject
+    em.set_content(body)
+
+    # Add SSL (layer of security)
+    context = ssl.create_default_context()
+
+    # Log in and send the email
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+        smtp.login(email_sender, email_password)
+        smtp.sendmail(email_sender, email_receiver, em.as_string())

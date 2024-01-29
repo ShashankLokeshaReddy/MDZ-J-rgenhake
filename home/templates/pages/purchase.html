@@ -50,21 +50,21 @@
                     </div>
                     </div>
                     <div id="collapse{{ item.item_number }}" class="accordion-collapse collapse" aria-labelledby="heading{{ item.item_number }}" data-bs-parent="#cartAccordion">
-                    <div class="accordion-body item-akkuvariante">
-                        Akkuvariante: {{ item.akkuvariante }}
-                    </div>
-                    <div class="accordion-body item-CAN-Bus">
-                        Mit 120 Ohm CAN-Bus Widerstand?: {{ item.mit_120_Ohm_CAN_Bus_Widerstand }}
-                    </div>
-                    <div class="accordion-body item-kabelvariante">
-                        Kabelvariante: {{ item.kabelvariante }}
-                    </div>
-                    <div class="accordion-body item-schnittstelle">
-                        Schnittstelle: {{ item.schnittstelle }}
-                    </div>
-                    <div class="accordion-body item-masse">
-                        Masse: {{ item.masse }}
-                    </div>
+                        <div class="accordion-body">
+                            Akkuvariante: <span class="item-akkuvariante">{{ item.akkuvariante }}</span>
+                        </div>
+                        <div class="accordion-body">
+                            Mit 120 Ohm CAN-Bus Widerstand?: <span class="item-CAN-Bus">{{ item.mit_120_Ohm_CAN_Bus_Widerstand }}</span>
+                        </div>
+                        <div class="accordion-body">
+                            Kabelvariante: <span class="item-kabelvariante">{{ item.kabelvariante }}</span>
+                        </div>
+                        <div class="accordion-body">
+                            Schnittstelle: <span class="item-schnittstelle">{{ item.schnittstelle }}</span>
+                        </div>
+                        <div class="accordion-body">
+                            Masse: <span class="item-masse">{{ item.masse }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -153,6 +153,7 @@
 
             // Event listener for the submit order button
             document.getElementById('submit-order').addEventListener('click', function () {
+                updateTotalPrice();
                 // Prompt user for confirmation
                 if (confirm("Are you sure you want to submit the selected orders?")) {
                     var itemsInOrder = [];
@@ -163,11 +164,11 @@
                         var price = row.getAttribute('data-price');
                         var quantity = parseInt(row.querySelector('.quantity').textContent);
                         var total = parseInt(row.querySelector('.total-price').textContent);
-                        var item_akkuvariante = parseInt(row.querySelector('.item-akkuvariante').textContent);
-                        var item_CAN_Bus = parseInt(row.querySelector('.item-CAN-Bus').textContent);
-                        var item_kabelvariante = parseInt(row.querySelector('.item-kabelvariante').textContent);
-                        var item_schnittstelle = parseInt(row.querySelector('.item-schnittstelle').textContent);
-                        var item_masse = parseInt(row.querySelector('.item-masse').textContent);
+                        var item_akkuvariante = row.querySelector('.item-akkuvariante').textContent;
+                        var item_CAN_Bus = row.querySelector('.item-CAN-Bus').textContent;
+                        var item_kabelvariante = row.querySelector('.item-kabelvariante').textContent;
+                        var item_schnittstelle = row.querySelector('.item-schnittstelle').textContent;
+                        var item_masse = row.querySelector('.item-masse').textContent;
 
                         itemsInOrder.push({
                             'item_number': itemNumber,
