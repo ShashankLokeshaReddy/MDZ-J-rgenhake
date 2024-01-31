@@ -2,24 +2,89 @@
 
 {% block content %}
     {% with in_cart_items=in_cart_items %}
-    {{block.super}}
+    {{ block.super }}
     {% endwith %}
 
     <!-- Custom Solution Selector -->
     <div id="CustomSolution-Section">
         <div class="space space-2"></div>
         <section>
-            <div>
-                <p style="text-align: center; color:white;">
-                    Konfigurieren Sie Ihre persönliche Kabellösung zur Stromversorgung von AES Akkus
-                </p>
+            <div class="content anlauf_text">
+                <h1 style="color:white;"> {{ index_text }} </h1>
             </div>
         </section>
         <div class="space space-2"></div>
+        <div class="space space-2"></div>
         <div style="text-align: center;">
             <button class="next-button" onclick="window.location.href='/configurator'">Weiter zum Konfigurator</button>
-            <button class="next-button" onclick="">Hochladen von Sonderlösungen</button>
+            <button class="next-button" onclick="openUploadPopup()">Hochladen von Sonderlösungen</button>
         </div>
     </div>
 
+    <!-- Popup Content -->
+    <div id="customModal" class="modal" style="text-align: center; font-weight: bold; display: none;">
+        <div class="modal-header content anlauf_text">
+            <span>Please upload a file or document describing your cable solution</span>
+            <span class="close-button" onclick="closeModal()">&#10006;</span> <!-- X symbol -->
+        </div>
+        <div class="space space-2"></div>
+        <div class="popup-content">
+            <form id="uploadForm" action="/uploadSpecialSolution" method="post" enctype="multipart/form-data">
+                <label for="myfile">Select a file:</label>
+                <input class="prev-button" type="file" id="myfile" name="myfile" multiple="multiple" />
+                <br /><br />
+                <button class="next-button" type="button" onclick="uploadDocument()">Hochladen</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div id="overlay" class="overlay" style="display: none;"></div>
+
+    <!-- JavaScript for Popup -->
+    <script>
+        var overlay = document.getElementById('overlay');
+
+        // Close the modal when clicking outside the modal content or on the close button
+        overlay.onclick = closeModal;
+
+        function openUploadPopup() {
+            overlay.style.display = 'block';
+            document.getElementById('customModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        function uploadDocument() {
+            var fileInput = document.getElementById('myfile');
+            var file = fileInput.files[0];
+
+            if (file) {
+                var formData = new FormData();
+                formData.append('myfile', file);
+
+                fetch('/uploadSpecialSolution', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response from the server
+                    console.log(data);
+                    closeModal(); // Close the modal after successful upload
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('Error:', error);
+                });
+            } else {
+                // Handle the case when no file is selected
+                alert('Please select a file.');
+            }
+        }
+    </script>
+    <!-- End JavaScript for Popup -->
 {% endblock %}

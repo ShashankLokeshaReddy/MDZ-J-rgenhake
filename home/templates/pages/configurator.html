@@ -149,12 +149,14 @@
     </div>
 
     <!-- Modal content -->
-    <div id="customModal" class="modal">
-        <div class="modal-header">
+    <div id="customModal" class="modal" style="text-align: center; font-weight: bold;">
+        <div class="modal-header content anlauf_text">
             <span>Entry has been successfully added.</span>
             <span class="close-button" onclick="closeModal()">&#10006;</span> <!-- X symbol -->
         </div>
+        <div class="space space-2"></div>
         <p>What would you like to do next?</p>
+        <br />
         <button class="next-button" id="configureButton">Configure Another Cable</button>
         <button class="next-button" id="viewInCartButton">View in Cart Items</button>
     </div>
@@ -194,6 +196,9 @@
         goToSection('Akkuvariante-Section')
         updateProgressBar();
         
+        // Close the modal when clicking outside the modal content or on the close button
+        overlay.onclick = closeModal;
+
         function selectAkkuvariante(productName) {
             console.log('Selected Akkuvariante:', productName);
 
@@ -555,9 +560,6 @@
                 window.location.href = '/purchase'; // Navigate to /purchase page
             };
         }
-
-        // Close the modal when clicking outside the modal content or on the close button
-        overlay.onclick = closeModal;
         
         function closeModal() {
             modal.style.display = 'none';

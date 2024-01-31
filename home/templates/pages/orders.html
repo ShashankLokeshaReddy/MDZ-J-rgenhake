@@ -6,7 +6,13 @@
     {% endwith %}
     {% load bootstrap_icons %}
     <div class="container mt-4">
-        <h2 class="mt-4">Orders</h2>
+        <section class="layoutblock lb-10col-width lb-hinweisausgabe">
+            <div class="content anlauf_text">
+                <p style="text-align: center;">
+                    Orders
+                </p>
+            </div>
+        </section>
         <form id="deleteOrderForm" method="post">
             {% csrf_token %}
             <input type="hidden" name="order_number" id="deleteOrderNumber">

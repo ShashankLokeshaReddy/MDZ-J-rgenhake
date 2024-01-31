@@ -8,6 +8,21 @@
 //     sidebar.classList.toggle('active');
 // });
 
+var overlay_sidebar = document.getElementById('overlay-sidebar');
+overlay_sidebar.onclick = closePopupMenu;
+
+function openPopupMenu() {
+    var popupMenu = document.getElementById("popup-menu-wrapper");
+    overlay_sidebar.style.display = 'block';
+    popupMenu.style.display = "block";
+}
+
+function closePopupMenu() {
+    var popupMenu = document.getElementById("popup-menu-wrapper");
+    overlay_sidebar.style.display = 'none';
+    popupMenu.style.display = "none";
+}
+
 // Function to make a GET request to fetch colors from the server
 async function fetchColors() {
     try {
@@ -73,16 +88,6 @@ window.addEventListener("load", function() {
     closePopupMenu();
 });
 
-function openPopupMenu() {
-    var popupMenu = document.getElementById("popup-menu-wrapper");
-    popupMenu.style.display = "flex";
-}
-
-function closePopupMenu() {
-    var popupMenu = document.getElementById("popup-menu-wrapper");
-    popupMenu.style.display = "none";
-}
-
 // Get the button element
 var nachObenButton = document.getElementById('nach-oben-bt');
 
@@ -122,14 +127,6 @@ function handleScroll() {
 
 // Add scroll event listener
 window.addEventListener('scroll', handleScroll);
-
-function openProfile(){
-
-}
-
-function openCart(){
-
-}
 
 // function getSelectedOption(category) {
 //     var selectedOption = ''; // Replace with logic to get the selected option

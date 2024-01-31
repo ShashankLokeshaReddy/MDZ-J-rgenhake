@@ -6,11 +6,19 @@
     {% endwith %}
     {% load bootstrap_icons %}
     <div class="container mt-4">
-        <h2 class="mt-4">Cart</h2>
+        <section class="layoutblock lb-10col-width lb-hinweisausgabe">
+            <div class="content anlauf_text">
+                <p style="text-align: center;">
+                    In Cart
+                </p>
+            </div>
+        </section>
+
         <form id="deleteOrderForm" method="post">
             {% csrf_token %}
             <input type="hidden" name="order_number" id="deleteOrderNumber">
         </form>
+
         <div class="accordion m-3" id="cartAccordion">
             {% for item in in_cart_items %}
             <div class="container item-row m-2 p-0" data-item-number="{{ item.item_number }}" data-price="{{ item.price }}">
@@ -74,6 +82,12 @@
             {% endif %}
         </div>
 
+        {% if in_cart_items %}
+        <div class="content anlauf_text">
+            <p style="text-align: center;">{{ rabatt_text }}</p>
+        </div>
+        {% endif %}
+
         <!-- Total Price and Submit Button -->
         <div class="row">
             <div class="col">
@@ -108,6 +122,14 @@
                     <a href="?page={{ in_cart_items.paginator.num_pages }}">last &raquo;</a>
                 {% endif %}
             </span>
+        </div>
+
+        <div class="space space-2"></div>
+
+        <div>
+            <nav style="text-align: center; font-weight: bold;">
+                <a href="/orders" class="nav-link">Click here to View Submitted Orders</a>
+            </nav>
         </div>
     </div>
 
