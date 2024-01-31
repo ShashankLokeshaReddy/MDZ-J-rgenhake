@@ -15,12 +15,12 @@
 
             <div class="foo-adresse">
                 <div class="foo-adresse-content">
-                    <p>{{firma}}</p>
-                    <p>{{firma_adresse_1}}<br>{{firma_adresse_2}}</p>
-                    <p><span class="tab">fon: </span><a href="tel:{{fon}}">{{fon}}</a><br>
-                        <span class="tab">fax: </span>{{fax}}<br>
-                        <span class="tab">E-Mail: </span><a href="mailto:{{email}}">{{email}}</a></p>
-                    <p class="size-plus2"><a href="https://{{webseite}}/">{{webseite}}</a></p>
+                    {% if firma %}<p>{{firma}}</p>{% endif %}
+                    {% if firma_adresse_1 %}<p>{{firma_adresse_1}}<br>{{firma_adresse_2}}</p>{% endif %}
+                    {% if fon %}<p><span class="tab">fon: </span><a href="tel:{{fon}}">{{fon}}</a><br>{% endif %}
+                        {% if fax %}<span class="tab">fax: </span>{{fax}}<br>{% endif %}
+                        {% if email %}<span class="tab">E-Mail: </span><a href="mailto:{{email}}">{{email}}</a></p>{% endif %}
+                    {% if webseite %}<p class="size-plus2"><a href="https://{{webseite}}/">{{webseite}}</a></p>{% endif %}
                 </div>
             </div>
 

@@ -68,6 +68,7 @@ def index(request):
     image_paths = get_image_path(request)
     orders = get_orders(request)
     ui_labels_data = get_ui_labels(request)
+    index_text = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'index_text'), '')
     firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
     firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
     firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
@@ -80,10 +81,10 @@ def index(request):
     return render(request, 'pages/index.html', {
         'customer_profiles': customer_profiles,
         'colors': colors,
-        'ui_labels': ui_labels,
         'image_paths': image_paths,
         'orders': orders,
         'in_cart_items': get_in_cart_items(request),
+        'index_text':index_text,
         'firma': firma,
         'firma_adresse_1': firma_adresse_1,
         'firma_adresse_2': firma_adresse_2,
@@ -149,7 +150,6 @@ def configurator(request):
         'kabelvarianten': kabelvarianten_json,
         'schnittstellen': schnittstellen_json,
         'colors': colors,
-        'ui_labels': ui_labels,
         'image_paths': image_paths,
         'orders': orders,
         'in_cart_items': get_in_cart_items(request),
@@ -358,6 +358,7 @@ def purchase(request):
     fax = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fax'), '')
     email = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'E-Mail'), '')
     webseite = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'webseite'), '')
+    rabatt_text = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'rabatt_text'), '')
     footer_copyright_info = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'footer-copyright-info'), '')
 
     preisliste = get_preisliste(request)
@@ -396,6 +397,7 @@ def purchase(request):
         'fax': fax,
         'email': email,
         'webseite': webseite,
+        'rabatt_text': rabatt_text,
         'footer_copyright_info': footer_copyright_info,
     }
 
