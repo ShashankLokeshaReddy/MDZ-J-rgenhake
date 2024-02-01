@@ -4,14 +4,20 @@ from PIL import Image as PILImage
 from colorfield.fields import ColorField
 import os
 import uuid
+from django.utils.deconstruct import deconstructible
+from home.storage import OverwriteStorage
+
+def get_img_upload_path(instance, filename):
+    return f"profile_pics/{instance.ust_id}.{filename.split('.')[-1]}"
 
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     ust_id = models.CharField(max_length=50, primary_key=True)
-    image = models.ImageField(default='default.png', upload_to='profile_pics')
+    image = models.ImageField(default='default.png', upload_to=get_img_upload_path, storage=OverwriteStorage())
     unternehmensname = models.CharField(max_length=255, null=True)
     land = models.CharField(max_length=100, null=True)
     address = models.TextField(null=True)
+    plz = models.CharField(max_length=5, null=True)
     telefonnummer = models.CharField(max_length=20, null=True)
     ansprechpartner = models.CharField(max_length=255, null=True)
 
