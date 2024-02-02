@@ -5,7 +5,8 @@ services:
     restart: always
     build: .
     volumes:
-      - db_data:/data  # Mount named volume for the SQLite database
+      - ./media:/media # Mount host path to media folder
+      - ./db.sqlite3:/db.sqlite3 # Mount host path to SQLite Database
     networks:
       - db_network
       - web_network
@@ -26,6 +27,3 @@ networks:
     driver: bridge
   web_network:
     driver: bridge
- 
-volumes:
-  db_data:
