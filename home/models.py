@@ -218,15 +218,14 @@ class PreisListe(models.Model):
     qty_1000 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     qty_2000 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
-class SpecialOrder(models.Model):
+class SpezielleBestellung(models.Model):
     ORDER_STATUS_CHOICES = [
-        ('InCart', 'InCart'),
         ('Ordered', 'Ordered'),
         ('Delivered', 'Delivered'),
         ('Cancelled', 'Cancelled'),
     ]
     order_number = models.CharField(max_length=255, primary_key=True)
-    Ust_Id = models.CharField(max_length=255, null=True)
+    Ust_id = models.CharField(max_length=255, null=True)
     Order_Date = models.DateTimeField(auto_now_add=True, null=True)
     Status = models.CharField(max_length=255, null=True, choices=ORDER_STATUS_CHOICES, default='InCart')
     uploaded_file = models.FileField(upload_to="special_orders/", null=True)

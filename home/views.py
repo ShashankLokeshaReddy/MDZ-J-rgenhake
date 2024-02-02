@@ -761,3 +761,15 @@ def send_email_notification(request, subject, body):
     with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
         smtp.login(email_sender, email_password)
         smtp.sendmail(email_sender, email_receiver, em.as_string())
+
+@require_POST
+def upload_special_solution(request):
+    try:
+        # uploaded_file = request.FILES.get('specialfile')
+        # special_order = SpecialOrder(uploaded_file=uploaded_file)
+        # special_order.save()
+
+        return JsonResponse({'message': 'File uploaded successfully'})
+
+    except Exception as e:
+        return JsonResponse({'error': f'Server error: {str(e)}'})

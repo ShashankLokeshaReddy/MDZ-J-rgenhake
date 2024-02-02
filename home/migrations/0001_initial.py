@@ -102,4 +102,14 @@ class Migration(migrations.Migration):
                 'unique_together': {('kabelvariante', 'gehause', 'leitung', 'lange')},  # Add unique constraint
             },
         ),
+        migrations.CreateModel(
+            name='SpezielleBestellung',
+            fields=[
+                ('order_number', models.CharField(max_length=255, primary_key=True, serialize=False)),
+                ('Ust_id', models.CharField(max_length=50, null=True)),
+                ('Order_Date', models.DateTimeField(null=True)),
+                ('Status', models.CharField(max_length=255,null=True)), 
+                ('uploaded_file', models.FileField(upload_to="special_orders/", null=True)),
+            ],
+        ),
     ]
