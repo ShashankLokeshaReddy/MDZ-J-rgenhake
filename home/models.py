@@ -54,7 +54,7 @@ class CustomerProfile(models.Model):
 
 class Akkuvariante(models.Model):
     akkuvariante_name = models.CharField(max_length=255, primary_key=True)
-    akkuvariante_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_akku)
+    akkuvariante_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_akku, storage=OverwriteStorage())
 
     def save(self, *args, **kwargs):
         # Check if there's an existing object with the same name
