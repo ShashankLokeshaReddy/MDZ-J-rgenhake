@@ -24,13 +24,13 @@
     <!-- Popup Content -->
     <div id="customModal" class="modal" style="text-align: center; font-weight: bold; display: none;">
         <div class="modal-header content anlauf_text">
-            <span>Please upload a file or document describing your cable solution</span>
+            <span>Bitte laden Sie eine Datei oder ein Dokument hoch, das Ihre Kabellösung beschreibt</span>
             <span class="close-button" onclick="closeModal()">&#10006;</span> <!-- X symbol -->
         </div>
         <div class="space space-2"></div>
         <div class="popup-content">
             <form id="uploadForm" action="/uploadSpecialSolution" method="post" enctype="multipart/form-data">
-                <label for="specialfile">Select a file:</label>
+                <label for="specialfile">Wählen Sie eine Datei aus:</label>
                 <input class="prev-button" type="file" id="specialfile" name="specialfile" multiple="multiple" />
                 <br /><br />
                 <button class="next-button" type="button" onclick="uploadDocument()">Hochladen</button>
@@ -63,11 +63,15 @@
             var file = fileInput.files[0];
 
             if (file) {
+                // Create a FormData object to send the file
                 var formData = new FormData();
                 formData.append('specialfile', file);
 
-                fetch('/upload_special_solution', {
+                fetch('/upload_special_solution/', {
                     method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
                     body: formData
                 })
                 .then(response => {
@@ -80,6 +84,7 @@
                     // Handle the response from the server
                     console.log(data);
                     closeModal(); // Close the modal after successful upload
+                    alert('Datei-Upload erfolgreich. Ihre Bestellung ist bei uns eingegangen und unsere Vertriebsmitarbeiter werden sich in Kürze mit Ihnen in Verbindung setzen.');
                 })
                 .catch(error => {
                     // Handle errors
@@ -90,12 +95,12 @@
                         console.error('Full response:', text);
                     });
                 });
-            } else {
+            } 
+            else {
                 // Handle the case when no file is selected
-                alert('Please select a file.');
+                alert('Bitte wählen Sie eine Datei aus.');
             }
         }
-
     </script>
     <!-- End JavaScript for Popup -->
 {% endblock %}

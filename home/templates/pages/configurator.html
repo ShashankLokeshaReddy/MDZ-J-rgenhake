@@ -44,7 +44,7 @@
                     <img src="{% get_media_prefix %}{{ akkuvariante.akkuvariante_image_path }}" alt="{{ akkuvariante.akkuvariante_name }}">
                 </div>
             {% empty %}
-                <p>No Akkuvarianten available.</p>
+                <p>Keine Akkuvarianten verfügbar.</p>
             {% endfor %}
             <div class="space space-2"></div>
             <p>Mit 120 Ohm CAN-Bus Widerstand?</p>
@@ -151,14 +151,14 @@
     <!-- Modal content -->
     <div id="customModal" class="modal" style="text-align: center; font-weight: bold;">
         <div class="modal-header content anlauf_text">
-            <span>Entry has been successfully added.</span>
+            <span>Der Eintrag wurde erfolgreich hinzugefügt.</span>
             <span class="close-button" onclick="closeModal()">&#10006;</span> <!-- X symbol -->
         </div>
         <div class="space space-2"></div>
-        <p>What would you like to do next?</p>
+        <p>Was möchten Sie als Nächstes tun?</p>
         <br />
-        <button class="next-button" id="configureButton">Configure Another Cable</button>
-        <button class="next-button" id="viewInCartButton">View in Cart Items</button>
+        <button class="next-button" id="configureButton">Konfigurieren Sie ein anderes Kabel</button>
+        <button class="next-button" id="viewInCartButton">Artikel im Warenkorb anzeigen</button>
     </div>
 
     <!-- Overlay -->
@@ -180,7 +180,7 @@
         var preisliste = JSON.parse('{{ preisliste | safe }}');
         var mediaPrefix = "{% get_media_prefix %}";
         var masseTextElement = document.getElementById("Masse-text");
-        masseTextElement.textContent = "Invalid input values";
+        masseTextElement.textContent = "Ungültige Eingabewerte";
         masseTextElement.style.color = "red";
         var modal = document.getElementById('customModal');
         var overlay = document.getElementById('overlay');
@@ -271,7 +271,7 @@
             if (selectedSlider) {
                 selectedSlider.classList.remove('hidden');
             } else {
-                console.log('No matching slider found for:', productName);
+                console.log('Kein passender Slider für gefunden:', productName);
             }
         }
 
@@ -405,18 +405,18 @@
                 // Check if the values are valid integers
                 if (value >= min && value <= max) {
                     // All good, click on next in green
-                    masseTextElement.textContent = "All good, click on next";
+                    masseTextElement.textContent = "Alles gut, klicken Sie auf Weiter";
                     masseTextElement.style.color = "green";
                     masseSelected = true;
                 } else {
                     // The value should be between min and max in red
-                    masseTextElement.textContent = "The value should be between " + min + " and " + max;
+                    masseTextElement.textContent = "Der Wert sollte zwischen liegen " + min + " und " + max;
                     masseTextElement.style.color = "red";
                     masseSelected = false;
                 }
             } else {
                 // Handle the case where the values are not valid integers
-                masseTextElement.textContent = "Invalid input values";
+                masseTextElement.textContent = "Ungültige Eingabewerte";
                 masseTextElement.style.color = "red";
                 masseSelected = false;
             }
@@ -503,7 +503,7 @@
             var masseText = document.getElementById("Masse-text").textContent.trim();
 
             if (akkuvariante != "" && kabelvariante != "" && schnittstelle != "" && masse != "" && preis != "") {
-                if (masseText === "All good, click on next") {
+                if (masseText === "Alles gut, klicken Sie auf Weiter") {
                     // Make a POST call to add data to InCartItem model
                     var data = {
                         akkuvarianteName: akkuvariante,
@@ -523,8 +523,8 @@
                     })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                            alert('Network response was not ok');
+                            throw new Error('Die Netzwerkantwort war nicht ok');
+                            alert('Die Netzwerkantwort war nicht ok');
                         }
                         return response.json();
                     })
@@ -534,15 +534,15 @@
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Error adding entry to cart: ' + error.message);
+                        alert('Fehler beim Hinzufügen des Eintrags zum Warenkorb: ' + error.message);
                     });
                 } else {
                     console.log("Masse-text is not 'All good, click on next'");
-                    alert('Error adding entry to the cart. Ensure that the masse values are within the specified range');
+                    alert('Fehler beim Hinzufügen eines Eintrags zum Warenkorb. Stellen Sie sicher, dass die Massenwerte innerhalb des angegebenen Bereichs liegen');
                 }
             } else {
-                console.log("One or more values are empty");
-                alert('One or more values are empty');
+                console.log("Ein oder mehrere Werte sind leer");
+                alert('Ein oder mehrere Werte sind leer');
             }
         }
 
@@ -593,7 +593,7 @@
             if (filteredKabelvarianten.length === 0) {
                 // No Kabel options available, display a message
                 var messageDiv = document.createElement('div');
-                messageDiv.textContent = "No Kabel options available for the selected akkuvariante type.";
+                messageDiv.textContent = "Für den ausgewählten Akkuvariantentyp sind keine Kabeloptionen verfügbar.";
                 selected_kabel_name = '';
                 kabelSelected = false;
                 container.appendChild(messageDiv);
@@ -603,7 +603,7 @@
                 schnittstellen_empty_container.innerHTML = '';
                 var sliderContainer = document.createElement('div');
                 var messageDiv = document.createElement('div');
-                messageDiv.textContent = "No Schnittstellen options available for the selected akkuvariante type.";
+                messageDiv.textContent = "Für den ausgewählten Akkuvariantentyp sind keine Schnittstellenoptionen verfügbar.";
                 schnittstellen_empty_container.appendChild(messageDiv);
                 selected_schnittstellen_name = '';
                 schnittstellenSelected = false;
@@ -613,7 +613,7 @@
                 masse_empty_container.innerHTML = '';
                 var sliderContainer = document.createElement('div');
                 var messageDiv = document.createElement('div');
-                messageDiv.textContent = "No maße options available for the selected akkuvariante type.";
+                messageDiv.textContent = "Für den ausgewählten Akkuvariantentyp sind keine Maßoptionen verfügbar.";
                 masse_empty_container.appendChild(messageDiv);
                 selected_masse_name = '';
                 masseSelected = false;
@@ -661,7 +661,7 @@
                         schnittstellen_empty_container.innerHTML = '';
                         var sliderContainer = document.createElement('div');
                         var messageDiv = document.createElement('div');
-                        messageDiv.textContent = "Akkuvariante option changed, Please reselect the kabels.";
+                        messageDiv.textContent = "Option Akkuvariante geändert, Bitte wählen Sie die Kabel neu aus.";
                         schnittstellen_empty_container.appendChild(messageDiv);
                         selected_schnittstellen_name = '';
                         schnittstellenSelected = false;
@@ -671,7 +671,7 @@
                         masse_empty_container.innerHTML = '';
                         var sliderContainer = document.createElement('div');
                         var messageDiv = document.createElement('div');
-                        messageDiv.textContent = "Akkuvariante option changed, Please reselect the kabels.";
+                        messageDiv.textContent = "Option Akkuvariante geändert, Bitte wählen Sie die Kabel neu aus.";
                         masse_empty_container.appendChild(messageDiv);
                         selected_masse_name = '';
                         masseSelected = false;
@@ -752,7 +752,7 @@
             } 
             else {
                 var noOptionsParagraph = document.createElement('p');
-                noOptionsParagraph.textContent = 'No valid Schnittstellen available.';
+                noOptionsParagraph.textContent = 'Keine gültigen Schnittstellen verfügbar.';
                 sliderContainer.appendChild(noOptionsParagraph);
             }
 
@@ -805,7 +805,7 @@
                 createInputPair(sliderContainer, kabelvariante, 'main', kabelvariante.main_part_min_length, straight_max_length.toString());
             } else {
                 var noOptionsParagraph = document.createElement('p');
-                noOptionsParagraph.textContent = 'No valid Kabelvarianten available.';
+                noOptionsParagraph.textContent = 'Keine gültigen Kabelvarianten verfügbar.';
                 sliderContainer.appendChild(noOptionsParagraph);
             }
 

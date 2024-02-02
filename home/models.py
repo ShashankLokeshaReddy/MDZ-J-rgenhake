@@ -255,4 +255,4 @@ class SpezielleBestellung(models.Model):
     uploaded_file = models.FileField(upload_to="special_orders/", null=True)
 
     def __str__(self):
-        return f"Special Order {self.id}"
+        return f"Special Order {self.order_number}"
