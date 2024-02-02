@@ -30,8 +30,8 @@
         <div class="space space-2"></div>
         <div class="popup-content">
             <form id="uploadForm" action="/uploadSpecialSolution" method="post" enctype="multipart/form-data">
-                <label for="myfile">Select a file:</label>
-                <input class="prev-button" type="file" id="myfile" name="myfile" multiple="multiple" />
+                <label for="specialfile">Select a file:</label>
+                <input class="prev-button" type="file" id="specialfile" name="specialfile" multiple="multiple" />
                 <br /><br />
                 <button class="next-button" type="button" onclick="uploadDocument()">Hochladen</button>
             </form>
@@ -59,18 +59,23 @@
         }
 
         function uploadDocument() {
-            var fileInput = document.getElementById('myfile');
+            var fileInput = document.getElementById('specialfile');
             var file = fileInput.files[0];
 
             if (file) {
                 var formData = new FormData();
-                formData.append('myfile', file);
+                formData.append('specialfile', file);
 
-                fetch('/uploadSpecialSolution', {
+                fetch('/upload_special_solution', {
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     // Handle the response from the server
                     console.log(data);
@@ -79,12 +84,18 @@
                 .catch(error => {
                     // Handle errors
                     console.error('Error:', error);
+
+                    // Log the full response for further investigation
+                    response.text().then(text => {
+                        console.error('Full response:', text);
+                    });
                 });
             } else {
                 // Handle the case when no file is selected
                 alert('Please select a file.');
             }
         }
+
     </script>
     <!-- End JavaScript for Popup -->
 {% endblock %}

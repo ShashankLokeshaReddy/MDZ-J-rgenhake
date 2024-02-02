@@ -29,4 +29,5 @@ urlpatterns = [
     path('delete_item/', views.delete_item, name='delete_item'),
     path('create_order_with_items/', views.create_order_with_items, name='create_order_with_items'),
     path('add_item_to_cart/', views.add_item_to_cart, name='add_item_to_cart'),
+    path('upload_special_solution/', views.upload_special_solution, name='upload_special_solution'),
 ]

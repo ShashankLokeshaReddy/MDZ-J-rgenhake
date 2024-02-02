@@ -6,7 +6,7 @@ services:
     build: .
     volumes:
       - ./media:/media # Mount host path to media folder
-      - ./db.sqlite3:/db.sqlite3 # Mount host path to SQLite Database
+      - ./data:/data # Mount host path to media folder
     networks:
       - db_network
       - web_network
