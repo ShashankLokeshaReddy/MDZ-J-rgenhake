@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
-from .models import CustomerProfile, Akkuvariante, Kabelvariante, Schnittstelle, Color, UILabel, Image, Order, InCartItem, OrderItem, PreisListe
+from .models import CustomerProfile, Akkuvariante, Kabelvariante, Schnittstelle, Color, UILabel, Image, Order, InCartItem, OrderItem, PreisListe, SpezielleBestellung
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ProfileImageUpdateForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -762,14 +762,18 @@ def send_email_notification(request, subject, body):
         smtp.login(email_sender, email_password)
         smtp.sendmail(email_sender, email_receiver, em.as_string())
 
+@csrf_exempt
 @require_POST
 def upload_special_solution(request):
     try:
-        # uploaded_file = request.FILES.get('specialfile')
-        # special_order = SpecialOrder(uploaded_file=uploaded_file)
-        # special_order.save()
+        order_number = str(uuid.uuid4())
+        Ust_id = request.user.customerprofile.ust_id
+        Status = 'Ordered'
+        uploaded_file = request.FILES.get('specialfile')
+        special_order = SpezielleBestellung(order_number=order_number, Ust_id=Ust_id, Status=Status, uploaded_file=uploaded_file)
+        special_order.save()
 
-        return JsonResponse({'message': 'File uploaded successfully'})
+        return JsonResponse({'message': 'Datei-Upload erfolgreich. Ihre Bestellung ist bei uns eingegangen und unsere Vertriebsmitarbeiter werden sich in Kürze mit Ihnen in Verbindung setzen'})
 
     except Exception as e:
         return JsonResponse({'error': f'Server error: {str(e)}'})
