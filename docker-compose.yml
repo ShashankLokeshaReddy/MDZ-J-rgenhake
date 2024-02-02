@@ -5,9 +5,8 @@ services:
     restart: always
     build: .
     volumes:
-      # - db_data:/data
       - ./media:/media # Mount host path to media folder
-      - ./data/db.sqlite3:/db.sqlite3 # Mount host path to media folder
+      - ./data:/data # Mount host path to media folder
     networks:
       - db_network
       - web_network
@@ -28,5 +27,3 @@ networks:
     driver: bridge
   web_network:
     driver: bridge
-# volumes:
-#   db_data:
