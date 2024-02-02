@@ -6,14 +6,32 @@ import os
 import uuid
 from django.utils.deconstruct import deconstructible
 from home.storage import OverwriteStorage
+from django.utils.text import slugify
 
-def get_img_upload_path(instance, filename):
+def get_img_upload_path_profile(instance, filename):
     return f"profile_pics/{instance.ust_id}.{filename.split('.')[-1]}"
+
+def get_img_upload_path_akku(instance, filename):
+    return f"Akkuvariante/{convert_to_url_format(instance.akkuvariante_name)}.{filename.split('.')[-1]}"
+
+def get_img_upload_path_kabel(instance, filename):
+    return f"Kabelvariante/{convert_to_url_format(instance.kabelvariante_name)}.{filename.split('.')[-1]}"
+
+def get_img_upload_path_masse(instance, filename):
+    return f"Maße/{convert_to_url_format(instance.kabelvariante_name)}.{filename.split('.')[-1]}"
+
+def get_img_upload_path_schnittstelle(instance, filename):
+    return f"Schnittstellen/{convert_to_url_format(instance.schnittstelle_name)}.{filename.split('.')[-1]}"
+
+def convert_to_url_format(input_string):
+    # Replace spaces with underscores and hyphens with double underscores
+    formatted_string = input_string.replace(' ', '_').replace('–', '').replace('-', '__')
+    return formatted_string
 
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     ust_id = models.CharField(max_length=50, primary_key=True)
-    image = models.ImageField(default='default.png', upload_to=get_img_upload_path, storage=OverwriteStorage())
+    image = models.ImageField(default='default.png', upload_to=get_img_upload_path_profile, storage=OverwriteStorage())
     unternehmensname = models.CharField(max_length=255, null=True)
     land = models.CharField(max_length=100, null=True)
     address = models.TextField(null=True)
@@ -36,21 +54,21 @@ class CustomerProfile(models.Model):
 
 class Akkuvariante(models.Model):
     akkuvariante_name = models.CharField(max_length=255, primary_key=True)
-    akkuvariante_image_path = models.ImageField(default='default.png', upload_to='Akkuvariante')
+    akkuvariante_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_akku)
 
     def save(self, *args, **kwargs):
         # Check if there's an existing object with the same name
         existing_object = Akkuvariante.objects.filter(akkuvariante_name=self.akkuvariante_name).first()
 
-        # If there's an existing object, delete its image before saving the new one
-        if existing_object and existing_object.akkuvariante_image_path:
+        # If there's an existing object and a new file is uploaded, delete its old image before saving the new one
+        if existing_object and self.akkuvariante_image_path != existing_object.akkuvariante_image_path:
             existing_image_path = existing_object.akkuvariante_image_path.path
             if os.path.exists(existing_image_path):
                 os.remove(existing_image_path)
 
         # Ensure the uploaded image has the filename 'akkuvariante_name.png'
         if self.akkuvariante_image_path:
-            filename = f"{self.akkuvariante_name}.png"
+            filename = f"{convert_to_url_format(self.akkuvariante_name)}.png"
             self.akkuvariante_image_path.name = os.path.join('Akkuvariante', filename)
 
         super().save(*args, **kwargs)
@@ -60,10 +78,10 @@ class Akkuvariante(models.Model):
 
 class Kabelvariante(models.Model):
     kabelvariante_name = models.CharField(max_length=255, primary_key=True)
-    kabelvariante_image_path = models.ImageField(default='default.png', upload_to='Kabelvariante')
+    kabelvariante_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_kabel, storage=OverwriteStorage())
     main_part_min_length = models.IntegerField(null=True)
     split_part_min_length = models.IntegerField(null=True)
-    masse_image_path = models.ImageField(default='default.png', upload_to='Maße')
+    masse_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_masse, storage=OverwriteStorage())
     splits = models.IntegerField(null=True)
 
     def save(self, *args, **kwargs):
@@ -72,23 +90,23 @@ class Kabelvariante(models.Model):
 
         # If there's an existing object, delete its images before saving the new ones
         if existing_object:
-            if existing_object.kabelvariante_image_path:
+            if existing_object.kabelvariante_image_path and self.kabelvariante_image_path != existing_object.kabelvariante_image_path:
                 existing_image_path = existing_object.kabelvariante_image_path.path
                 if os.path.exists(existing_image_path):
                     os.remove(existing_image_path)
 
-            if existing_object.masse_image_path:
+            if existing_object.masse_image_path and self.masse_image_path != existing_object.masse_image_path:
                 existing_masse_image_path = existing_object.masse_image_path.path
                 if os.path.exists(existing_masse_image_path):
                     os.remove(existing_masse_image_path)
 
         # Ensure the uploaded images have the correct filenames
         if self.kabelvariante_image_path:
-            filename = f"{self.kabelvariante_name}.png"
+            filename = f"{convert_to_url_format(self.kabelvariante_name)}.png"
             self.kabelvariante_image_path.name = os.path.join('Kabelvariante', filename)
 
         if self.masse_image_path:
-            filename = f"{self.kabelvariante_name}Maße.png"
+            filename = f"{convert_to_url_format(self.kabelvariante_name)}Maße.png"
             self.masse_image_path.name = os.path.join('Maße', filename)
 
         super().save(*args, **kwargs)
@@ -98,21 +116,21 @@ class Kabelvariante(models.Model):
 
 class Schnittstelle(models.Model):
     schnittstelle_name = models.CharField(max_length=255, primary_key=True)
-    schnittstelle_image_path = models.ImageField(default='default.png', upload_to='Schnittstellen')
+    schnittstelle_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_schnittstelle, storage=OverwriteStorage())
 
     def save(self, *args, **kwargs):
         # Check if there's an existing object with the same name
         existing_object = Schnittstelle.objects.filter(schnittstelle_name=self.schnittstelle_name).first()
 
         # If there's an existing object, delete its image before saving the new one
-        if existing_object and existing_object.schnittstelle_image_path:
+        if existing_object and existing_object.schnittstelle_image_path and self.schnittstelle_image_path != existing_object.schnittstelle_image_path:
             existing_image_path = existing_object.schnittstelle_image_path.path
             if os.path.exists(existing_image_path):
                 os.remove(existing_image_path)
 
         # Ensure the uploaded image has the filename 'schnittstelle_name.png'
         if self.schnittstelle_image_path:
-            filename = f"{self.schnittstelle_name}.png"
+            filename = f"{convert_to_url_format(self.schnittstelle_name)}.png"
             self.schnittstelle_image_path.name = os.path.join('Schnittstellen', filename)
 
         super().save(*args, **kwargs)
