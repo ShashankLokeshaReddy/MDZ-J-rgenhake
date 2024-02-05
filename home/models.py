@@ -163,7 +163,7 @@ class InCartItem(models.Model):
         ('Ja', 'Ja'),
         ('Nein', 'Nein'),
     ]
-    item_number = models.CharField(max_length=255, primary_key=True)
+    item_nummer = models.CharField(max_length=255, primary_key=True)
     ust_id = models.CharField(max_length=50, null=True)
     # item_details = models.CharField(max_length=255, null=True)
     akkuvariante = models.CharField(max_length=255, null=True)
@@ -171,12 +171,13 @@ class InCartItem(models.Model):
     kabelvariante = models.CharField(max_length=255, null=True)
     schnittstelle = models.CharField(max_length=255, null=True)
     masse = models.CharField(max_length=255, null=True)
-    quantity = models.FloatField(null=True)
-    price = models.FloatField(null=True)
-    total = models.FloatField(null=True)
+    menge = models.FloatField(null=True)
+    original_preis = models.FloatField(null=True)
+    reduzierter_preis = models.FloatField(null=True)
+    gesamt = models.FloatField(null=True)
 
     def __str__(self):
-        return self.item_number
+        return self.item_nummer
 
 class Order(models.Model):
     ORDER_STATUS_CHOICES = [
@@ -185,10 +186,10 @@ class Order(models.Model):
         ('Cancelled', 'Cancelled'),
     ]
 
-    order_number = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    order_nummer = models.UUIDField(primary_key=True, default=uuid.uuid4)
     ust_id = models.CharField(max_length=50, null=True)
-    order_date = models.DateTimeField(auto_now_add=True)
-    order_details = models.CharField(max_length=255, null=True)
+    order_datum = models.DateTimeField(auto_now_add=True)
+    bestelldetails = models.CharField(max_length=255, null=True)
     order_status = models.CharField(max_length=255, null=True, choices=ORDER_STATUS_CHOICES, default='Ordered')
 
     def update_status(self, new_status):
@@ -216,7 +217,7 @@ class OrderItem(models.Model):
         ('Nein', 'Nein'),
     ]
     order = models.ForeignKey(Order, on_delete=models.CASCADE, db_constraint=False)
-    item_number = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    item_nummer = models.UUIDField(primary_key=True, default=uuid.uuid4)
     ust_id = models.CharField(max_length=50, null=True)
     # item_details = models.CharField(max_length=255, null=True)
     mit_120_Ohm_CAN_Bus_Widerstand = models.CharField(max_length=255, null=True, choices=CAN_BUS_STATUS_CHOICES, default='Nein')
@@ -224,9 +225,10 @@ class OrderItem(models.Model):
     kabelvariante = models.CharField(max_length=255, null=True)
     schnittstelle = models.CharField(max_length=255, null=True)
     masse = models.CharField(max_length=255, null=True)
-    quantity = models.FloatField(null=True)
-    price = models.FloatField(null=True)
-    total = models.FloatField(null=True)
+    menge = models.FloatField(null=True)
+    original_preis = models.FloatField(null=True)
+    reduzierter_preis = models.FloatField(null=True)
+    gesamt = models.FloatField(null=True)
 
 class PreisListe(models.Model):
     kabelvariante = models.CharField(max_length=50, null=True)
@@ -248,11 +250,11 @@ class SpezielleBestellung(models.Model):
         ('Delivered', 'Delivered'),
         ('Cancelled', 'Cancelled'),
     ]
-    order_number = models.CharField(max_length=255, primary_key=True)
+    order_nummer = models.CharField(max_length=255, primary_key=True)
     Ust_id = models.CharField(max_length=255, null=True)
-    Order_Date = models.DateTimeField(auto_now_add=True, null=True)
+    order_datum = models.DateTimeField(auto_now_add=True, null=True)
     Status = models.CharField(max_length=255, null=True, choices=ORDER_STATUS_CHOICES, default='InCart')
-    uploaded_file = models.FileField(upload_to="special_orders/", null=True)
+    hochgeladene_datei = models.FileField(upload_to="special_orders/", null=True)
 
     def __str__(self):
-        return f"Special Order {self.order_number}"
+        return f"Special Order {self.order_nummer}"

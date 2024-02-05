@@ -9,35 +9,35 @@
         <section class="layoutblock lb-10col-width lb-hinweisausgabe">
             <div class="content anlauf_text">
                 <p style="text-align: center;">
-                    Orders
+                    Aufträge
                 </p>
             </div>
         </section>
         <form id="deleteOrderForm" method="post">
             {% csrf_token %}
-            <input type="hidden" name="order_number" id="deleteOrderNumber">
+            <input type="hidden" name="order_nummer" id="deleteOrderNumber">
         </form>
         <div class="accordion m-3" id="ordersAccordion">
             {% for order in orders %}
-            <div class="container order-row m-2 p-0" data-order-number="{{ order.order_number }}" data-total="{{ order.total }}">
+            <div class="container order-row m-2 p-0" data-order-number="{{ order.order_nummer }}" data-gesamt="{{ order.gesamt }}">
                 <div class="accordion-item col p-0">
-                    <div class="accordion-header" id="heading{{ order.order_number }}">
-                        <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ order.order_number }}" aria-expanded="false" aria-controls="collapse{{ order.order_number }}">
+                    <div class="accordion-header" id="heading{{ order.order_nummer }}">
+                        <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ order.order_nummer }}" aria-expanded="false" aria-controls="collapse{{ order.order_nummer }}">
                             <div class="container">
                                 <div class="row">
                                     <span class="col">
-                                        <h4>Order #{{ order.order_number }}</h4>
+                                        <h4>Order #{{ order.order_nummer }}</h4>
                                     </span>
                                     <span class="col">
                                         <div class="container">
-                                            <small class="row text-uppercase fw-light">Order Date</small>
-                                            <b class="row order-date bold">{{ order.order_date }}</b>
+                                            <small class="row text-uppercase fw-light">Auftragsdatum</small>
+                                            <b class="row order-date bold">{{ order.order_datum }}</b>
                                         </div>
                                     </span>
                                     <span class="col">
                                         <div class="container">
-                                            <small class="row text-uppercase fw-light">Total</small>
-                                            <b class="row total bold">€{{ order.total }}</b>
+                                            <small class="row text-uppercase fw-light">Gesamt</small>
+                                            <b class="row gesamt bold">€{{ order.gesamt }}</b>
                                         </div>
                                     </span>
                                     <span class="col">
@@ -57,42 +57,48 @@
                             </div>
                         </div>
                     </div>
-                    <div id="collapse{{ order.order_number }}" class="accordion-collapse collapse" aria-labelledby="heading{{ order.order_number }}" data-bs-parent="#ordersAccordion">
+                    <div id="collapse{{ order.order_nummer }}" class="accordion-collapse collapse" aria-labelledby="heading{{ order.order_nummer }}" data-bs-parent="#ordersAccordion">
                         <div class="container">
                             <div class="accordion m-3 row" id="orderItemsAccordion">
                                 {% for item in order.items %}
-                                <div class="container item-row m-2 p-0" data-item-number="{{ item.item_number }}" data-price="{{ item.price }}">
+                                <div class="container item-row m-2 p-0" data-item-number="{{ item.item_nummer }}" data-original_preis="{{ item.original_preis }}" data-reduzierter_preis="{{ item.reduzierter_preis }}">
                                     <div class="accordion-item col p-0">
-                                        <div class="accordion-header" id="itemHeading{{ item.item_number }}">
-                                            <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ item.item_number }}" aria-expanded="false" aria-controls="collapse{{ item.item_number }}">
+                                        <div class="accordion-header" id="itemHeading{{ item.item_nummer }}">
+                                            <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ item.item_nummer }}" aria-expanded="false" aria-controls="collapse{{ item.item_nummer }}">
                                                 <div class="container">
                                                     <div class="row">
                                                         <span class="col">
-                                                            <h4>Item #{{ item.item_number }}</h4>
+                                                            <h4>Item #{{ item.item_nummer }}</h4>
                                                         </span>
                                                         <span class="col">
                                                             <div class="container">
-                                                                <small class="row text-uppercase fw-light">Price</small>
-                                                                <b class="row price bold">€{{ item.price }}</b>
+                                                                <small class="row text-uppercase fw-light">Original Preis</small>
+                                                                <b class="row original_preis bold">€{{ item.original_preis }}</b>
                                                             </div>
                                                         </span>
                                                         <span class="col">
                                                             <div class="container">
-                                                                <small class="row text-uppercase fw-light">Quantity</small>
-                                                                <b class="row quantity">{{ item.quantity }}</b>
+                                                                <small class="row text-uppercase fw-light">Reduzierter Preis</small>
+                                                                <b class="row reduzierter_preis bold">€{{ item.reduzierter_preis }}</b>
                                                             </div>
                                                         </span>
                                                         <span class="col">
                                                             <div class="container">
-                                                                <small class="row text-uppercase fw-light">Total Price</small>
-                                                                <b class="row total-price">€{{ item.total }}</b>
+                                                                <small class="row text-uppercase fw-light">menge</small>
+                                                                <b class="row menge">{{ item.menge }}</b>
+                                                            </div>
+                                                        </span>
+                                                        <span class="col">
+                                                            <div class="container">
+                                                                <small class="row text-uppercase fw-light">Gesamt Preis</small>
+                                                                <b class="row gesamt-price">€{{ item.gesamt }}</b>
                                                             </div>
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="collapse{{ item.item_number }}" class="accordion-collapse collapse" aria-labelledby="heading{{ item.item_number }}" data-bs-parent="#orderItemsAccordion">
+                                        <div id="collapse{{ item.item_nummer }}" class="accordion-collapse collapse" aria-labelledby="heading{{ item.item_nummer }}" data-bs-parent="#orderItemsAccordion">
                                             <div class="accordion-body">
                                                 Akkuvariante: <span class="item-akkuvariante">{{ item.akkuvariante }}</span>
                                             </div>
@@ -127,17 +133,17 @@
         <div class="pagination">
             <span class="step-links">
                 {% if orders.has_previous %}
-                    <a href="?page=1">&laquo; first</a>
-                    <a href="?page={{ orders.previous_page_number }}">previous</a>
+                    <a href="?page=1">&laquo; erste</a>
+                    <a href="?page={{ orders.previous_page_number }}">vorherige</a>
                 {% endif %}
 
                 <span class="current">
-                    Page {{ orders.number }} of {{ orders.paginator.num_pages }}.
+                    Seite {{ orders.number }} of {{ orders.paginator.num_pages }}.
                 </span>
 
                 {% if orders.has_next %}
-                    <a href="?page={{ orders.next_page_number }}">next</a>
-                    <a href="?page={{ orders.paginator.num_pages }}">last &raquo;</a>
+                    <a href="?page={{ orders.next_page_number }}">nächste</a>
+                    <a href="?page={{ orders.paginator.num_pages }}">zuletzt &raquo;</a>
                 {% endif %}
             </span>
         </div>
@@ -160,7 +166,7 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
                             },
-                            body: JSON.stringify({'order_number': orderNumber}),
+                            body: JSON.stringify({'order_nummer': orderNumber}),
                         })
                         .then(response => {
                             if (!response.ok) {
@@ -193,7 +199,7 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
                             },
-                            body: JSON.stringify({'order_number': orderNumber}),
+                            body: JSON.stringify({'order_nummer': orderNumber}),
                         })
                         .then(response => {
                             if (!response.ok) {

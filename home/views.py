@@ -61,6 +61,7 @@ def register(request):
             'footer_copyright_info': footer_copyright_info,
             })
 
+@login_required
 def index(request):
     customer_profiles = get_customer_profiles(request)
     colors = get_colors(request)
@@ -303,23 +304,24 @@ def orders(request):
     footer_copyright_info = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'footer-copyright-info'), '')
 
     # Filter orders based on the current user's ust_id
-    orders = Order.objects.filter(ust_id=request.user.customerprofile.ust_id).order_by('-order_date')
-    user_orders = [{'order_number': order.order_number,
+    orders = Order.objects.filter(ust_id=request.user.customerprofile.ust_id).order_by('-order_datum')
+    user_orders = [{'order_nummer': order.order_nummer,
              'ust_id': order.ust_id,
-             'order_date': order.order_date,
-             'order_details': order.order_details,
+             'order_datum': order.order_datum,
+             'bestelldetails': order.bestelldetails,
              'order_status' : order.order_status,
-             'total': sum([item.total for item in order.orderitem_set.all()]),
+             'gesamt': sum([item.gesamt for item in order.orderitem_set.all()]),
              'items': [{
-                 'item_number': item.item_number,
+                 'item_nummer': item.item_nummer,
                  'mit_120_Ohm_CAN_Bus_Widerstand': item.mit_120_Ohm_CAN_Bus_Widerstand,
                  'akkuvariante': item.akkuvariante,
                  'kabelvariante': item.kabelvariante,
                  'schnittstelle': item.schnittstelle,
                  'masse': item.masse,
-                 'quantity': item.quantity,
-                 'price': item.price,
-                 'total': item.total
+                 'menge': item.menge,
+                 'original_preis': item.original_preis,
+                 'reduzierter_preis': item.reduzierter_preis,
+                 'gesamt': item.gesamt
              } for item in order.orderitem_set.all()]
              } for order in orders]
 
@@ -484,21 +486,22 @@ def get_image_path(request):
 def get_orders(request):
     try:
         orders = Order.objects.filter(ust_id=request.user.customerprofile.ust_id)
-        data = [{'order_number': order.order_number,
+        data = [{'order_nummer': order.order_nummer,
                 'ust_id': order.ust_id,
-                'order_date': order.order_date,
-                'order_details': order.order_details,
+                'order_datum': order.order_datum,
+                'bestelldetails': order.bestelldetails,
                 'order_status' : order.order_status,
                 'items': [{
-                    'item_number': item.item_number,
+                    'item_nummer': item.item_nummer,
                     'mit_120_Ohm_CAN_Bus_Widerstand': item.mit_120_Ohm_CAN_Bus_Widerstand,
                     'akkuvariante': item.akkuvariante,
                     'kabelvariante': item.kabelvariante,
                     'schnittstelle': item.schnittstelle,
                     'masse': item.masse,
-                    'quantity': item.quantity,
-                    'price': item.price,
-                    'total': item.total
+                    'menge': item.menge,
+                    'original_preis': item.original_preis,
+                    'reduzierter_preis': item.reduzierter_preis,
+                    'gesamt': item.gesamt
                 } for item in orders.orderitem_set.all()]
                 } for order in orders]
     except Exception as e:
@@ -511,15 +514,16 @@ def get_orders(request):
 def get_in_cart_items(request):
     inCartItems = InCartItem.objects.all()
     try:
-        data = [{'item_number': inCartItem.item_number,
+        data = [{'item_nummer': inCartItem.item_nummer,
              'ust_id': inCartItem.ust_id,
              'akkuvariante': inCartItem.akkuvariante,
              'kabelvariante': inCartItem.kabelvariante,
              'schnittstelle ': inCartItem.schnittstelle,
              'masse ': inCartItem.masse,
-             'quantity' : inCartItem.quantity,
-             'price': inCartItem.price,
-             'total': inCartItem.total} for inCartItem in inCartItems.filter(ust_id=request.user.customerprofile.ust_id)]
+             'menge' : inCartItem.menge,
+             'original_preis': inCartItem.original_preis,
+             'reduzierter_preis': inCartItem.reduzierter_preis,
+             'gesamt': inCartItem.gesamt} for inCartItem in inCartItems.filter(ust_id=request.user.customerprofile.ust_id)]
     except Exception as e:
         print(f"Error getting user in cart items: {str(e)}")
         return []
@@ -531,10 +535,10 @@ def get_in_cart_items(request):
 def cancel_order(request):
     try:
         json_data = json.loads(request.body)
-        order_number = json_data['order_number']
+        order_nummer = json_data['order_nummer']
 
-        # Cancel the order with the given order_number
-        Order.objects.filter(order_number=order_number).update(order_status='Cancelled')
+        # Cancel the order with the given order_nummer
+        Order.objects.filter(order_nummer=order_nummer).update(order_status='Cancelled')
 
         try:
             send_cancel_notification(request)
@@ -549,10 +553,10 @@ def cancel_order(request):
 def order_again(request):
     try:
         json_data = json.loads(request.body)
-        order_number = json_data['order_number']
+        order_nummer = json_data['order_nummer']
 
         # Cancel the order with the given order_again
-        Order.objects.filter(order_number=order_number).update(order_status='Ordered')
+        Order.objects.filter(order_nummer=order_nummer).update(order_status='Ordered')
 
         try:
             send_reorder_notification(request)
@@ -567,10 +571,10 @@ def order_again(request):
 def delete_item(request):
     try:
         json_data = json.loads(request.body)
-        item_number = json_data['item_number']
+        item_nummer = json_data['item_nummer']
 
-        # Delete the item with the given item_number
-        InCartItem.objects.filter(item_number=item_number).delete()
+        # Delete the item with the given item_nummer
+        InCartItem.objects.filter(item_nummer=item_nummer).delete()
 
         return JsonResponse({'success': True, 'message': 'Cart item deleted successfully.'})
 
@@ -596,23 +600,24 @@ def create_order_with_items(request):
         try:
             for entry in items_in_order:
                 print(f"Received entry: {entry}")
-                item_number = entry['item_number']
+                item_nummer = entry['item_nummer']
                 akkuvariante = entry['akkuvariante']
                 mit_120_Ohm_CAN_Bus_Widerstand = entry['mit_120_Ohm_CAN_Bus_Widerstand']
                 kabelvariante = entry['kabelvariante']
                 schnittstelle = entry['schnittstelle']
                 masse = entry['masse']
-                price = entry['price']
-                quantity = entry['quantity']
-                total = entry['total']
+                original_preis = entry['original_preis']
+                reduzierter_preis = entry['reduzierter_preis']
+                menge = entry['menge']
+                gesamt = entry['gesamt']
 
-                OrderItem.objects.create(order=order, ust_id=ust_id, akkuvariante=akkuvariante, mit_120_Ohm_CAN_Bus_Widerstand=mit_120_Ohm_CAN_Bus_Widerstand, kabelvariante=kabelvariante, schnittstelle=schnittstelle, masse=masse, quantity=quantity, price=price, total=total)
-                InCartItem.objects.filter(item_number=item_number).delete()
+                OrderItem.objects.create(order=order, ust_id=ust_id, akkuvariante=akkuvariante, mit_120_Ohm_CAN_Bus_Widerstand=mit_120_Ohm_CAN_Bus_Widerstand, kabelvariante=kabelvariante, schnittstelle=schnittstelle, masse=masse, menge=menge, original_preis=original_preis, reduzierter_preis=reduzierter_preis, gesamt=gesamt)
+                InCartItem.objects.filter(item_nummer=item_nummer).delete()
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Error creating order items: {str(e)} {order}'})
 
         print("Update orders success")
-        messages.success(request, f'Your orders have been submitted!')
+        messages.success(request, f'Ihre Bestellungen wurden übermittelt!')
         return JsonResponse({'success': True, 'message': 'Orders updated successfully'})
 
     except Exception as e:
@@ -634,7 +639,9 @@ def add_item_to_cart(request):
         kabelvariante = json_data.get('kabelvariante', '')
         schnittstelle = ', '.join(json_data.get('schnittstelle', []))
         masse = ', '.join(json_data.get('masse', []))
-        price = float(match.group())
+        original_preis = float(match.group())
+        reduzierter_preis = float(match.group())
+        preisliste = get_preisliste(request)
 
         # Check if the item with matching values exists
         existing_item = InCartItem.objects.filter(
@@ -644,28 +651,66 @@ def add_item_to_cart(request):
             kabelvariante=kabelvariante,
             schnittstelle=schnittstelle,
             masse=masse,
-            price=price
+            original_preis=original_preis
         ).first()
 
         if existing_item:
-            # Item already exists, update quantity
-            existing_item.quantity += 1
-            existing_item.total = existing_item.quantity * existing_item.price
+            # Item already exists, update menge
+            existing_item.menge += 1
+            if existing_item.menge < 25:
+                existing_item.gesamt = existing_item.menge * existing_item.original_preis
+            if existing_item.menge >= 25 and existing_item.menge < 50:
+                for preislist in preisliste:
+                    if preislist['gehause'] == existing_item.akkuvariante and preislist['kabelvariante'] == existing_item.kabelvariante and float(preislist['qty_1']) == existing_item.original_preis:
+                        existing_item.gesamt = existing_item.menge * float(preislist['qty_25'])
+                        existing_item.reduzierter_preis = float(preislist['qty_25'])
+            if existing_item.menge >= 50 and existing_item.menge < 100:
+                for preislist in preisliste:
+                    if preislist['gehause'] == existing_item.akkuvariante and preislist['kabelvariante'] == existing_item.kabelvariante and float(preislist['qty_1']) == existing_item.original_preis:
+                        existing_item.gesamt = existing_item.menge * float(preislist['qty_50'])  
+                        existing_item.reduzierter_preis = float(preislist['qty_50'])
+            if existing_item.menge >= 100 and existing_item.menge < 250:
+                for preislist in preisliste:
+                    if preislist['gehause'] == existing_item.akkuvariante and preislist['kabelvariante'] == existing_item.kabelvariante and float(preislist['qty_1']) == existing_item.original_preis:
+                        existing_item.gesamt = existing_item.menge * float(preislist['qty_100'])
+                        existing_item.reduzierter_preis = float(preislist['qty_100']) 
+            if existing_item.menge >= 250 and existing_item.menge < 500:
+                for preislist in preisliste:
+                    if preislist['gehause'] == existing_item.akkuvariante and preislist['kabelvariante'] == existing_item.kabelvariante and float(preislist['qty_1']) == existing_item.original_preis:
+                        existing_item.gesamt = existing_item.menge * float(preislist['qty_250'])
+                        existing_item.reduzierter_preis = float(preislist['qty_250']) 
+            if existing_item.menge >= 500 and existing_item.menge < 1000:
+                for preislist in preisliste:
+                    if preislist['gehause'] == existing_item.akkuvariante and preislist['kabelvariante'] == existing_item.kabelvariante and float(preislist['qty_1']) == existing_item.original_preis:
+                        existing_item.gesamt = existing_item.menge * float(preislist['qty_500']) 
+                        existing_item.reduzierter_preis = float(preislist['qty_500'])
+            if existing_item.menge >= 1000 and existing_item.menge < 2000:
+                for preislist in preisliste:
+                    if preislist['gehause'] == existing_item.akkuvariante and preislist['kabelvariante'] == existing_item.kabelvariante and float(preislist['qty_1']) == existing_item.original_preis:
+                        existing_item.gesamt = existing_item.menge * float(preislist['qty_1000'])
+                        existing_item.reduzierter_preis = float(preislist['qty_1000'])
+            if existing_item.menge >= 2000:
+                for preislist in preisliste:
+                    if preislist['gehause'] == existing_item.akkuvariante and preislist['kabelvariante'] == existing_item.kabelvariante and float(preislist['qty_1']) == existing_item.original_preis:
+                        existing_item.gesamt = existing_item.menge * float(preislist['qty_2000'])
+                        existing_item.reduzierter_preis = float(preislist['qty_2000'])
+
             existing_item.save()
         else:
             # Item does not exist, create a new entry
-            item_number = str(uuid.uuid4())
+            item_nummer = str(uuid.uuid4())
             InCartItem.objects.create(
-                item_number=item_number,
+                item_nummer=item_nummer,
                 ust_id=ust_id,
                 akkuvariante=akkuvariante,
                 mit_120_Ohm_CAN_Bus_Widerstand=CAN_Bus,
                 kabelvariante=kabelvariante,
                 schnittstelle=schnittstelle,
                 masse=masse,
-                quantity=1,
-                price=price,
-                total=price
+                menge=1,
+                original_preis=original_preis,
+                reduzierter_preis=reduzierter_preis,
+                gesamt=original_preis
             )
 
         return JsonResponse({'success': True, 'message': 'Cart item updated/created successfully.'})
@@ -678,37 +723,40 @@ def add_item_to_cart(request):
         match = re.search(r'\d+\.\d+', json_data['preis'])
 
         ust_id = request.user.customerprofile.ust_id
-        item_number = str(uuid.uuid4())
+        item_nummer = str(uuid.uuid4())
         akkuvariante = json_data.get('akkuvarianteName', '')
         CAN_Bus = json_data.get('CAN_Bus', '')
         kabelvariante = json_data.get('kabelvariante', '')
         schnittstelle = ', '.join(json_data.get('schnittstelle', []))
         masse = ', '.join(json_data.get('masse', []))
-        price = float(match.group())
+        original_preis = float(match.group())
+        reduzierter_preis = float(match.group())
         
         inCartItems = InCartItem.objects.all()
-        data = [{'item_number': inCartItem.item_number,
+        data = [{'item_nummer': inCartItem.item_nummer,
              'ust_id': inCartItem.ust_id,
              'akkuvariante': inCartItem.akkuvariante,
              'mit_120_Ohm_CAN_Bus_Widerstand':inCartItem.mit_120_Ohm_CAN_Bus_Widerstand,
              'kabelvariante': inCartItem.kabelvariante,
              'schnittstelle ': inCartItem.schnittstelle,
              'masse ': inCartItem.masse,
-             'quantity' : inCartItem.quantity,
-             'price': inCartItem.price,
-             'total': inCartItem.total} for inCartItem in inCartItems.filter(ust_id=ust_id)]
+             'menge' : inCartItem.menge,
+             'original_preis': inCartItem.original_preis,
+             'reduzierter_preis': inCartItem.reduzierter_preis,
+             'gesamt': inCartItem.gesamt} for inCartItem in inCartItems.filter(ust_id=ust_id)]
     
         cart_item = InCartItem.objects.create(
-            item_number=item_number,
+            item_nummer=item_nummer,
             ust_id=ust_id,
             akkuvariante=akkuvariante,
             mit_120_Ohm_CAN_Bus_Widerstand=CAN_Bus,
             kabelvariante=kabelvariante,
             schnittstelle=schnittstelle,
             masse=masse,
-            quantity=1,
-            price=price,
-            total=price
+            menge=1,
+            original_preis=original_preis,
+            reduzierter_preis=reduzierter_preis,
+            gesamt=original_preis
         )
 
         return JsonResponse({'success': True, 'message': 'Cart item created successfully.'}, status=201)
@@ -718,13 +766,13 @@ def add_item_to_cart(request):
 
 def send_cancel_notification(request):
     json_data = json.loads(request.body)
-    order_number = json_data['order_number']
+    order_nummer = json_data['order_nummer']
 
-    order = Order.objects.filter(order_number=order_number, ust_id=request.user.customerprofile.ust_id).first()
+    order = Order.objects.filter(order_nummer=order_nummer, ust_id=request.user.customerprofile.ust_id).first()
 
-    subject = f"Order #{order.order_number} has been cancelled!"
+    subject = f"Order #{order.order_nummer} has been cancelled!"
     body = f"""
-    Your order #{order.order_number} has been cancelled.
+    Your order #{order.order_nummer} has been cancelled.
     """
 
     send_email_notification(request, subject, body)
@@ -732,13 +780,13 @@ def send_cancel_notification(request):
 
 def send_reorder_notification(request):
     json_data = json.loads(request.body)
-    order_number = json_data['order_number']
+    order_nummer = json_data['order_nummer']
 
-    order = Order.objects.filter(order_number=order_number, ust_id=request.user.customerprofile.ust_id).first()
+    order = Order.objects.filter(order_nummer=order_nummer, ust_id=request.user.customerprofile.ust_id).first()
 
-    subject = f"Order #{order.order_number} has been reordered!"
+    subject = f"Order #{order.order_nummer} has been reordered!"
     body = f"""
-    Your cancelled order #{order.order_number} has been reordered again.
+    Your cancelled order #{order.order_nummer} has been reordered again.
     """
     send_email_notification(request, subject, body)
     return
@@ -766,11 +814,11 @@ def send_email_notification(request, subject, body):
 @require_POST
 def upload_special_solution(request):
     try:
-        order_number = str(uuid.uuid4())
+        order_nummer = str(uuid.uuid4())
         Ust_id = request.user.customerprofile.ust_id
         Status = 'Ordered'
-        uploaded_file = request.FILES.get('specialfile')
-        special_order = SpezielleBestellung(order_number=order_number, Ust_id=Ust_id, Status=Status, uploaded_file=uploaded_file)
+        hochgeladene_datei = request.FILES.get('specialfile')
+        special_order = SpezielleBestellung(order_nummer=order_nummer, Ust_id=Ust_id, Status=Status, hochgeladene_datei=hochgeladene_datei)
         special_order.save()
 
         return JsonResponse({'message': 'Datei-Upload erfolgreich. Ihre Bestellung ist bei uns eingegangen und unsere Vertriebsmitarbeiter werden sich in Kürze mit Ihnen in Verbindung setzen'})

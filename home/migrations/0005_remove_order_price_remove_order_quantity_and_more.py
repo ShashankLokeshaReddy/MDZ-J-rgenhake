@@ -13,15 +13,19 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RemoveField(
             model_name='order',
-            name='price',
+            name='original_preis',
         ),
         migrations.RemoveField(
             model_name='order',
-            name='quantity',
+            name='reduzierter_preis',
+        ),
+        migrations.RemoveField(
+            model_name='order',
+            name='menge',
         ),
         migrations.AlterField(
             model_name='order',
-            name='order_number',
+            name='order_nummer',
             field=models.AutoField(primary_key=True, serialize=False),
         ),
         migrations.AlterField(
@@ -32,16 +36,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OrderItem',
             fields=[
-                ('item_number', models.CharField(max_length=255, primary_key=True, serialize=False)),
+                ('item_nummer', models.CharField(max_length=255, primary_key=True, serialize=False)),
                 ('ust_id', models.CharField(max_length=50, null=True)),
                 ('mit_120_Ohm_CAN_Bus_Widerstand', models.CharField(max_length=255, null=True, choices=[('Ja','Ja'),('Nein','Nein')], default='Nein')),
                 ('akkuvariante', models.CharField(max_length=255, null=True)),
                 ('kabelvariante', models.CharField(max_length=255, null=True)),
                 ('schnittstelle', models.CharField(max_length=255, null=True)),
                 # ('item_details', models.CharField(max_length=255, null=True)),
-                ('quantity', models.FloatField(null=True)),
-                ('price', models.FloatField(null=True)),
-                ('total', models.FloatField(null=True)),
+                ('menge', models.FloatField(null=True)),
+                ('original_preis', models.FloatField(null=True)),
+                ('reduzierter_preis', models.FloatField(null=True)),
+                ('gesamt', models.FloatField(null=True)),
                 ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='home.order')),
             ],
         ),

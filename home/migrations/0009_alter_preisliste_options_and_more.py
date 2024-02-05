@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='incartitem',
-            name='quantity',
+            name='menge',
             field=models.FloatField(null=True),
         ),
         migrations.AddField(

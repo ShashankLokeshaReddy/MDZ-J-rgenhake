@@ -70,14 +70,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Order',
             fields=[
-                ('order_number', models.CharField(max_length=255, primary_key=True, serialize=False)),
+                ('order_nummer', models.CharField(max_length=255, primary_key=True, serialize=False)),
                 ('ust_id', models.CharField(max_length=50, null=True)),
-                ('order_date', models.DateTimeField(null=True)),
-                ('order_details', models.CharField(max_length=255,null=True)),
+                ('order_datum', models.DateTimeField(null=True)),
+                ('bestelldetails', models.CharField(max_length=255,null=True)),
                 ('order_status', models.CharField(max_length=255,null=True)),
-                ('quantity', models.FloatField(null=True)),
-                ('price', models.FloatField(null=True)),
-                ('total', models.FloatField(null=True)),
+                ('menge', models.FloatField(null=True)),
+                ('original_preis', models.FloatField(null=True)),
+                ('reduzierter_preis', models.FloatField(null=True)),
+                ('gesamt', models.FloatField(null=True)),
             ],
         ),
         migrations.CreateModel(
@@ -105,11 +106,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SpezielleBestellung',
             fields=[
-                ('order_number', models.CharField(max_length=255, primary_key=True, serialize=False)),
+                ('order_nummer', models.CharField(max_length=255, primary_key=True, serialize=False)),
                 ('Ust_id', models.CharField(max_length=50, null=True)),
-                ('Order_Date', models.DateTimeField(null=True)),
+                ('order_datum', models.DateTimeField(null=True)),
                 ('Status', models.CharField(max_length=255,null=True)), 
-                ('uploaded_file', models.FileField(upload_to="special_orders/", null=True)),
+                ('hochgeladene_datei', models.FileField(upload_to="special_orders/", null=True)),
             ],
         ),
     ]

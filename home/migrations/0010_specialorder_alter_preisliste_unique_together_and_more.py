@@ -14,16 +14,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SpecialOrder',
             fields=[
-                ('order_number', models.CharField(max_length=255, primary_key=True, serialize=False)),
+                ('order_nummer', models.CharField(max_length=255, primary_key=True, serialize=False)),
                 ('Ust_Id', models.CharField(max_length=255, null=True)),
-                ('Order_Date', models.DateTimeField(auto_now_add=True, null=True)),
+                ('order_datum', models.DateTimeField(auto_now_add=True, null=True)),
                 ('Status', models.CharField(choices=[('InCart', 'InCart'), ('Ordered', 'Ordered'), ('Delivered', 'Delivered'), ('Cancelled', 'Cancelled')], default='InCart', max_length=255, null=True)),
-                ('uploaded_file', models.FileField(null=True, upload_to='special_orders/')),
+                ('hochgeladene_datei', models.FileField(null=True, upload_to='special_orders/')),
             ],
         ),
         migrations.AlterField(
             model_name='order',
-            name='order_date',
+            name='order_datum',
             field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
             preserve_default=False,
         ),

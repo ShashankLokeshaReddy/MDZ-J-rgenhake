@@ -9,7 +9,7 @@
         <section class="layoutblock lb-10col-width lb-hinweisausgabe">
             <div class="content anlauf_text">
                 <p style="text-align: center;">
-                    In Cart
+                    Warenkorb
                 </p>
             </div>
         </section>
@@ -21,43 +21,49 @@
 
         <div class="accordion m-3" id="cartAccordion">
             {% for item in in_cart_items %}
-            <div class="container item-row m-2 p-0" data-item-number="{{ item.item_number }}" data-price="{{ item.price }}">
+            <div class="container item-row m-2 p-0" data-item-number="{{ item.item_nummer }}" data-original_preis="{{ item.original_preis }}" data-reduzierter_preis="{{ item.reduzierter_preis }}">
                 <div class="accordion-item col p-0">
-                    <div class="accordion-header" id="heading{{ item.item_number }}">
-                    <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ item.item_number }}" aria-expanded="false" aria-controls="collapse{{ item.item_number }}">
+                    <div class="accordion-header" id="heading{{ item.item_nummer }}">
+                    <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ item.item_nummer }}" aria-expanded="false" aria-controls="collapse{{ item.item_nummer }}">
                         <div class="container">
                             <div class="row">
                                 <span class="col">
-                                    <h4>Item #{{ item.item_number }}</h4>
+                                    <h4>Item #{{ item.item_nummer }}</h4>
                                 </span>
                                 <span class="col">
                                     <div class="container">
-                                        <small class="row text-uppercase fw-light">Price</small>
-                                        <b class="row price bold">€{{ item.price }}</b>
+                                        <small class="row text-uppercase fw-light">Original Preis</small>
+                                        <b class="row original_preis bold">€{{ item.original_preis }}</b>
                                     </div>
                                 </span>
                                 <span class="col">
                                     <div class="container">
-                                        <small class="row text-uppercase fw-light">Quantity</small>
-                                        <b class="row quantity">{{ item.quantity }}</b>
+                                        <small class="row text-uppercase fw-light">Reduzierter Preis</small>
+                                        <b class="row reduzierter_preis bold">€{{ item.reduzierter_preis }}</b>
                                     </div>
                                 </span>
                                 <span class="col">
                                     <div class="container">
-                                        <small class="row text-uppercase fw-light">Total Price</small>
-                                        <b class="row total-price">{{ item.total }}</b>
+                                        <small class="row text-uppercase fw-light">Menge</small>
+                                        <b class="row menge">{{ item.menge }}</b>
                                     </div>
                                 </span>
                                 <span class="col">
-                                    <button class="btn btn-sm btn-success increase-quantity">+</button>
-                                    <button class="btn btn-sm btn-danger decrease-quantity">-</button>
-                                    <button class="btn btn-sm btn-warning delete-item" data-toggle="modal" data-target="#deleteOrderModal">Delete</button>
+                                    <div class="container">
+                                        <small class="row text-uppercase fw-light">Gesamt Preis</small>
+                                        <b class="row gesamt-price">{{ item.gesamt }}</b>
+                                    </div>
+                                </span>
+                                <span class="col">
+                                    <button class="btn btn-sm btn-success increase-menge">+</button>
+                                    <button class="btn btn-sm btn-danger decrease-menge">-</button>
+                                    <button class="btn btn-sm btn-warning delete-item" data-toggle="modal" data-target="#deleteOrderModal">Löschen</button>
                                 </span>
                             </div>
                         </div>
                     </div>
                     </div>
-                    <div id="collapse{{ item.item_number }}" class="accordion-collapse collapse" aria-labelledby="heading{{ item.item_number }}" data-bs-parent="#cartAccordion">
+                    <div id="collapse{{ item.item_nummer }}" class="accordion-collapse collapse" aria-labelledby="heading{{ item.item_nummer }}" data-bs-parent="#cartAccordion">
                         <div class="accordion-body">
                             Akkuvariante: <span class="item-akkuvariante">{{ item.akkuvariante }}</span>
                         </div>
@@ -78,7 +84,7 @@
             </div>
             {% endfor %}
             {% if not in_cart_items %}
-                <div class="text-center m-5">No items in cart.</div>
+                <div class="text-center m-5">Keine Artikel im Warenkorb.</div>
             {% endif %}
         </div>
 
@@ -91,15 +97,15 @@
         <!-- Total Price and Submit Button -->
         <div class="row">
             <div class="col">
-                <p>Total Price: <span id="total-price">0</span></p>
+                <p>Gesamt Preis: <span id="gesamt-price">0</span></p>
             </div>
             <div class="col">
                 <form id="submitOrderForm" method="post">
                     {% csrf_token %}
                     {% if not in_cart_items %}
-                        <button type="button" id="submit-order" class="btn btn-outline-info disabled" data-toggle="modal" data-target="#submitOrderModal" aria-disabled="true">Submit Order</button>
+                        <button type="button" id="submit-order" class="btn btn-outline-info disabled" data-toggle="modal" data-target="#submitOrderModal" aria-disabled="true">Bestellung abschicken</button>
                     {% else %}
-                        <button type="button" id="submit-order" class="btn btn-outline-info" data-toggle="modal" data-target="#submitOrderModal">Submit Order</button>
+                        <button type="button" id="submit-order" class="btn btn-outline-info" data-toggle="modal" data-target="#submitOrderModal">Bestellung abschicken</button>
                     {% endif %}
                 </form>
             </div>
@@ -109,17 +115,17 @@
         <div class="pagination">
             <span class="step-links">
                 {% if in_cart_items.has_previous %}
-                    <a href="?page=1">&laquo; first</a>
-                    <a href="?page={{ in_cart_items.previous_page_number }}">previous</a>
+                    <a href="?page=1">&laquo; erste</a>
+                    <a href="?page={{ in_cart_items.previous_page_number }}">vorherige</a>
                 {% endif %}
 
                 <span class="current">
-                    Page {{ in_cart_items.number }} of {{ in_cart_items.paginator.num_pages }}.
+                    Seite {{ in_cart_items.number }} of {{ in_cart_items.paginator.num_pages }}.
                 </span>
 
                 {% if in_cart_items.has_next %}
-                    <a href="?page={{ in_cart_items.next_page_number }}">next</a>
-                    <a href="?page={{ in_cart_items.paginator.num_pages }}">last &raquo;</a>
+                    <a href="?page={{ in_cart_items.next_page_number }}">nächste</a>
+                    <a href="?page={{ in_cart_items.paginator.num_pages }}">zuletzt &raquo;</a>
                 {% endif %}
             </span>
         </div>
@@ -128,7 +134,7 @@
 
         <div>
             <nav style="text-align: center; font-weight: bold;">
-                <a href="/orders" class="nav-link">Click here to View Submitted Orders</a>
+                <a href="/orders" class="nav-link">Klicken Sie hier, um die übermittelten Bestellungen anzuzeigen</a>
             </nav>
         </div>
     </div>
@@ -152,11 +158,11 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
                             },
-                            body: JSON.stringify({'item_number': itemNumber}),
+                            body: JSON.stringify({'item_nummer': itemNumber}),
                         })
                         .then(response => {
                             if (!response.ok) {
-                                throw new Error('Network response was not ok');
+                                throw new Error('Die Netzwerkantwort war nicht in Ordnung');
                             }
                             return response.json();
                         })
@@ -177,15 +183,16 @@
             document.getElementById('submit-order').addEventListener('click', function () {
                 updateTotalPrice();
                 // Prompt user for confirmation
-                if (confirm("Are you sure you want to submit the selected orders?")) {
+                if (confirm("Sind Sie sicher, dass Sie die ausgewählten Bestellungen absenden möchten?")) {
                     var itemsInOrder = [];
 
                     // Collect order details for submission
                     document.querySelectorAll('.item-row').forEach(function (row) {
                         var itemNumber = row.getAttribute('data-item-number');
-                        var price = row.getAttribute('data-price');
-                        var quantity = parseInt(row.querySelector('.quantity').textContent);
-                        var total = parseInt(row.querySelector('.total-price').textContent);
+                        var original_preis = row.getAttribute('data-original_preis');
+                        var reduzierter_preis = parseInt(row.querySelector('.reduzierter_preis').textContent);
+                        var menge = parseInt(row.querySelector('.menge').textContent);
+                        var gesamt = parseInt(row.querySelector('.gesamt-price').textContent);
                         var item_akkuvariante = row.querySelector('.item-akkuvariante').textContent;
                         var item_CAN_Bus = row.querySelector('.item-CAN-Bus').textContent;
                         var item_kabelvariante = row.querySelector('.item-kabelvariante').textContent;
@@ -193,10 +200,11 @@
                         var item_masse = row.querySelector('.item-masse').textContent;
 
                         itemsInOrder.push({
-                            'item_number': itemNumber,
-                            'price': price,
-                            'quantity': quantity,
-                            'total': total,
+                            'item_nummer': itemNumber,
+                            'original_preis': original_preis,
+                            'reduzierter_preis': reduzierter_preis,
+                            'menge': menge,
+                            'gesamt': gesamt,
                             'akkuvariante': item_akkuvariante,
                             'mit_120_Ohm_CAN_Bus_Widerstand': item_akkuvariante,
                             'kabelvariante': item_kabelvariante,
@@ -220,7 +228,7 @@
                     })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                            throw new Error('Die Netzwerkantwort war nicht in Ordnung');
                         }
                         return response.json();
                     })
@@ -235,117 +243,127 @@
                 }
             });
 
-            // Event listener for increasing quantity
-            document.querySelectorAll('.increase-quantity').forEach(function (button) {
+            // Event listener for increasing menge
+            document.querySelectorAll('.increase-menge').forEach(function (button) {
                 button.addEventListener('click', function () {
                     var row = this.closest('.item-row');
                     updateQuantity(row, 1);
                 });
             });
 
-            // Event listener for decreasing quantity
-            document.querySelectorAll('.decrease-quantity').forEach(function (button) {
+            // Event listener for decreasing menge
+            document.querySelectorAll('.decrease-menge').forEach(function (button) {
                 button.addEventListener('click', function () {
                     var row = this.closest('.item-row');
                     updateQuantity(row, -1);
                 });
             });
 
-            // Function to update the quantity and total price
-            function updateQuantity(row, quantityChange) {
+            // Function to update the menge and gesamt price
+            function updateQuantity(row, mengeChange) {
                 // Ensure row is a jQuery object
                 var $row = $(row);
 
-                var quantityElement = $row.find('.quantity');
-                var totalPriceElement = $row.find('.total-price');
-                var price = parseFloat($row.data('price'));
-                var currentQuantity = parseInt(quantityElement.text());
-                var newQuantity = currentQuantity + quantityChange;
+                var mengeElement = $row.find('.menge');
+                var gesamtPriceElement = $row.find('.gesamt-price');
+                var original_preis = parseFloat($row.data('original_preis'));
+                var reduzierter_preis = parseFloat($row.data('reduzierter_preis'));
+                var currentQuantity = parseInt(mengeElement.text());
+                var newQuantity = currentQuantity + mengeChange;
 
-                // Check if the new quantity is at least 0
+                // Check if the new menge is at least 0
                 if (newQuantity >= 0) {
-                    quantityElement.text(newQuantity);
-                    var totalPrice = 0
+                    mengeElement.text(newQuantity);
+                    var gesamtPrice = 0
                     var akkuvariante = $row.find('.item-akkuvariante').text();
                     
                     for (let i = 0; i < preisliste.length; i++) {
-                        if ((akkuvariante.includes(preisliste[i]['gehause'])) && (price === parseFloat(preisliste[i]['qty_1']))) {
+                        if ((akkuvariante.includes(preisliste[i]['gehause'])) && (original_preis === parseFloat(preisliste[i]['qty_1']))) {
                             if (newQuantity < 25) {
-                                totalPrice += newQuantity * price;
+                                gesamtPrice += newQuantity * original_preis;
                             }
                             else if ((newQuantity >= 25) && (newQuantity < 50)) {
-                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_25']);
+                                gesamtPrice += newQuantity * parseFloat(preisliste[i]['qty_25']);
                             }
                             else if ((newQuantity >= 50) && (newQuantity < 100)) {
-                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_50']);
+                                gesamtPrice += newQuantity * parseFloat(preisliste[i]['qty_50']);
                             }
                             else if ((newQuantity >= 100) && (newQuantity < 250)) {
-                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_100']);
+                                gesamtPrice += newQuantity * parseFloat(preisliste[i]['qty_100']);
                             }
                             else if ((newQuantity >= 250) && (newQuantity < 500)) {
-                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_250']);
+                                gesamtPrice += newQuantity * parseFloat(preisliste[i]['qty_250']);
                             }
                             else if ((newQuantity >= 500) && (newQuantity < 1000)) {
-                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_500']);
+                                gesamtPrice += newQuantity * parseFloat(preisliste[i]['qty_500']);
                             }
                             else if ((newQuantity >= 1000) && (newQuantity < 2000)) {
-                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_1000']);
+                                gesamtPrice += newQuantity * parseFloat(preisliste[i]['qty_1000']);
                             }
                             else if (newQuantity >= 2000)  {
-                                totalPrice += newQuantity * parseFloat(preisliste[i]['qty_2000']);
+                                gesamtPrice += newQuantity * parseFloat(preisliste[i]['qty_2000']);
                             }
                         }
                     }
-                    totalPriceElement.text((totalPrice).toFixed(2));
+                    gesamtPriceElement.text((gesamtPrice).toFixed(2));
                     updateTotalPrice();
                 } else {
                     // Display a confirmation prompt to delete the order
-                    if (confirm("Are you sure you want to delete this order?")) {
+                    if (confirm("Sind Sie sicher, dass Sie diese Bestellung löschen möchten?")) {
                         $row.remove();
                         updateTotalPrice();
                     }
                 }
             }
 
-            // Function to update the total price based on the quantity and price of each order
+            // Function to update the gesamt price based on the menge and price of each order
             function updateTotalPrice() {
-                var totalPrice = 0;
+                var gesamtPrice = 0;
+                var reduzierter_preis = 0;
                 $('.item-row').each(function () {
-                    var quantity = parseInt($(this).find('.quantity').text());
-                    var price = parseFloat($(this).data('price'));
+                    var menge = parseInt($(this).find('.menge').text());
+                    var original_preis = parseFloat($(this).data('original_preis'));
                     var akkuvariante = $(this).find('.item-akkuvariante').text();
 
                     for (let i = 0; i < preisliste.length; i++) {
-                        if ((akkuvariante === preisliste[i]['gehause']) && (price === parseFloat(preisliste[i]['qty_1']))) {
-                            if (quantity < 25) {
-                                totalPrice += quantity * price;
+                        if ((akkuvariante === preisliste[i]['gehause']) && (original_preis === parseFloat(preisliste[i]['qty_1']))) {
+                            if (menge < 25) {
+                                gesamtPrice += menge * original_preis;
+                                $(this).find('.reduzierter_preis').text(original_preis);
                             }
-                            else if ((quantity >= 25) && (quantity < 50)) {
-                                totalPrice += quantity * parseFloat(preisliste[i]['qty_25']);
+                            else if ((menge >= 25) && (menge < 50)) {
+                                gesamtPrice += menge * parseFloat(preisliste[i]['qty_25']);
+                                $(this).find('.reduzierter_preis').text(parseFloat(preisliste[i]['qty_25']));
                             }
-                            else if ((quantity >= 50) && (quantity < 100)) {
-                                totalPrice += quantity * parseFloat(preisliste[i]['qty_50']);
+                            else if ((menge >= 50) && (menge < 100)) {
+                                gesamtPrice += menge * parseFloat(preisliste[i]['qty_50']);
+                                $(this).find('.reduzierter_preis').text(parseFloat(preisliste[i]['qty_50']));
                             }
-                            else if ((quantity >= 100) && (quantity < 250)) {
-                                totalPrice += quantity * parseFloat(preisliste[i]['qty_100']);
+                            else if ((menge >= 100) && (menge < 250)) {
+                                gesamtPrice += menge * parseFloat(preisliste[i]['qty_100']);
+                                $(this).find('.reduzierter_preis').text(parseFloat(preisliste[i]['qty_100']));
                             }
-                            else if ((quantity >= 250) && (quantity < 500)) {
-                                totalPrice += quantity * parseFloat(preisliste[i]['qty_250']);
+                            else if ((menge >= 250) && (menge < 500)) {
+                                gesamtPrice += menge * parseFloat(preisliste[i]['qty_250']);
+                                $(this).find('.reduzierter_preis').text(parseFloat(preisliste[i]['qty_250']));
                             }
-                            else if ((quantity >= 500) && (quantity < 1000)) {
-                                totalPrice += quantity * parseFloat(preisliste[i]['qty_500']);
+                            else if ((menge >= 500) && (menge < 1000)) {
+                                gesamtPrice += menge * parseFloat(preisliste[i]['qty_500']);
+                                $(this).find('.reduzierter_preis').text(parseFloat(preisliste[i]['qty_500']));
                             }
-                            else if ((quantity >= 1000) && (quantity < 2000)) {
-                                totalPrice += quantity * parseFloat(preisliste[i]['qty_1000']);
+                            else if ((menge >= 1000) && (menge < 2000)) {
+                                gesamtPrice += menge * parseFloat(preisliste[i]['qty_1000']);
+                                $(this).find('.reduzierter_preis').text(parseFloat(preisliste[i]['qty_1000']));
                             }
-                            else if (quantity >= 2000)  {
-                                totalPrice += quantity * parseFloat(preisliste[i]['qty_2000']);
+                            else if (menge >= 2000)  {
+                                gesamtPrice += menge * parseFloat(preisliste[i]['qty_2000']);
+                                $(this).find('.reduzierter_preis').text(parseFloat(preisliste[i]['qty_2000']));
                             }
                         }
                     }
                 });
-
-                $('#total-price').text(totalPrice.toFixed(2));
+                
+                $('#gesamt-price').text(gesamtPrice.toFixed(2));
             }
         });
     </script>

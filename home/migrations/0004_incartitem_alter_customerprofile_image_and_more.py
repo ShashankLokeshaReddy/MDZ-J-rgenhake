@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='InCartItem',
             fields=[
-                ('item_number', models.CharField(max_length=255, primary_key=True, serialize=False)),
+                ('item_nummer', models.CharField(max_length=255, primary_key=True, serialize=False)),
                 ('ust_id', models.CharField(max_length=50, null=True)),
                 ('mit_120_Ohm_CAN_Bus_Widerstand', models.CharField(max_length=255, null=True, choices=[('Ja','Ja'),('Nein','Nein')], default='Nein')),
                 ('akkuvariante', models.CharField(max_length=255, null=True)),
@@ -20,8 +20,9 @@ class Migration(migrations.Migration):
                 ('schnittstelle', models.CharField(max_length=255, null=True)),
                 # ('item_details', models.CharField(max_length=255, null=True)),
                 ('masse', models.FloatField(null=True)),
-                ('price', models.FloatField(null=True)),
-                ('total', models.FloatField(null=True)),
+                ('original_preis', models.FloatField(null=True)),
+                ('reduzierter_preis', models.FloatField(null=True)),
+                ('gesamt', models.FloatField(null=True)),
             ],
         ),
         migrations.AlterField(
