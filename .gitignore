@@ -10,9 +10,9 @@ env
 /staticfiles/
 
 #src
-*.sqlite*
+# *.sqlite*
 
 .env
 node_modules
 
-media/profile_pics
+# media/profile_pics
