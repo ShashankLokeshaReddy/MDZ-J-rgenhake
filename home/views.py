@@ -97,7 +97,7 @@ def index(request):
     })
 
 @login_required
-def configurator(request):
+def konfigurator(request):
     customer_profiles = get_customer_profiles(request)
     akkuvarianten = get_akkuvarianten(request)
     kabelvarianten = get_kabelvarianten(request)
@@ -166,7 +166,7 @@ def configurator(request):
     })
 
 @login_required
-def profile(request):
+def profil(request):
     ui_labels_data = get_ui_labels(request)
     firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
     firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
@@ -188,7 +188,7 @@ def profile(request):
             userUpdateForm.save()
             profileUpdateForm.save()
             messages.success(request, f'Your profile changes have been saved!')
-            return redirect('profile')
+            return redirect('profil')
     else:
         profileImageUpdateForm = ProfileImageUpdateForm(instance=request.user.customerprofile)
         userUpdateForm = UserUpdateForm(instance=request.user)
@@ -351,7 +351,7 @@ def orders(request):
     return render(request, 'pages/orders.html', context)
 
 @login_required
-def purchase(request):
+def warenkorb(request):
     ui_labels_data = get_ui_labels(request)
     firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
     firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
