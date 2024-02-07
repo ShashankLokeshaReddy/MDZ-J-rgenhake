@@ -28,12 +28,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='customerprofile',
             name='image',
-            field=models.ImageField(default='default.png', upload_to='profile_pics'),
+            field=models.ImageField(default='General/default.png', upload_to='profile_pics'),
         ),
         migrations.AlterField(
             model_name='order',
             name='order_status',
-            field=models.CharField(choices=[('InCart', 'In Cart'), ('Ordered', 'Ordered'), ('Delivered', 'Delivered')], default='InCart', max_length=255, null=True),
+            field=models.CharField(choices=[('InCart', 'In Cart'), ('Bestellt', 'Bestellt'), ('Geliefert', 'Geliefert')], default='InCart', max_length=255, null=True),
         ),
         migrations.AlterField(
             model_name='uilabel',

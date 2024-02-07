@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('order_nummer', models.CharField(max_length=255, primary_key=True, serialize=False)),
                 ('Ust_Id', models.CharField(max_length=255, null=True)),
                 ('order_datum', models.DateTimeField(auto_now_add=True, null=True)),
-                ('Status', models.CharField(choices=[('InCart', 'InCart'), ('Ordered', 'Ordered'), ('Delivered', 'Delivered'), ('Cancelled', 'Cancelled')], default='InCart', max_length=255, null=True)),
+                ('Status', models.CharField(choices=[('InCart', 'InCart'), ('Bestellt', 'Bestellt'), ('Geliefert', 'Geliefert'), ('Abgesagt', 'Abgesagt')], default='InCart', max_length=255, null=True)),
                 ('hochgeladene_datei', models.FileField(null=True, upload_to='special_orders/')),
             ],
         ),

@@ -64,7 +64,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Image',
             fields=[
-                ('image_path', models.CharField(max_length=255, primary_key=True, serialize=False)),
+                ('general_image_name', models.CharField(max_length=255, primary_key=True, serialize=False)),
+                ('general_image_path', models.ImageField(default='default.png', upload_to='General')),
             ],
         ),
         migrations.CreateModel(
