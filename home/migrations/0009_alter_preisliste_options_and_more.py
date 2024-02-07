@@ -32,6 +32,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='order',
             name='order_status',
-            field=models.CharField(choices=[('Ordered', 'Ordered'), ('Delivered', 'Delivered'), ('Cancelled', 'Cancelled')], default='Ordered', max_length=255, null=True),
+            field=models.CharField(choices=[('Bestellt', 'Bestellt'), ('Geliefert', 'Geliefert'), ('Abgesagt', 'Abgesagt')], default='Bestellt', max_length=255, null=True),
         ),
     ]

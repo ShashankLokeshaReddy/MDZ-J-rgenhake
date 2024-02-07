@@ -479,7 +479,7 @@ def get_ui_labels(request):
 
 def get_image_path(request):
     images = Image.objects.all()
-    data = [{'image_path': image.image_path} for image in images]
+    data = [{'image_path': image.general_image_path} for image in images]
     print("get_image_path",data)
     return data # JsonResponse(data, safe=False)
 
@@ -538,7 +538,7 @@ def cancel_order(request):
         order_nummer = json_data['order_nummer']
 
         # Cancel the order with the given order_nummer
-        Order.objects.filter(order_nummer=order_nummer).update(order_status='Cancelled')
+        Order.objects.filter(order_nummer=order_nummer).update(order_status='Abgesagt')
 
         try:
             send_cancel_notification(request)
@@ -556,7 +556,7 @@ def order_again(request):
         order_nummer = json_data['order_nummer']
 
         # Cancel the order with the given order_again
-        Order.objects.filter(order_nummer=order_nummer).update(order_status='Ordered')
+        Order.objects.filter(order_nummer=order_nummer).update(order_status='Bestellt')
 
         try:
             send_reorder_notification(request)
@@ -587,7 +587,7 @@ def create_order_with_items(request):
         json_data = json.loads(request.body)
         items_in_order = json_data['items_in_order']
         ust_id = request.user.customerprofile.ust_id
-        order_status = 'Ordered'
+        order_status = 'Bestellt'
 
         # Print the request data to the console or log file
         print(f"Received json_data request data: {json_data}")
@@ -816,7 +816,7 @@ def upload_special_solution(request):
     try:
         order_nummer = str(uuid.uuid4())
         Ust_id = request.user.customerprofile.ust_id
-        Status = 'Ordered'
+        Status = 'Bestellt'
         hochgeladene_datei = request.FILES.get('specialfile')
         special_order = SpezielleBestellung(order_nummer=order_nummer, Ust_id=Ust_id, Status=Status, hochgeladene_datei=hochgeladene_datei)
         special_order.save()

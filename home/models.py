@@ -28,10 +28,13 @@ def convert_to_url_format(input_string):
     formatted_string = input_string.replace(' ', '_').replace('–', '').replace('-', '__')
     return formatted_string
 
+def get_img_upload_path_general_images(instance, filename):
+    return f"General/{convert_to_url_format(instance.general_image_name)}.{filename.split('.')[-1]}"
+
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     ust_id = models.CharField(max_length=50, primary_key=True)
-    image = models.ImageField(default='default.png', upload_to=get_img_upload_path_profile, storage=OverwriteStorage())
+    image = models.ImageField(default='General/default.png', upload_to=get_img_upload_path_profile, storage=OverwriteStorage())
     unternehmensname = models.CharField(max_length=255, null=True)
     land = models.CharField(max_length=100, null=True)
     address = models.TextField(null=True)
@@ -153,10 +156,28 @@ class UILabel(models.Model):
         return self.label_key  # or any other field to represent the object as a string
 
 class Image(models.Model):
-    image_path = models.CharField(max_length=255, primary_key=True)
+    general_image_name = models.CharField(max_length=255, primary_key=True)
+    general_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_general_images, storage=OverwriteStorage())
+
+    def save(self, *args, **kwargs):
+        # Check if there's an existing object with the same name
+        existing_object = Image.objects.filter(general_image_name=self.general_image_name).first()
+
+        # If there's an existing object and a new file is uploaded, delete its old image before saving the new one
+        if existing_object and self.general_image_path != existing_object.general_image_path:
+            existing_image_path = existing_object.general_image_path.path
+            if os.path.exists(existing_image_path):
+                os.remove(existing_image_path)
+
+        # Ensure the uploaded image has the filename 'general_image_name.png'
+        if self.general_image_path:
+            filename = f"{convert_to_url_format(self.general_image_name)}.png"
+            self.general_image_path.name = os.path.join('General', filename)
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.image_path  # or any other field to represent the object as a string
+        return self.general_image_name
 
 class InCartItem(models.Model):
     CAN_BUS_STATUS_CHOICES = [
@@ -181,16 +202,16 @@ class InCartItem(models.Model):
 
 class Order(models.Model):
     ORDER_STATUS_CHOICES = [
-        ('Ordered', 'Ordered'),
-        ('Delivered', 'Delivered'),
-        ('Cancelled', 'Cancelled'),
+        ('Bestellt', 'Bestellt'),
+        ('Geliefert', 'Geliefert'),
+        ('Abgesagt', 'Abgesagt'),
     ]
 
     order_nummer = models.UUIDField(primary_key=True, default=uuid.uuid4)
     ust_id = models.CharField(max_length=50, null=True)
     order_datum = models.DateTimeField(auto_now_add=True)
     bestelldetails = models.CharField(max_length=255, null=True)
-    order_status = models.CharField(max_length=255, null=True, choices=ORDER_STATUS_CHOICES, default='Ordered')
+    order_status = models.CharField(max_length=255, null=True, choices=ORDER_STATUS_CHOICES, default='Bestellt')
 
     def update_status(self, new_status):
         """
@@ -201,15 +222,15 @@ class Order(models.Model):
 
     def place_order(self):
         """
-        Set the order status to 'Ordered'.
+        Set the order status to 'Bestellt'.
         """
-        self.update_status('Ordered')
+        self.update_status('Bestellt')
 
     def deliver_order(self):
         """
-        Set the order status to 'Delivered'.
+        Set the order status to 'Geliefert'.
         """
-        self.update_status('Delivered')
+        self.update_status('Geliefert')
 
 class OrderItem(models.Model):
     CAN_BUS_STATUS_CHOICES = [
@@ -246,9 +267,9 @@ class PreisListe(models.Model):
 
 class SpezielleBestellung(models.Model):
     ORDER_STATUS_CHOICES = [
-        ('Ordered', 'Ordered'),
-        ('Delivered', 'Delivered'),
-        ('Cancelled', 'Cancelled'),
+        ('Bestellt', 'Bestellt'),
+        ('Geliefert', 'Geliefert'),
+        ('Abgesagt', 'Abgesagt'),
     ]
     order_nummer = models.CharField(max_length=255, primary_key=True)
     Ust_id = models.CharField(max_length=255, null=True)
