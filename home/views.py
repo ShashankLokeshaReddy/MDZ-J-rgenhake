@@ -13,10 +13,7 @@ import uuid
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import smtplib
-import ssl
-from email.message import EmailMessage
-from dotenv import load_dotenv
+from .notifications import NotificationService
 
 @csrf_exempt
 def register(request):
@@ -502,7 +499,7 @@ def get_orders(request):
                     'original_preis': item.original_preis,
                     'reduzierter_preis': item.reduzierter_preis,
                     'gesamt': item.gesamt
-                } for item in orders.orderitem_set.all()]
+                } for item in order.orderitem_set.all()]
                 } for order in orders]
     except Exception as e:
         print(f"Error getting user orders: {str(e)}")
@@ -541,7 +538,8 @@ def cancel_order(request):
         Order.objects.filter(order_nummer=order_nummer).update(order_status='Cancelled')
 
         try:
-            send_cancel_notification(request)
+            notificationService = NotificationService()
+            notificationService.send_cancel_notification(request)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Error sending notification about order cancellation: {str(e)}'})
         else:
@@ -559,10 +557,13 @@ def order_again(request):
         Order.objects.filter(order_nummer=order_nummer).update(order_status='Ordered')
 
         try:
-            send_reorder_notification(request)
+            notificationService = NotificationService()
+            notificationService.send_reorder_notification(request)
         except Exception as e:
+            messages.info(request, f'Ihre Bestellungen wurden erneut übermittelt, aber beim Senden einer Benachrichtigung ist ein Problem aufgetreten!')
             return JsonResponse({'success': False, 'message': f'Error sending notification about reordering: {str(e)}'})
         else:
+            messages.success(request, f'Ihre Bestellungen wurden erneut übermittelt!')
             return JsonResponse({'success': True, 'message': 'Ordered again successfully.'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': f'Error reordering: {str(e)}'})
@@ -613,6 +614,8 @@ def create_order_with_items(request):
 
                 OrderItem.objects.create(order=order, ust_id=ust_id, akkuvariante=akkuvariante, mit_120_Ohm_CAN_Bus_Widerstand=mit_120_Ohm_CAN_Bus_Widerstand, kabelvariante=kabelvariante, schnittstelle=schnittstelle, masse=masse, menge=menge, original_preis=original_preis, reduzierter_preis=reduzierter_preis, gesamt=gesamt)
                 InCartItem.objects.filter(item_nummer=item_nummer).delete()
+                notificationService = NotificationService()
+                notificationService.send_order_created_notification(request, order)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Error creating order items: {str(e)} {order}'})
 
@@ -763,52 +766,6 @@ def add_item_to_cart(request):
 
     except Exception as e:
         return JsonResponse({'success': False, 'message': f'Error creating cart item: {str(e)}'})
-
-def send_cancel_notification(request):
-    json_data = json.loads(request.body)
-    order_nummer = json_data['order_nummer']
-
-    order = Order.objects.filter(order_nummer=order_nummer, ust_id=request.user.customerprofile.ust_id).first()
-
-    subject = f"Order #{order.order_nummer} has been cancelled!"
-    body = f"""
-    Your order #{order.order_nummer} has been cancelled.
-    """
-
-    send_email_notification(request, subject, body)
-    return
-
-def send_reorder_notification(request):
-    json_data = json.loads(request.body)
-    order_nummer = json_data['order_nummer']
-
-    order = Order.objects.filter(order_nummer=order_nummer, ust_id=request.user.customerprofile.ust_id).first()
-
-    subject = f"Order #{order.order_nummer} has been reordered!"
-    body = f"""
-    Your cancelled order #{order.order_nummer} has been reordered again.
-    """
-    send_email_notification(request, subject, body)
-    return
-
-def send_email_notification(request, subject, body):
-    email_sender = 'jurgenhaketest@gmail.com'
-    email_password = 'azuexffmhvurppvu'
-    email_receiver = request.user.email
-
-    em = EmailMessage()
-    em['From'] = email_sender
-    em['To'] = email_receiver
-    em['Subject'] = subject
-    em.set_content(body)
-
-    # Add SSL (layer of security)
-    context = ssl.create_default_context()
-
-    # Log in and send the email
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-        smtp.login(email_sender, email_password)
-        smtp.sendmail(email_sender, email_receiver, em.as_string())
 
 @csrf_exempt
 @require_POST
