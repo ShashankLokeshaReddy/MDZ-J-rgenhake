@@ -285,19 +285,6 @@ color: inherit;
     font-weight: 900;
 }
 
-.main-header-wrapper {
-    position: relative;
-    z-index: 100;
-}
-
-.main-header-content-wrapper {
-    position: relative;
-    z-index: 300;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    align-items: center;
-}
 .main-nav-container {
     position: relative;
     margin: 0;
@@ -371,17 +358,6 @@ i, em {
 }
 .menu-lang-switcher .main-menu .menu-item {
     font-size: .75em;
-}
-.main-menu-container {
-    display: none;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    background: rgba(255,170,255,0);
-    width: 100vw;
-    z-index: 10000;
 }
 /* .main-menu-wrapper {
     width: 100%;
@@ -753,21 +729,105 @@ svg:not(:root) {
     color: red;
 }
 
-/* Add or adjust styles as needed */
-.stepper-wrapper {
-    margin-top: 10px; /* Adjust as needed to position above the progress bar */
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    width: 80%; /* Adjust as needed to make the progress bar wider */
+/* Styling for cable-config-container */
+.openbtn {
+    font-size: 24px; /* Adjust font size as needed */
+    font-weight: bold; /* Make the text bold */
+    line-height: 1; /* Ensure vertical centering */
+    display: flex; /* Use flexbox for centering */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    cursor: pointer;
+    background-color: var(--color-text);
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 999;
+    transition: right 0.5s ease; /* Add smooth transition */
 }
 
+.openbtn:hover {
+    background-color: var(--color-primary);
+}
+
+.cable-config-container {
+    /* align-items: center; */
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+#left-column {
+    width: 100%;
+    /* padding: 20px; */
+}
+
+/* Styling for the stepper-wrapper */
+.stepper-toggle {    
+    flex-direction: row;
+    display: flex;
+    align-items: flex-start;
+    overflow-y: auto;
+    margin-top: 20px;
+    width: 22%;
+    height: 300px;
+    position: fixed;
+    right: 0;
+    /* top: 50%;
+    transform: translateY(-50%); */
+    /* background-color: rgba(255, 255, 255, 0.5); */
+    color: var(--color-text);
+    padding: 10px;
+    cursor: pointer;
+    z-index: 998;
+}
+
+.stepper-wrapper {
+    /* position: fixed;
+    overflow-y: auto;
+    right: 0;
+    top: 25%;
+    bottom: 25%;
+    margin-bottom: 20px;
+    width: 20%;
+    height: 300px; */
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    /* align-items: flex-start; */
+
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.8);;
+    color: var(--color-text);
+    padding: 10px 15px;
+    border: none;
+    position: fixed;
+    right: 4%;
+    top: 50%;
+    transform: translateY(-50%);
+    /* z-index: 100001; */
+}
+
+.stepper-wrapper.hidden {
+    display: none; /* Hide the stepper-wrapper off screen */
+    transition: right 0.5s ease; /* Add smooth transition */
+}
+
+/* Styling for individual stepper items */
 .stepper-item {
     position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* Change to horizontal */
     align-items: center;
     flex: 1;
+    width: 100%;
+    margin-bottom: 10px;
 
     @media (max-width: 768px) {
         font-size: 12px;
@@ -779,17 +839,17 @@ svg:not(:root) {
     position: absolute;
     content: "";
     border: 4px solid var(--color-secondary);
-    width: 100%;
-    top: 20px;
+    height: 100%; /* Adjust to vertical progress bar */
+    left: 20px; /* Adjust to position the progress bar */
     z-index: 2;
 }
 
 .stepper-item::before {
-    left: -50%;
+    top: -50%;
 }
 
 .stepper-item::after {
-    left: 50%;
+    top: 50%;
 }
 
 .stepper-item .step-counter {
@@ -802,7 +862,7 @@ svg:not(:root) {
     height: 50px; /* Adjust as needed to make the progress bar wider */
     border-radius: 50%;
     background: var(--color-secondary);
-    margin-bottom: 6px;
+    margin-right: 10px; /* Adjust for spacing between step counter and text */
 }
 
 .stepper-item.active {
@@ -817,9 +877,9 @@ svg:not(:root) {
     position: absolute;
     content: "";
     border: 4px solid var(--color-primary);
-    width: 100%;
-    top: 20px;
-    left: 50%;
+    height: 100%; /* Adjust to vertical progress bar */
+    top: 50%; /* Adjust to position the progress bar */
+    left: 20px; /* Adjust to position the progress bar */
     z-index: 3;
 }
 
@@ -1956,11 +2016,11 @@ body{
 }
 .main-header-wrapper{
     position:relative;
-    z-index:100
+    z-index:1000000
 }
 .main-header-content-wrapper{
     position:relative;
-    z-index:300;
+    z-index:3000000;
     display:flex;
     flex-flow:row nowrap;
     justify-content:space-between;

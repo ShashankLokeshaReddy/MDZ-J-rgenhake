@@ -128,6 +128,79 @@ function handleScroll() {
 // Add scroll event listener
 window.addEventListener('scroll', handleScroll);
 
+// Debounce function
+// function debounce(func, wait) {
+//     let timeout;
+//     return function executedFunction(...args) {
+//         const later = () => {
+//             clearTimeout(timeout);
+//             func(...args);
+//         };
+//         clearTimeout(timeout);
+//         timeout = setTimeout(later, wait);
+//     };
+// }
+
+// // Event listener with debounced scroll handler
+// window.addEventListener('scroll', debounce(function() {
+//     var leftColumn = document.getElementById('left-column');
+//     var stepperWrapper = document.getElementById('stepper-wrapper');
+//     var footer = document.querySelector('.main-footer-wrapper');
+//     var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+//     var leftColumnTop = leftColumn.getBoundingClientRect().top + scrollTop;
+//     var leftColumnBottom = leftColumn.getBoundingClientRect().bottom + scrollTop;
+//     var stepperWrapperTop = stepperWrapper.getBoundingClientRect().top + scrollTop;
+//     var stepperWrapperBottom = stepperWrapper.getBoundingClientRect().bottom + scrollTop;
+//     var footerTop = footer.getBoundingClientRect().top + scrollTop;
+//     var windowHeight = window.innerHeight;
+
+//     if (leftColumnTop <= stepperWrapperTop && stepperWrapperBottom <= leftColumnBottom) {
+//         stepperWrapper.style.position = 'fixed';
+
+//         // Check if the footer is overlapping with the stepper-wrapper
+//         if (footerTop <= stepperWrapperBottom) {
+//             stepperWrapper.style.position = 'absolute';
+//             stepperWrapper.style.top = '';
+//             stepperWrapper.style.bottom = '0';
+//         }
+//     } else {
+//         stepperWrapper.style.position = 'absolute';
+//     }
+// }, 100));
+
+// window.addEventListener('scroll', function() {
+//     var leftColumn = document.getElementById('left-column');
+//     var stepperWrapper = document.getElementById('stepper-wrapper');
+//     var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+//     var leftColumnTop = leftColumn.getBoundingClientRect().top + scrollTop;
+//     var leftColumnBottom = leftColumn.getBoundingClientRect().bottom + scrollTop;
+//     var stepperWrapperTop = stepperWrapper.getBoundingClientRect().top + scrollTop;
+//     var stepperWrapperBottom = stepperWrapper.getBoundingClientRect().bottom + scrollTop;
+//     var stepperWrapperHeight = stepperWrapper.offsetHeight;
+//     var windowHeight = window.innerHeight;
+//     console.log("windowHeight:",windowHeight);
+//     console.log("scrollTop:",scrollTop);
+//     console.log("leftColumnTop:",leftColumnTop);
+//     console.log("leftColumnBottom:",leftColumnBottom);
+//     console.log("stepperWrapperTop:",stepperWrapperTop);
+//     console.log("stepperWrapperBottom:",stepperWrapperBottom);
+//     if (leftColumnTop <= stepperWrapperTop && stepperWrapperBottom < leftColumnBottom) {
+//         // If the top of the left-column is above or at the top of the viewport
+//         // and the bottom of the left-column is below or at the bottom of the viewport
+//         // position the stepper-wrapper fixed between the top and bottom of the left-column
+//         stepperWrapper.style.position = 'fixed';
+//         // stepperWrapper.style.top = '25%';
+//         // stepperWrapper.style.bottom = '25%';
+//         // stepperWrapper.style.overflowY = 'auto';
+//     } else {
+//         // Otherwise, make the stepper-wrapper scrollable along with the left-column
+//         stepperWrapper.style.position = 'static';
+//         // stepperWrapper.style.overflowY = 'scroll';
+//     }
+// });
+
 // function getSelectedOption(category) {
 //     var selectedOption = ''; // Replace with logic to get the selected option
 //     return selectedOption;
