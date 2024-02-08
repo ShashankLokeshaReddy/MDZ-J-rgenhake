@@ -4,7 +4,7 @@
     {% with in_cart_items=in_cart_items %}
     {{ block.super }}
     {% endwith %}
-
+    
     <!-- Custom Solution Selector -->
     <div id="CustomSolution-Section">
         <div class="space space-2"></div>
@@ -84,7 +84,8 @@
                     // Handle the response from the server
                     console.log(data);
                     closeModal(); // Close the modal after successful upload
-                    alert('Datei-Upload erfolgreich. Ihre Bestellung ist bei uns eingegangen und unsere Vertriebsmitarbeiter werden sich in Kürze mit Ihnen in Verbindung setzen.');
+                    location.reload();
+                    // alert('Datei-Upload erfolgreich. Ihre Bestellung ist bei uns eingegangen und unsere Vertriebsmitarbeiter werden sich in Kürze mit Ihnen in Verbindung setzen.');
                 })
                 .catch(error => {
                     // Handle errors

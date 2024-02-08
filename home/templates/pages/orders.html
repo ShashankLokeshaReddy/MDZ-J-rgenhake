@@ -47,10 +47,10 @@
                                         </div>
                                     </span>
                                     <span class="col">
-                                        {% if order.order_status == 'Ordered' %}
-                                            <button type="button" class="btn btn-outline-info cancel-order" data-toggle="modal" data-target="#cancelOrderModal">Cancel</button>
-                                        {% elif order.order_status == 'Cancelled' %}
-                                            <button type="button" class="btn btn-outline-info order-again" data-toggle="modal" data-target="#orderAgainModal">Order Again</button>
+                                        {% if order.order_status == 'Bestellt' %}
+                                            <button type="button" class="btn btn-outline-info cancel-order" data-toggle="modal" data-target="#cancelOrderModal">Stornieren</button>
+                                        {% elif order.order_status == 'Abgesagt' %}
+                                            <button type="button" class="btn btn-outline-info order-again" data-toggle="modal" data-target="#orderAgainModal">Bestell es nochmal</button>
                                         {% endif %}
                                     </span>
                                 </div>
@@ -125,7 +125,7 @@
             </div>
             {% endfor %}
             {% if not orders %}
-                <div class="text-center m-5">No orders for user.</div>
+                <div class="text-center m-5">Keine Bestellungen für Benutzer.</div>
             {% endif %}
         </div>
 
@@ -158,7 +158,7 @@
                     var orderNumber = orderRow.dataset.orderNumber;
 
                     // Prompt user for confirmation
-                    if (confirm("Are you sure you want to cancel this order?")) {
+                    if (confirm("Sind Sie sicher, dass Sie diese Bestellung stornieren möchten?")) {
                         // If confirmed, trigger UPDATE request to cancel the order
                         fetch('/cancel_order/', {
                             method: 'POST',
@@ -170,7 +170,7 @@
                         })
                         .then(response => {
                             if (!response.ok) {
-                                throw new Error('Network response was not ok');
+                                throw new Error('Die Netzwerkantwort war nicht in Ordnung');
                             }
                             return response.json();
                         })
@@ -192,7 +192,7 @@
 
                     // Prompt user for confirmation
                     if (confirm("Are you sure you want to order this again?")) {
-                        // If confirmed, trigger UPDATE request to update the order to 'Ordered'
+                        // If confirmed, trigger UPDATE request to update the order to 'Bestellt'
                         fetch('/order_again/', {
                             method: 'POST',
                             headers: {
@@ -203,7 +203,7 @@
                         })
                         .then(response => {
                             if (!response.ok) {
-                                throw new Error('Network response was not ok');
+                                throw new Error('Die Netzwerkantwort war nicht in Ordnung');
                             }
                             return response.json();
                         })
