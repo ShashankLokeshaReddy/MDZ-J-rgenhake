@@ -198,6 +198,7 @@
         var jaRadioButton = document.getElementById("ja-nein-option-ja");
         var neinRadioButton = document.getElementById("ja-nein-option-nein");
         var CAN_Bus = 'Nein';
+        var gesamt_preis_non_Straight = 0;
 
         jaRadioButton.addEventListener("change", updateSummary);
         neinRadioButton.addEventListener("change", updateSummary);
@@ -385,6 +386,9 @@
                                     break outerLoop;
                                 }
                             }
+                        }
+                        else{
+                            preis = "€" + gesamt_preis_non_Straight;
                         }
                     }
                 }
@@ -773,6 +777,19 @@
             container.appendChild(sliderContainer);
         }
 
+        function arraysContainSameElements(array1, array2) {
+            if (array1.length !== array2.length) {
+                return false;
+            }
+
+            const sortedArray1 = array1.slice().sort();
+            const sortedArray2 = array2.slice().sort();
+
+            return sortedArray1.every((element, index) => {
+                return element === sortedArray2[index];
+            });
+        }
+
         function populateMasseSelectors(kabelvariante) {
             var selectedSchnittstellen = getSelectedSchnittstellen();
             console.log("selectedSchnittstellen in populate masse:",selectedSchnittstellen);
@@ -795,12 +812,50 @@
             // Check for splits and create input pairs accordingly
             if (kabelvariante.splits > 1) {
                 // TODO: Still pending
-                createInputPair(sliderContainer, kabelvariante, 'main', kabelvariante.main_part_min_length, 2000);
+                for (let i = 0; i < preisliste.length; i++) {
+                    if (preisliste[i]["gehause"] === selected_akkuvariante_name) {
+                        if (preisliste[i]["kabelvariante"] === selected_kabel_name) {
+                            selectedSchnittstelle_type_list = [];
+                            for (let j = 0; j < selectedSchnittstellen.length; j++) {
+                                var [selectedSchnittstelle_type, selectedSchnittstelle_name] = selectedSchnittstellen[j].split('-').map(part => part.trim());
+                                selectedSchnittstelle_type_list.push(selectedSchnittstelle_type);
+                            }
+                            leitung_list = [preisliste[i]["leitung"]][0].split(', ');
+                            
+                            if (arraysContainSameElements){
+                                lange_list = preisliste[i]["lange"].split(', ').map(item => parseInt(item.replace(/[^\d]/g, '')));
+                                
+                                for (let k = 0; k < lange_list.length; k++) {
+                                    if (k === 0) {
+                                        diff = 1;
+                                        createInputPair(sliderContainer, kabelvariante, 'main', kabelvariante.main_part_min_length, lange_list[k], diff);
+                                        gesamt_preis_non_Straight = preisliste[i]["qty_1"];
+                                    }
+                                    else{
+                                        diff = 0;
+                                        createInputPair(sliderContainer, kabelvariante, 'branch' + k, kabelvariante.split_part_min_length, lange_list[k], diff);
+                                    }
+                                }
+                            }
 
-                for (var i = 1; i <= kabelvariante.splits; i++) {
-                    createInputPair(sliderContainer, kabelvariante, 'branch' + i, kabelvariante.split_part_min_length, kabelvariante.split_part_max_length);
+                            // if (preisliste[i]["leitung"] === selectedSchnittstelle_type_list) {
+                            //     console.log("hajhdaj");
+                            //     var intValue = parseInt(preisliste[i]["lange"].replace(/\D/g, ''), 10);
+                            //     if (straight_max_length < intValue) {
+                            //         straight_max_length = intValue;
+                            //     }
+                            // }
+                        }
+                    }
                 }
-            } else if (parseInt(kabelvariante.splits) === 1) {
+                // createInputPair(sliderContainer, kabelvariante, 'main', kabelvariante.main_part_min_length, 2000);
+
+                // for (var i = 1; i <= kabelvariante.splits; i++) {
+                //     createInputPair(sliderContainer, kabelvariante, 'branch' + i, kabelvariante.split_part_min_length, kabelvariante.split_part_max_length);
+                // }
+
+            } 
+            else if (parseInt(kabelvariante.splits) === 1) {
                 var straight_max_length = 0;
 
                 for (let i = 0; i < preisliste.length; i++) {
@@ -816,8 +871,10 @@
                         }
                     }
                 }
-                createInputPair(sliderContainer, kabelvariante, 'main', kabelvariante.main_part_min_length, straight_max_length.toString());
-            } else {
+                diff = 1;
+                createInputPair(sliderContainer, kabelvariante, 'main', kabelvariante.main_part_min_length, straight_max_length.toString(), diff);
+            } 
+            else {
                 var noOptionsParagraph = document.createElement('p');
                 noOptionsParagraph.textContent = 'Keine gültigen Kabelvarianten verfügbar.';
                 sliderContainer.appendChild(noOptionsParagraph);
@@ -827,7 +884,7 @@
             container.appendChild(sliderContainer);
         }
 
-        function createInputPair(container, kabelvariante, identifier, min, max) {
+        function createInputPair(container, kabelvariante, identifier, min, max, diff) {
             var inputPairDiv = document.createElement('div');
             inputPairDiv.className = 'input-pair';
 
@@ -841,7 +898,7 @@
             input.min = min;
             input.max = max;
             input.step = 1;
-            input.value = min - 1;
+            input.value = min - diff;
             input.oninput = function () {
                 masseChange(this.value, min, max);
             };
