@@ -202,6 +202,7 @@ class InCartItem(models.Model):
 
 class Order(models.Model):
     ORDER_STATUS_CHOICES = [
+        ('Angebot angefordert', 'Angebot angefordert'),
         ('Bestellt', 'Bestellt'),
         ('Geliefert', 'Geliefert'),
         ('Abgesagt', 'Abgesagt'),
