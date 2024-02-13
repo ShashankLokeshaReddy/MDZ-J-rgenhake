@@ -209,8 +209,6 @@
         overlay.onclick = closeModal;
 
         function selectAkkuvariante(productName) {
-            console.log('Selected Akkuvariante:', productName);
-
             var productSelectors = document.querySelectorAll('.akkuvariante-selector');
 
             productSelectors.forEach(function(selector) {
@@ -530,8 +528,6 @@
                     console.error("Element with ID '" + sectionId + "' not found.");
                 }
             }
-
-            console.log("Going to the section: " + selectedSectionId);
         }
 
         function addToCart() {
