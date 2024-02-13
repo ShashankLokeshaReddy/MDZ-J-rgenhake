@@ -656,11 +656,14 @@ svg:not(:root) {
     font-weight: bold;
 }
 
-#masse-slider-container, #summary-container {
+#masse-slider-container,
+#summary-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: left;
+    justify-content: left;
+    max-width: 500px;
+    margin: 0 auto; /* Add this line */
 }
 
 .masse-slider-container-class {
@@ -740,13 +743,13 @@ svg:not(:root) {
     cursor: pointer;
     background-color: var(--color-text);
     color: white;
-    padding: 10px 15px;
+    padding: 5px 5px;
     border: none;
     position: fixed;
     right: 0;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 999;
+    z-index: 299;
     transition: right 0.5s ease; /* Add smooth transition */
 }
 
@@ -762,7 +765,7 @@ svg:not(:root) {
 }
 
 #left-column {
-    width: 100%;
+    width: 80%;
     /* padding: 20px; */
 }
 
@@ -773,7 +776,7 @@ svg:not(:root) {
     align-items: flex-start;
     overflow-y: auto;
     margin-top: 20px;
-    width: 22%;
+    width: 20%;
     height: 300px;
     position: fixed;
     right: 0;
@@ -783,7 +786,7 @@ svg:not(:root) {
     color: var(--color-text);
     padding: 10px;
     cursor: pointer;
-    z-index: 998;
+    z-index: 298;
 }
 
 .stepper-wrapper {
@@ -808,7 +811,7 @@ svg:not(:root) {
     padding: 10px 15px;
     border: none;
     position: fixed;
-    right: 4%;
+    right: 2%;
     top: 50%;
     transform: translateY(-50%);
     /* z-index: 100001; */
@@ -2360,7 +2363,7 @@ body{
         align-items: center;
         position: relative;
         z-index: 300;
-        background: rgba(255,136,17,0);
+        background: rgba(255,255,255,1);
     }
     .foo-imp-item-impre:after,.foo-imp-item-agb:after{
         padding:0 12px
