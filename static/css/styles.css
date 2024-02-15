@@ -81,6 +81,7 @@
     --bs-info: var(--color-primary);
     .btn-outline-info {
         --bs-btn-color: var(--color-primary);
+        --bs-btn-bg: #fff;
         --bs-btn-active-bg: var(--color-primary);
         --bs-btn-border-color: var(--color-primary);
         --bs-btn-hover-bg: var(--color-primary);
@@ -89,6 +90,18 @@
         --bs-btn-disabled-border-color: var(--color-primary);
         --bs-btn-disabled-color: var(--color-primary);
     }
+    --bs-info: var(--color-secondary);
+    .btn-outline-info-secondary {
+        --bs-btn-color: var(--color-text);
+        --bs-btn-active-bg: var(--color-secondary);
+        --bs-btn-border-color: var(--color-text);
+        --bs-btn-hover-bg: var(--color-secondary);
+        --bs-btn-hover-border-color: var(--color-secondary);
+        --bs-btn-active-border-color: var(--color-text);
+        --bs-btn-disabled-border-color: var(--color-text);
+        --bs-btn-disabled-color: var(--color-secondary);
+    }
+
 }
 
 html, body, input, textarea, button {
@@ -656,13 +669,21 @@ svg:not(:root) {
     font-weight: bold;
 }
 
-#masse-slider-container,
 #summary-container {
     display: flex;
     flex-direction: column;
     align-items: left;
     justify-content: left;
     max-width: 500px;
+    margin: 0 auto; /* Add this line */
+}
+
+#masse-slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: left;
+    max-width: 800px;
     margin: 0 auto; /* Add this line */
 }
 
