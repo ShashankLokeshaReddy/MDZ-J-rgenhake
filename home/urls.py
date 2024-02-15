@@ -22,13 +22,14 @@ urlpatterns = [
     path('add_item_to_cart/', views.add_item_to_cart, name='add_item_to_cart'),
     path('upload_special_solution/', views.upload_special_solution, name='upload_special_solution'),
 
-    path('customerProfile/', views.get_customer_profiles, name='get_customer_profiles'),
-    path('akkuvarianten/', views.get_akkuvarianten, name='get_akkuvarianten'),
-    path('kabelvarianten/', views.get_kabelvarianten, name='get_kabelvarianten'),
-    path('schnittstellen/', views.get_schnittstellen, name='get_schnittstellen'),
-    path('colors/', views.get_colors, name='get_colors'),
-    path('ui-labels/', views.get_ui_labels, name='get_ui_labels'),
-    path('images/', views.get_image_path, name='get_image_path'),
-    path('developer_mode/', views.developer_mode, name='developer_mode'),
+    # path('customerProfile/', views.get_customer_profiles, name='get_customer_profiles'),
+    # path('akkuvarianten/', views.get_akkuvarianten, name='get_akkuvarianten'),
+    # path('kabelvarianten/', views.get_kabelvarianten, name='get_kabelvarianten'),
+    # path('schnittstellen/', views.get_schnittstellen, name='get_schnittstellen'),
+    # path('preisliste/', views.get_preisliste, name='get_preisliste'),
+    # path('colors/', views.get_colors, name='get_colors'),
+    # path('ui-labels/', views.get_ui_labels, name='get_ui_labels'),
+    # path('images/', views.get_image_path, name='get_image_path'),
+    # path('developer_mode/', views.developer_mode, name='developer_mode'),
     # add missing ones
 ]
