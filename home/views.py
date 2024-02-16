@@ -559,13 +559,12 @@ def order_again(request):
             notificationService = NotificationService()
             notificationService.send_reorder_notification(request)
         except Exception as e:
-            messages.info(request, f'Ihre Bestellungen wurden erneut übermittelt, aber beim Senden einer Benachrichtigung ist ein Problem aufgetreten!')
-            return JsonResponse({'success': False, 'message': f'Error sending notification about reordering: {str(e)}'})
+            return JsonResponse({'success': False, 'message': f'Fehler beim Senden der Benachrichtigung über die Nachbestellung: {str(e)}'})
         else:
-            messages.success(request, f'Ihre Bestellungen wurden erneut übermittelt!')
-            return JsonResponse({'success': True, 'message': 'Ordered again successfully.'})
+            messages.success(request, f'Wieder erfolgreich bestellt.')
+            return JsonResponse({'success': True, 'message': 'Wieder erfolgreich bestellt.'})
     except Exception as e:
-        return JsonResponse({'success': False, 'message': f'Error reordering: {str(e)}'})
+        return JsonResponse({'success': False, 'message': f'Fehler beim Nachbestellen: {str(e)}'})
 
 @require_POST
 def delete_item(request):
@@ -576,10 +575,10 @@ def delete_item(request):
         # Delete the item with the given item_nummer
         InCartItem.objects.filter(item_nummer=item_nummer).delete()
 
-        return JsonResponse({'success': True, 'message': 'Cart item deleted successfully.'})
+        return JsonResponse({'success': True, 'message': 'Warenkorbartikel erfolgreich gelöscht.'})
 
     except Exception as e:
-        return JsonResponse({'success': False, 'message': f'Error deleting cart item: {str(e)}'})
+        return JsonResponse({'success': False, 'message': f'Fehler beim Löschen des Warenkorbartikels: {str(e)}'})
 
 @require_POST
 def create_order_with_items(request):
@@ -620,12 +619,12 @@ def create_order_with_items(request):
 
         print("Update orders success")
         messages.success(request, f'Ihre Bestellungen wurden übermittelt!')
-        return JsonResponse({'success': True, 'message': 'Orders updated successfully'})
+        return JsonResponse({'success': True, 'message': 'Bestellungen erfolgreich aktualisiert'})
 
     except Exception as e:
         print("Update orders not success")
         print(f"Error updating orders: {str(e)}")
-        return JsonResponse({'success': False, 'message': f'Error creating orders: {str(e)}'})
+        return JsonResponse({'success': False, 'message': f'Fehler beim Erstellen von Bestellungen: {str(e)}'})
 
 @require_POST
 def create_offer_request_with_items(request):
@@ -765,10 +764,10 @@ def add_item_to_cart(request):
                     gesamt=original_preis
                 )
 
-            return JsonResponse({'success': True, 'message': 'Cart item updated/created successfully.'})
+            return JsonResponse({'success': True, 'message': 'Warenkorbartikel erfolgreich aktualisiert/erstellt.'})
 
     except Exception as e:
-        return JsonResponse({'success': False, 'message': f'Error updating/creating cart item: {str(e)}'})
+        return JsonResponse({'success': False, 'message': f'Fehler beim Aktualisieren/Erstellen des Warenkorbartikels: {str(e)}'})
     try:
         json_data = json.loads(request.body)
         json_string = json.dumps(json_data, ensure_ascii=False)
@@ -815,10 +814,10 @@ def add_item_to_cart(request):
                 gesamt=original_preis
             )
 
-            return JsonResponse({'success': True, 'message': 'Cart item created successfully.'}, status=201)
+            return JsonResponse({'success': True, 'message': 'Warenkorbartikel erfolgreich erstellt.'}, status=201)
 
     except Exception as e:
-        return JsonResponse({'success': False, 'message': f'Error creating cart item: {str(e)}'})
+        return JsonResponse({'success': False, 'message': f'Fehler beim Erstellen des Warenkorbartikels: {str(e)}'})
 
 @csrf_exempt
 @require_POST

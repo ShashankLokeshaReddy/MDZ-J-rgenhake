@@ -9,15 +9,15 @@
     <div id="CustomSolution-Section">
         <div class="space space-2"></div>
         <section>
-            <div class="content anlauf_text">
-                <h1 style="color:white;"> {{ index_text }} </h1>
+            <div class="content anlauf_text" style=" text-align:center;">
+                <span style="color:white;"> {{ index_text }} </span>
             </div>
         </section>
         <div class="space space-2"></div>
         <div class="space space-2"></div>
         <div style="text-align: center;">
-            <button class="next-button" onclick="window.location.href='/konfigurator'">Weiter zum Konfigurator</button>
-            <button class="next-button" onclick="openUploadPopup()">Hochladen von Sonderlösungen</button>
+            <button class="btn btn-outline-info" onclick="window.location.href='/konfigurator'">Weiter zum Konfigurator</button>
+            <button class="btn btn-outline-info" onclick="openUploadPopup()">Hochladen von Sonderlösungen</button>
         </div>
     </div>
 
@@ -31,9 +31,9 @@
         <div class="popup-content">
             <form id="uploadForm" action="/uploadSpecialSolution" method="post" enctype="multipart/form-data">
                 <label for="specialfile">Wählen Sie eine Datei aus:</label>
-                <input class="prev-button" type="file" id="specialfile" name="specialfile" multiple="multiple" />
+                <input class="btn btn-outline-info-secondary" type="file" id="specialfile" name="specialfile" multiple="multiple" />
                 <br /><br />
-                <button class="next-button" type="button" onclick="uploadDocument()">Hochladen</button>
+                <button class="btn btn-outline-info" type="button" onclick="uploadDocument()">Hochladen</button>
             </form>
         </div>
     </div>
@@ -82,7 +82,6 @@
                 })
                 .then(data => {
                     // Handle the response from the server
-                    console.log(data);
                     closeModal(); // Close the modal after successful upload
                     location.reload();
                     // alert('Datei-Upload erfolgreich. Ihre Bestellung ist bei uns eingegangen und unsere Vertriebsmitarbeiter werden sich in Kürze mit Ihnen in Verbindung setzen.');

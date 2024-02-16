@@ -40,7 +40,7 @@
                 </div>
                 <div class="space space-2"></div>
                 <div style="text-align: center;">
-                    <button class="next-button" onclick="goToSection('Kabelvariante-Section')">Nächste</button>
+                    <button class="btn btn-outline-info" onclick="goToSection('Kabelvariante-Section')">Nächste</button>
                 </div>
             </div>
 
@@ -59,8 +59,8 @@
                 </div>
                 <div class="space space-2"></div>
                 <div style="text-align: center;">
-                    <button class="prev-button" onclick="goToSection('Akkuvariante-Section')">Zuruck</button>
-                    <button class="next-button" onclick="goToSection('Schnittstellen-Section')">Nächste</button>
+                    <button class="btn btn-outline-info-secondary" onclick="goToSection('Akkuvariante-Section')">Zuruck</button>
+                    <button class="btn btn-outline-info" onclick="goToSection('Schnittstellen-Section')">Nächste</button>
                 </div>
             </div>
 
@@ -79,8 +79,9 @@
                 </div>
                 <div class="space space-2"></div>
                 <div style="text-align: center;">
-                    <button class="prev-button" onclick="goToSection('Kabelvariante-Section')">Zuruck</button>
-                    <button class="next-button" onclick="goToSection('Masse-Section')">Nächste</button>
+                    <p id="Schnittstellen-text" style="text-align: center;"></p>
+                    <button class="btn btn-outline-info-secondary" onclick="goToSection('Kabelvariante-Section')">Zuruck</button>
+                    <button class="btn btn-outline-info" onclick="goToSection('Masse-Section')">Nächste</button>
                 </div>
             </div>
 
@@ -100,8 +101,8 @@
                 <div class="space space-2"></div>
                 <div style="text-align: center;">
                     <p id="Masse-text" style="text-align: center;"></p>
-                    <button class="prev-button" onclick="goToSection('Schnittstellen-Section')">Zuruck</button>
-                    <button class="next-button" onclick="goToSection('Zusammenfassung-Section')">Nächste</button>
+                    <button class="btn btn-outline-info-secondary" onclick="goToSection('Schnittstellen-Section')">Zuruck</button>
+                    <button class="btn btn-outline-info" onclick="goToSection('Zusammenfassung-Section')">Nächste</button>
                 </div>
             </div>
                 
@@ -126,16 +127,15 @@
                 </div>
                 <div class="space space-2"></div>
                 <div style="text-align: center;">
-                    <button class="prev-button" onclick="goToSection('Masse-Section')">Zuruck</button>
-                    <button class="next-button" onclick="addToCart()">Add to Cart</button>
+                    <button class="btn btn-outline-info-secondary" onclick="goToSection('Masse-Section')">Zuruck</button>
+                    <button class="btn btn-outline-info" onclick="addToCart()">Add to Cart</button>
                 </div>
             </div>
         </div>
 
         <div id="stepper-toggle" class="stepper-toggle">
             <div class="openbtn" onclick="toggleStepperWrapper()">&#171;</div>
-            <div id="stepper-wrapper" class="stepper-wrapper hidden">
-                <!-- Content of stepper-wrapper goes here -->
+            <div id="stepper-wrapper" class="stepper-wrapper">
                 <div class="stepper-item" data-counter="1">
                     <div class="step-counter">1</div>
                     <div class="step-name">Akkuvariante</div>
@@ -166,14 +166,12 @@
         <div class="space space-2"></div>
         <p>Was möchten Sie als Nächstes tun?</p>
         <br />
-        <button class="next-button" id="configureButton">Konfigurieren Sie ein anderes Kabel</button>
-        <button class="next-button" id="viewInCartButton">Artikel im Warenkorb anzeigen</button>
+        <button class="btn btn-outline-info" id="configureButton">Konfigurieren Sie ein anderes Kabel</button>
+        <button class="btn btn-outline-info" id="viewInCartButton">Artikel im Warenkorb anzeigen</button>
     </div>
 
     <!-- Overlay -->
     <div id="overlay" class="overlay"></div>
-
-    <!-- <div class="space space-2"></div> -->
 
     <script>
         var akkuSelected = false;
@@ -189,8 +187,11 @@
         var preisliste = JSON.parse('{{ preisliste | safe }}');
         var mediaPrefix = "{% get_media_prefix %}";
         var masseTextElement = document.getElementById("Masse-text");
-        masseTextElement.textContent = "Ungültige Eingabewerte";
-        masseTextElement.style.color = "red";
+        masseTextElement.textContent = "Alles gut, klicken Sie auf Weiter";
+        masseTextElement.style.color = "green";
+        var schnittstelleTextElement = document.getElementById("Schnittstellen-text");
+        schnittstelleTextElement.textContent = "Bitte wählen Sie alle Schnittstellen aus";
+        schnittstelleTextElement.style.color = "red";
         var modal = document.getElementById('customModal');
         var overlay = document.getElementById('overlay');
         var configureButton = document.getElementById('configureButton');
@@ -209,8 +210,6 @@
         overlay.onclick = closeModal;
 
         function selectAkkuvariante(productName) {
-            console.log('Selected Akkuvariante:', productName);
-
             var productSelectors = document.querySelectorAll('.akkuvariante-selector');
 
             productSelectors.forEach(function(selector) {
@@ -225,6 +224,8 @@
             if (selected_akkuvariante_name != productName) {
                 akkuSelected = true;
                 selected_akkuvariante_name = productName;
+                goToSection('Akkuvariante-Section');
+                kabelSelected = false;
                 populateKabelvariantenSelectors(kabelvarianten); 
                 updateSummary();
                 updateProgressBar();
@@ -242,32 +243,43 @@
                 }
             });
 
-            var filteredKabelvarianten = [];
-
-            for (let i = 0; i < kabelvarianten.length; i++) {
-                if (kabelvarianten[i]["kabelvariante_name"] === productName) {
-                    // var preislist_kabelvariante = preisliste[i]["kabelvariante"];
-                    if (!filteredKabelvarianten.includes(kabelvarianten[i])) {
-                        filteredKabelvarianten.push(kabelvarianten[i]);
+            if (selected_kabel_name != productName) {
+                var filteredKabelvarianten = [];
+                for (let i = 0; i < kabelvarianten.length; i++) {
+                    if (kabelvarianten[i]["kabelvariante_name"] === productName) {
+                        if (!filteredKabelvarianten.includes(kabelvarianten[i])) {
+                            filteredKabelvarianten.push(kabelvarianten[i]);
+                        }
                     }
                 }
+                filteredKabelvarianten.forEach(populateSchnittstellenSelectors);
+                kabelSelected = true;
+                selected_kabel_name = productName;
+                schnittstellenSelected = false;
+                goToSection('Kabelvariante-Section');
+                removeAllSelectedSchnittstellen();
+                var container = document.getElementById('masse-slider-container');
+                container.innerHTML = '';
+                var sliderContainer = document.createElement('div');
+                sliderContainer.className = 'masse-slider-container-class';
+                var kabelvariante =filteredKabelvarianten[0];
+                sliderContainer.id = kabelvariante.kabelvariante_name + '-masse-slider';
+                schnittstelleTextElement.textContent = "Bitte wählen Sie alle Schnittstellen aus";
+                schnittstelleTextElement.style.color = "red";
+                masseTextElement.textContent = "Ungültige Eingabewerte";
+                masseTextElement.style.color = "red";
+                container.appendChild(sliderContainer);
+                var img = document.createElement('img');
+                img.className = 'masse-image';
+                img.src = mediaPrefix + kabelvariante.masse_image_path;
+                sliderContainer.appendChild(img);
+                masseSelected = false;
+                updateSummary();
+                updateProgressBar();
             }
-
-            filteredKabelvarianten.forEach(populateSchnittstellenSelectors);
-            // masse(productName);
-            // schnittstelle(productName);
-            kabelSelected = true;
-            selected_kabel_name = productName;
-            schnittstellenSelected = false;
-            removeAllSelectedSchnittstellen();
-            masseSelected = false;
-            updateSummary();
-            updateProgressBar();
         }
 
         function masse(productName){
-            console.log('Selected Kabelvariante in masse:', productName);
-
             // Hide all sliders initially
             var sliders = document.querySelectorAll('.masse-slider-container-class');
             sliders.forEach(function(slider) {
@@ -284,59 +296,24 @@
             }
         }
 
-        // function schnittstelle(productName){
-        //     console.log('Selected Kabelvariante in Schnittstellen:', productName);
-        //     selected_kabel_name = productName;
-
-        //     // Hide all sliders initially
-        //     var sliders = document.querySelectorAll('.schnittstelle-slider-container-class');
-        //     sliders.forEach(function(slider) {
-        //         slider.classList.add('hidden');
-        //     });
-
-        //     // Show the selected slider based on cable type
-        //     var selectedSliderId = productName.toLowerCase() + '-schnittstelle-slider';
-        //     var selectedSlider = document.getElementById(selectedSliderId);
-        //     if (selectedSlider) {
-        //         selectedSlider.classList.remove('hidden');
-        //     } else {
-        //         console.log('No matching slider found for:', productName);
-        //     }
-
-        // }
-
         function selectschnittstellenvariante(productName, splitIndex) {
             var splitIndex = parseInt(splitIndex.split('-S')[1]);
-            console.log('Selected schnittstelle:', productName, splitIndex);
             var productSelectors = document.querySelectorAll('.schnittstelle-selector');
 
             productSelectors.forEach(function(selector) {
-                // if (splitIndex === 'S'){
-                //     var label = selector.querySelector('label');
-                //     var selectorSplitIndex = selector.getAttribute('data-split-index');
-                //     if (label.textContent.trim() === productName && selectorSplitIndex === splitIndex) {
-                //         selector.classList.add('selected');
-                //     }
-                //     if (label.textContent.trim() !== productName && selectorSplitIndex === splitIndex) {
-                //         selector.classList.remove('selected');
-                //     }
-                // }
-                // else{
-                    for (var i = 0; i <= splitIndex; i++) {
-                        var label = selector.querySelector('label');
-                        var selectorSplitIndex = selector.getAttribute('data-split-index');
-                        if (label.textContent.trim() === productName && selectorSplitIndex === 'S' + splitIndex) {
-                            selector.classList.add('selected');
-                        }
-                        if (label.textContent.trim() !== productName && selectorSplitIndex === 'S' + splitIndex) {
-                            selector.classList.remove('selected');
-                        }
+                for (var i = 0; i <= splitIndex; i++) {
+                    var label = selector.querySelector('label');
+                    var selectorSplitIndex = selector.getAttribute('data-split-index');
+                    if (label.textContent.trim() === productName && selectorSplitIndex === 'S' + splitIndex) {
+                        selector.classList.add('selected');
                     }
-                // }
+                    if (label.textContent.trim() !== productName && selectorSplitIndex === 'S' + splitIndex) {
+                        selector.classList.remove('selected');
+                    }
+                }
             });
 
             schnittstellenSelected = true;
-            
             var filteredKabelvarianten = [];
 
             for (let i = 0; i < kabelvarianten.length; i++) {
@@ -346,8 +323,10 @@
                     }
                 }
             }
-
+            
             filteredKabelvarianten.forEach(populateMasseSelectors);
+            masseSelected = false;
+            goToSection('Schnittstellen-Section');
             updateSummary();
             updateProgressBar();
         }
@@ -359,6 +338,13 @@
             });
         }
         
+        function removeAllMasseInputPairs() {
+            var selectors = document.querySelectorAll('.input-pair');
+            selectors.forEach(function (selector) {
+                selector.classList.remove('selected');
+            });
+        }
+
         function updateSummary() {
             var akkuvariante = selected_akkuvariante_name;
             var kabelvariante = selected_kabel_name;
@@ -367,9 +353,33 @@
             var preis = "";
 
             var preiseliste_sorted = preisliste.sort(function(a, b) {
-                var langeA = parseInt(a.lange.replace(/\D/g, ''), 10);
-                var langeB = parseInt(b.lange.replace(/\D/g, ''), 10);
-                return langeA - langeB;
+                // Split lange values into an array of strings
+                var langeAArray = a.lange.split(', ');
+                var langeBArray = b.lange.split(', ');
+
+                // Define a function to parse lange value and extract numerical component
+                function parseLangeValue(lange) {
+                    if (lange === "0mm") {
+                        return 0;
+                    } else if (lange.startsWith("<")) {
+                        return parseInt(lange.slice(1).replace(/\D/g, ''), 10);
+                    } else {
+                        return parseInt(lange.replace(/\D/g, ''), 10);
+                    }
+                }
+
+                // Compare parsed numerical components
+                for (var i = 0; i < Math.min(langeAArray.length, langeBArray.length); i++) {
+                    var langeA = parseLangeValue(langeAArray[i]);
+                    var langeB = parseLangeValue(langeBArray[i]);
+
+                    if (langeA !== langeB) {
+                        return langeA - langeB;
+                    }
+                }
+
+                // If all parsed components are equal, sort by the number of components (shorter first)
+                return langeAArray.length - langeBArray.length;
             });
 
             outerLoop: for (let i = 0; i < preiseliste_sorted.length; i++) {
@@ -378,9 +388,40 @@
                         if (selected_kabel_name === 'Straight'){
                             if (preiseliste_sorted[i]["leitung"]+'-S1' === schnittstelle[0]) {
                                 var preisliste_intValue = parseInt(preiseliste_sorted[i]["lange"].replace(/\D/g, ''), 10);
-                                var masse_intValue = parseInt(masse[0].replace(/\D/g, ''), 10);
+                                var masse_numericalValues = masse.map(item => {
+                                    var match = item.match(/-?\b\d+\b/);
+                                    return match ? parseInt(match[0]) : null;
+                                });
+                                var masse_intValue = masse_numericalValues[0];
 
                                 if (masse_intValue <= preisliste_intValue) {
+                                    preis = "\u20ac" + preiseliste_sorted[i]["qty_1"];
+                                    break outerLoop;
+                                }
+                            }
+                        }
+                        else{
+                            let lange_list_max = preiseliste_sorted[i]["leitung"].split(', ').map(item => parseInt(item.replace(/[^\d]/g, '')));
+                            var preiseliste_sorted_leitung = preiseliste_sorted[i]["leitung"].split(',').map(item => item.trim())
+                            var arrayequal_truthvalue = arraysContainSameElements(preiseliste_sorted_leitung, schnittstelle)
+                            if (arrayequal_truthvalue) {
+                                var preisliste_intValue = preiseliste_sorted[i]["lange"].split(', ').map(item => parseInt(item.replace(/[^\d]/g, '')));
+                                
+                                var masse_numericalValues = masse.map(item => {
+                                    var match = item.match(/-?\b\d+\b/);
+                                    return match ? parseInt(match[0]) : null;
+                                });
+                                
+                                var preis_truthvalue = true;
+                                for (let m = 0; m < Math.min(preisliste_intValue.length, masse_numericalValues.length); m++) {
+                                    if (masse_numericalValues[m] <= preisliste_intValue[m]) {
+                                    } 
+                                    else {
+                                        preis_truthvalue = false;
+                                    }
+                                }
+
+                                if (preis_truthvalue) {
                                     preis = "\u20ac" + preiseliste_sorted[i]["qty_1"];
                                     break outerLoop;
                                 }
@@ -389,7 +430,16 @@
                     }
                 }
             }
-
+            
+            if (!document.querySelector('.input-pair')) {
+                masseSelected = false;
+                preis = "";
+                if (schnittstelle.length !== 0) {
+                    masseTextElement.textContent = "Ausgewählte Schnittstellenkombination ist nicht möglich. Bitte ändern Sie es";
+                    masseTextElement.style.color = "red";
+                }
+            }
+ 
             if (jaRadioButton.checked) {
                 CAN_Bus = 'Ja';
             }
@@ -405,7 +455,6 @@
         }
 
         function masseChange(value, min, max) {
-            // Explicitly convert to integers
             value = parseInt(value, 10);
             min = parseInt(min, 10);
             max = parseInt(max, 10);
@@ -417,13 +466,15 @@
                     masseTextElement.textContent = "Alles gut, klicken Sie auf Weiter";
                     masseTextElement.style.color = "green";
                     masseSelected = true;
-                } else {
+                } 
+                else {
                     // The value should be between min and max in red
                     masseTextElement.textContent = "Der Wert sollte zwischen liegen " + min + " und " + max;
                     masseTextElement.style.color = "red";
                     masseSelected = false;
                 }
-            } else {
+            } 
+            else {
                 // Handle the case where the values are not valid integers
                 masseTextElement.textContent = "Ungültige Eingabewerte";
                 masseTextElement.style.color = "red";
@@ -488,7 +539,16 @@
                                 top: targetPosition,
                                 behavior: 'smooth'
                             });
-                        } else {
+                            selectedSchnittstellen = getSelectedSchnittstellen();
+                            if (selectedSectionId === "Masse-Section" && schnittstellenSelected){
+                                masseSelected = true;
+                                masseTextElement.textContent = "Alles gut, klicken Sie auf Weiter";
+                                masseTextElement.style.color = "green";
+                                updateProgressBar();
+                                updateSummary();
+                            }
+                        } 
+                        else {
                             section.classList.add('hidden');
                             if (stepperItem && stepperItem.classList.contains('active')) {
                                 stepperItem.classList.remove('active');
@@ -499,8 +559,6 @@
                     console.error("Element with ID '" + sectionId + "' not found.");
                 }
             }
-
-            console.log("Going to the section: " + selectedSectionId);
         }
 
         function addToCart() {
@@ -541,7 +599,13 @@
                         console.log('Success:', data);
                         if (data.login_url) {
                             location.reload();
-                        } 
+                        }
+                        else if (!data.success) {
+                            schnittstellenSelected = false;
+                            masseSelected = false;
+                            updateProgressBar();
+                            alert(data.message);
+                        }
                         else {
                             showSuccessPopup();
                         }
@@ -587,6 +651,7 @@
             stepperItems[0].classList.toggle('completed', akkuSelected);
             stepperItems[1].classList.toggle('completed', kabelSelected);
             stepperItems[2].classList.toggle('completed', schnittstellenSelected);
+            const masseSection = document.getElementById('Masse-Section');
             stepperItems[3].classList.toggle('completed', masseSelected);
         }
 
@@ -649,25 +714,19 @@
                         var img = document.createElement('img');
                         img.src = mediaPrefix + kabelvariante.kabelvariante_image_path;
                         img.alt = kabelvariante.kabelvariante_name;
+                        img.style.display = "block"; // Ensure image is treated as a block element
+                        img.style.margin = "auto"; // Set margins to auto for horizontal centering
+                        div.style.textAlign = "center"; // Set text-align to center for vertical centering of inline elements
                         div.appendChild(img);
 
                         container.appendChild(div);
                     }
 
-                    // trigger schnittsellen & masse populate functions or apply filters to them 
-                    // like check for the available schnittstellen & masse and select them only 
-                    // if available, else assign them to empty strings, update step pogress
-                    // for masse if the earlier value for Akku 1 is valid for the new Akku selection
-                    // keeep it as it is else change it to minimum, update step pogress
-               
                     var productSelectors = document.querySelectorAll('.kabelvariante-selector');
 
                     productSelectors.forEach(function(selector) {
                         selector.classList.remove('selected');
                         var label = selector.querySelector('label');
-                        // if (label.textContent.trim() === selected_kabel_name) {
-                            // selector.classList.add('selected');
-
                         selected_kabel_name = '';
 
                         // No Schnittstellen options available, display a message
@@ -689,7 +748,6 @@
                         masse_empty_container.appendChild(messageDiv);
                         selected_masse_name = '';
                         masseSelected = false;
-                        // }
                     });
                 });
             }
@@ -708,10 +766,8 @@
             img.src = mediaPrefix + kabelvariante.masse_image_path;
 
             sliderContainer.appendChild(img);
-
-            if (kabelvariante.splits > 0) {
+            if (kabelvariante.splits == 1) {
                 for (var k = 1; k <= kabelvariante.splits; k++) {
-                    console.log("k:",k);
                     var rowDiv = document.createElement('div');
                     rowDiv.className = 'schnittstelle-row';
 
@@ -763,7 +819,70 @@
                     rowDiv.appendChild(selectorsDiv);
                     sliderContainer.appendChild(rowDiv);
                 }
-            } 
+            }
+
+            else if (kabelvariante.splits > 1) {
+                for (var k = 1; k <= kabelvariante.splits; k++) {
+                    var rowDiv = document.createElement('div');
+                    rowDiv.className = 'schnittstelle-row';
+
+                    var headingDiv = document.createElement('div');
+                    headingDiv.className = 'schnittstelle-heading';
+                    headingDiv.innerHTML = '<div class="schnittstelle-heading-option">Schnittstelle S' + k + '</div>';
+                    rowDiv.appendChild(headingDiv);
+
+                    var selectorsDiv = document.createElement('div');
+                    selectorsDiv.className = 'schnittstelle-selectors';
+
+                    var filteredschnittstellenOptions = [];
+                    var selector_IDs_list = [];
+
+                    for (let i = 0; i < preisliste.length; i++) {
+                        if (preisliste[i]["gehause"] === selected_akkuvariante_name && preisliste[i]["kabelvariante"] === kabelvariante.kabelvariante_name) {
+                            var preislist_schnittstellen_names = preisliste[i]["leitung"].split(',').map(item => item.trim());
+                            for (let l = 0; l < preislist_schnittstellen_names.length; l++) {
+                                for (let j = 0; j < schnittstellenOptions.length; j++) {
+                                    if (preislist_schnittstellen_names[l] === schnittstellenOptions[j]["schnittstelle_name"] && l+1==k) {
+                                        preislist_schnittstellenOption = schnittstellenOptions[j];
+                                        if (!filteredschnittstellenOptions.includes(preislist_schnittstellenOption)) {
+                                            filteredschnittstellenOptions.push(preislist_schnittstellenOption);
+                                        }
+                                        break; // Exit inner loop once a match is found
+                                    }
+                                }
+                            }
+                        }
+                        
+                        filteredschnittstellenOptions.forEach(function (schnittstelle) {
+                            var existingSelector = schnittstelle.schnittstelle_name + '-S' + k;
+                            if (!selector_IDs_list.includes(existingSelector)) {
+                                selector_IDs_list.push(existingSelector);
+                                var selectorDiv = document.createElement('div');
+                                selectorDiv.className = 'schnittstelle-selector';
+                                selectorDiv.id = schnittstelle.schnittstelle_name + '-S' + k;
+                                selectorDiv.setAttribute('data-split-index', 'S' + k);
+                                selectorDiv.onclick = function () {
+                                    selectschnittstellenvariante(schnittstelle.schnittstelle_name, selectorDiv.id);
+                                };
+
+                                var label = document.createElement('label');
+                                label.textContent = schnittstelle.schnittstelle_name;
+                                selectorDiv.appendChild(label);
+
+                                var img = document.createElement('img');
+                                img.src = mediaPrefix + schnittstelle.schnittstelle_image_path;
+                                img.alt = schnittstelle.schnittstelle_name;
+                                selectorDiv.appendChild(img);
+
+                                selectorsDiv.appendChild(selectorDiv);
+                            }
+                        });
+                        rowDiv.appendChild(selectorsDiv);
+                    }
+                    sliderContainer.appendChild(rowDiv);
+                }
+            }
+
             else {
                 var noOptionsParagraph = document.createElement('p');
                 noOptionsParagraph.textContent = 'Keine gültigen Schnittstellen verfügbar.';
@@ -773,9 +892,25 @@
             container.appendChild(sliderContainer);
         }
 
+        function arraysContainSameElements(array1, array2) {
+            if (array1.length !== array2.length) {
+                return false;
+            }
+
+            const sortedArray1 = array1.slice().sort();
+            const sortedArray2 = array2.slice().sort();
+
+            return sortedArray1.every((element, index) => {
+                // Extract the part before '-S' from each element for comparison
+                const trimmedElement1 = element.split('-S')[0].trim();
+                const trimmedElement2 = sortedArray2[index].split('-S')[0].trim();
+
+                return trimmedElement1 === trimmedElement2;
+            });
+        }
+
         function populateMasseSelectors(kabelvariante) {
             var selectedSchnittstellen = getSelectedSchnittstellen();
-            console.log("selectedSchnittstellen in populate masse:",selectedSchnittstellen);
             var container = document.getElementById('masse-slider-container');
 
             // Clear existing content in the container
@@ -794,13 +929,90 @@
 
             // Check for splits and create input pairs accordingly
             if (kabelvariante.splits > 1) {
-                // TODO: Still pending
-                createInputPair(sliderContainer, kabelvariante, 'main', kabelvariante.main_part_min_length, 2000);
-
-                for (var i = 1; i <= kabelvariante.splits; i++) {
-                    createInputPair(sliderContainer, kabelvariante, 'branch' + i, kabelvariante.split_part_min_length, kabelvariante.split_part_max_length);
+                let lange_list_max = [];
+                for (let i = 0; i < preisliste.length; i++) {
+                    if (preisliste[i]["gehause"] === selected_akkuvariante_name) {
+                        if (preisliste[i]["kabelvariante"] === selected_kabel_name) {
+                            if (arraysContainSameElements){
+                                lange_list = preisliste[i]["lange"].split(', ').map(item => parseInt(item.replace(/[^\d]/g, '')));
+                                if (lange_list_max.length === 0) {
+                                    lange_list_max = lange_list
+                                }
+                                for (let l = 0; l < lange_list.length; l++) {
+                                    
+                                    if (lange_list[l] > lange_list_max[l]) {
+                                        lange_list_max[l] = lange_list[l];
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-            } else if (parseInt(kabelvariante.splits) === 1) {
+
+                for (let k = 0; k < lange_list_max.length; k++) {
+                    if (k === 0) {
+                        diff = 0;
+                        createInputPair(sliderContainer, kabelvariante, 'X1', kabelvariante.main_part_min_length, lange_list_max[k], diff);
+                    }
+                    else {
+                        diff = 0;
+                        let maxValues = {}; // Object to store max values for each selectedSchnittstelle_type
+                        selectedSchnittstelle_type_list = [];
+
+                        // Extract selectedSchnittstelle_type from selectedSchnittstellen
+                        for (let j = 0; j < selectedSchnittstellen.length; j++) {
+                            var [selectedSchnittstelle_type, selectedSchnittstelle_name] = selectedSchnittstellen[j].split('-').map(part => part.trim());
+                            selectedSchnittstelle_type_list.push(selectedSchnittstelle_type);
+                        }
+
+                        // Iterate through preisliste to find maximum lange values for each selectedSchnittstelle_type
+                        for (let i = 0; i < preisliste.length; i++) {
+                            leitung_list = [preisliste[i]["leitung"]][0].split(', ');
+                            lange_list = preisliste[i]["lange"].split(', ').map(item => parseInt(item.replace(/[^\d]/g, '')));
+
+                            if (preisliste[i]["gehause"] === selected_akkuvariante_name && preisliste[i]["kabelvariante"] === selected_kabel_name) {
+                                for (let l = 0; l < selectedSchnittstelle_type_list.length; l++) {
+                                    const selectedSchnittstelle_type = selectedSchnittstelle_type_list[l];
+                                    const index = leitung_list.indexOf(selectedSchnittstelle_type);
+                                    if (index !== -1) { // Check if the selectedSchnittstelle_type exists in leitung_list
+                                        const dynamicIndex = index + 1; // Calculate the dynamically extracted index
+                                        if (!maxValues[selectedSchnittstelle_type] || lange_list[dynamicIndex] > maxValues[selectedSchnittstelle_type]) {
+                                            maxValues[selectedSchnittstelle_type] = lange_list[dynamicIndex];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        for (let m = 0; m < selectedSchnittstelle_type_list.length; m++) {
+                            if (m+1 === k) {
+                                var selectedSchnittstelle_type = selectedSchnittstelle_type_list[m];
+                                n = k + 1;
+                                createInputPair(sliderContainer, kabelvariante, 'X'+n, kabelvariante.split_part_min_length, maxValues[selectedSchnittstelle_type], diff);
+                            }
+                        }
+                    }
+                }
+
+                if (selectedSchnittstellen.length < kabelvariante.splits) {
+                    schnittstelleTextElement.textContent = "Bitte wählen Sie alle Schnittstellen aus";
+                    schnittstelleTextElement.style.color = "red";
+                    schnittstellenSelected = false;
+                    masseTextElement.textContent = "Ungültige Eingabewerte";
+                    masseTextElement.style.color = "red";
+                    masseSelected = false;
+                }
+                else {
+                    schnittstelleTextElement.textContent = "Alles gut, klicken Sie auf Weiter";
+                    schnittstelleTextElement.style.color = "green";
+                    schnittstellenSelected = true;
+                    masseTextElement.textContent = "Alles gut, klicken Sie auf Weiter";
+                    masseTextElement.style.color = "green";
+                    masseSelected = true;
+                }
+            }
+            
+            else if (parseInt(kabelvariante.splits) === 1) {
                 var straight_max_length = 0;
 
                 for (let i = 0; i < preisliste.length; i++) {
@@ -816,8 +1028,14 @@
                         }
                     }
                 }
-                createInputPair(sliderContainer, kabelvariante, 'main', kabelvariante.main_part_min_length, straight_max_length.toString());
-            } else {
+                diff = 0;
+                createInputPair(sliderContainer, kabelvariante, 'X1', kabelvariante.main_part_min_length, straight_max_length.toString(), diff);
+                schnittstelleTextElement.textContent = "Alles gut, klicken Sie auf Weiter";
+                schnittstelleTextElement.style.color = "green";
+                masseTextElement.textContent = "Alles gut, klicken Sie auf Weiter";
+                masseTextElement.style.color = "green";
+            } 
+            else {
                 var noOptionsParagraph = document.createElement('p');
                 noOptionsParagraph.textContent = 'Keine gültigen Kabelvarianten verfügbar.';
                 sliderContainer.appendChild(noOptionsParagraph);
@@ -827,21 +1045,21 @@
             container.appendChild(sliderContainer);
         }
 
-        function createInputPair(container, kabelvariante, identifier, min, max) {
+        function createInputPair(container, kabelvariante, identifier, min, max, diff) {
             var inputPairDiv = document.createElement('div');
             inputPairDiv.className = 'input-pair';
 
             var label = document.createElement('label');
-            label.htmlFor = kabelvariante.kabelvariante_name + '-masse-' + identifier + '-length';
-            label.textContent = identifier.charAt(0).toUpperCase() + identifier.slice(1) + ' Length (mm): ';
+            label.htmlFor = kabelvariante.kabelvariante_name + '-masse-' + identifier + '-lange';
+            label.textContent = identifier.charAt(0).toUpperCase() + identifier.slice(1) + ' Lange (mm): ';
 
             var input = document.createElement('input');
             input.type = 'number';
-            input.id = kabelvariante.kabelvariante_name + '-masse-' + identifier + '-length';
+            input.id = kabelvariante.kabelvariante_name + '-masse-' + identifier + '-lange';
             input.min = min;
             input.max = max;
             input.step = 1;
-            input.value = min - 1;
+            input.value = min - diff;
             input.oninput = function () {
                 masseChange(this.value, min, max);
             };
@@ -895,7 +1113,6 @@
             });
 
             selected_masse_name = inputValuesArray;
-            console.log("selected_masse_name", selected_masse_name);
             return inputValuesArray;
         }
 
