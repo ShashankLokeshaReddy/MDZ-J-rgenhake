@@ -10,4 +10,4 @@ django-crispy-forms
 crispy-bootstrap5
 django-colorfield
 django_bootstrap_icons
-# mysqlclient
+mysqlclient

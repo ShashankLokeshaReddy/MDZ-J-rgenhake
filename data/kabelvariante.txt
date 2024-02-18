@@ -1,0 +1,3 @@
+Straight|Kabelvariante/Straight.png|130|0|1|Maße/Straight.png
+Y-Ab-Stecker|Kabelvariante/Y__Ab__Stecker.png|0|100|2|Maße/Y__Ab__Stecker.png
+Y-Kabel|Kabelvariante/Y__Kabel.png|130|100|2|Maße/Y__Kabel.png

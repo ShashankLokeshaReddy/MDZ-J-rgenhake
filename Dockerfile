@@ -9,6 +9,12 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Update package lists
+RUN apt-get update
+
+# Install SQLite
+RUN apt-get install -y sqlite3
+
 COPY . .
 
 # running migrations
