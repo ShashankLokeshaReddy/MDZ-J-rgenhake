@@ -207,52 +207,6 @@ def profil(request):
     }
     return render(request, 'pages/profile.html', context)
 
-@login_required(login_url='/login/')
-@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
-def developer_mode(request):
-    customer_profiles = get_customer_profiles(request)
-    akkuvarianten = get_akkuvarianten(request)
-    kabelvarianten = get_kabelvarianten(request)
-    schnittstellen = get_schnittstellen(request)
-    colors = get_colors(request)
-    ui_labels = get_ui_labels(request)
-    image_paths = get_image_path(request)
-    orders = get_orders(request)
-    ui_labels_data = get_ui_labels(request)
-    firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
-    firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
-    firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
-    fon = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fon'), '')
-    fax = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'fax'), '')
-    email = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'E-Mail'), '')
-    webseite = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'webseite'), '')
-    footer_copyright_info = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'footer-copyright-info'), '')
-
-    for kabelvariante in kabelvarianten:
-        kabelvariante['splits'] = int(kabelvariante['splits'])
-        kabelvariante['main_part_min_length'] = int(kabelvariante['main_part_min_length'])
-        kabelvariante['split_part_min_length'] = int(kabelvariante['split_part_min_length'])
-        
-    return render(request, 'pages/developer_mode.html', {
-        'customer_profiles': customer_profiles,
-        'akkuvarianten': akkuvarianten,
-        'kabelvarianten': kabelvarianten,
-        'schnittstellen': schnittstellen,
-        'colors': colors,
-        'ui_labels': ui_labels,
-        'image_paths': image_paths,
-        'orders': orders,
-        'in_cart_items': get_in_cart_items(request),
-        'firma': firma,
-        'firma_adresse_1': firma_adresse_1,
-        'firma_adresse_2': firma_adresse_2,
-        'fon': fon,
-        'fax': fax,
-        'email': email,
-        'webseite': webseite,
-        'footer_copyright_info': footer_copyright_info,
-    })
-
 # @login_required(login_url='/login/')
 # @user_passes_test(lambda u: u.is_superuser, login_url='/login/')
 @require_POST
