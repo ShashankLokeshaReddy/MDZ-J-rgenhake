@@ -1,0 +1,3 @@
+primary|#C85019
+secondary|#CCCCCC
+text|#000000
