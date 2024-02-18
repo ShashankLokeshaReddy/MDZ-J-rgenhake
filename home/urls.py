@@ -21,7 +21,7 @@ urlpatterns = [
     path('create_order_with_items/', views.create_order_with_items, name='create_order_with_items'),
     path('add_item_to_cart/', views.add_item_to_cart, name='add_item_to_cart'),
     path('upload_special_solution/', views.upload_special_solution, name='upload_special_solution'),
-
+    path('create_offer_request_with_items/', views.create_offer_request_with_items, name='create_offer_request_with_items'),
     # path('customerProfile/', views.get_customer_profiles, name='get_customer_profiles'),
     # path('akkuvarianten/', views.get_akkuvarianten, name='get_akkuvarianten'),
     # path('kabelvarianten/', views.get_kabelvarianten, name='get_kabelvarianten'),

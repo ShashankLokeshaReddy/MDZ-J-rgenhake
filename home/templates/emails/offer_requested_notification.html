@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            table {
+                border-top: 1px solid black;
+                border-collapse: collapse;
+            }
+            .table-row {
+                border-left: 1px solid black;
+                border-right: 1px solid black;
+                border-bottom: 1px solid black;
+                border-collapse: collapse;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Sehr geehrte/r Herr/Frau <b>{{last_name}}</b>,</p>
+
+        <p>vielen Dank für Ihre Interesse und der Nutzung von <a href="https://juergenhakexAES.com">juergenhakexAES.com</a>, der Kabelkonfigurator der Jürgenhake Deutschland GmbH.</p>
+
+        <p>Innerhalb der nächsten 1 – 2 Werktage erhalten Sie eine offizielle vielen Dank für Ihre Interesse und der Nutzung von. Bitte überprüfen Sie auch Ihren Spam-Ordner, falls Sie die Bestätigung nicht in Ihrem Posteingang finden sollte.</p>
+        <br>
+        <p>
+            Hier ist eine Übersicht Ihrer Angebotsanfrage:<br>
+            <br>
+            <b>
+                Angebotsnummer:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;„{{ order_nummer }}“<br>
+                Kundennummer:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;„{{ ust_id }}“<br>
+                Anfragedatum:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;„{{ order_datum }}“
+            </b>
+        </p>
+        <br>
+        <table>
+
+            <thead>
+                <tr class="table-row">
+                    <th class="table-heading p-1">Pos.</th>
+                    <th class="table-heading p-1">Produktkonfiguration</th>
+                    <th class="table-heading p-1">Original Stückpreis<br>[€]</th>
+                    <th class="table-heading p-1">Reduzerter Stückpreis<br>[€]</th>
+                    <th class="table-heading p-1">Menge</th>
+                    <th class="table-heading p-1">Gesamtpreis<br>[€]</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in items %}
+                    <tr class="table-row">
+                        <td class="table-data p-1">{{ forloop.counter }}</td>
+                        <td class="table-data p-1" style="text-align: left;">
+                            Akkuvariante: {{ item.akkuvariante }}<br>
+                            Mit 120 Ohm CAN-Bus Widerstand?: {{ item.mit_120_Ohm_CAN_Bus_Widerstand }}<br>
+                            Kabelvariante: {{ item.kabelvariante }}<br>
+                            Schnittstelle: {{ item.schnittstelle }}<br>
+                            Masse: {{ item.masse }}
+                        </td>
+                        <td class="table-data p-1">{{ item.original_preis }}</td>
+                        <td class="table-data p-1">{{ item.reduzierter_preis }}</td>
+                        <td class="table-data p-1">{{ item.menge }}</td>
+                        <td class="table-data p-1">{{ item.gesamt }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Gesamtpreis</td>
+                    <td></td>
+                    <td>{{ gesamt }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Vielen Dank für Ihr Vertrauen in unsere Produkte, bei Rückfragen stehen wir Ihnen zu unseren gängigen Öffnungszeiten zur Verfügung.</p>
+        <p>Mit freundlichen Grüßen</p>
+        <img src="cid:logo" alt="Logo: Jürgenhake" class="logo-svg" style="width: 200px;">
+
+        <p>Jürgenhake  |  Windmüllerstr 41  |  59557 Lippstadt</p>
+
+        <p>
+            fon:&nbsp;&nbsp;&nbsp; +49 2941 2807-12<br>
+            mob:&nbsp;&nbsp;&nbsp; +49 151 64077230<br>
+            fax:&nbsp;&nbsp;&nbsp; +49 2941 2807-60<br>
+            E-Mail: c.juergenhake@juergenhake.de
+        </p>
+
+        <p>
+            Bernhard Jürgenhake Gesellschaft für Kabelkonfektion und Metallverarbeitung mbH<br>
+            HRB 5346&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Geschäftsführer:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dr.-Ing. Christoph Jürgenhake, Andre Russ<br>
+            Amtsgericht Paderborn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USt-Ident-Nr. DE 125 687 409
+        </p>
+
+        <p>
+            Jürgenhake Deutschland GmbH<br>
+            HRB 7608&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Geschäftsführer:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dr.-Ing. Christoph Jürgenhake, Andre Russ<br>
+            Amtsgericht Paderborn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USt-Ident-Nr. DE 814 386 036
+        </p>
+
+        <p style="font-size: smaller;">
+            Diese E-Mail und alle Anlagen können Betriebs- oder Geschäftsgeheimnisse, dem Anwaltsgeheimnis unterliegende oder sonstige vertrauliche Informationen enthalten. Sollten Sie diese E-Mail irrtümlich erhalten haben, ist Ihnen eine Kenntnisnahme des Inhalts, eine Vervielfältigung oder Weitergabe der E-Mail und aller Anlagen ausdrücklich untersagt. Bitte benachrichtigen Sie den Absender und löschen/vernichten Sie die empfangene E-Mail und alle Anlagen. Bitte beachten Sie, dass wir für eventuellen Datenverlust bzw. Beschädigungen aufgrund eines Softwareviruses nicht haftbar sind. Vielen Dank.<br>
+            <br>
+            This message and any attachments may contain trade secrets or privileged, undisclosed or otherwise confidential information. If you have received this e-mail in error, you are hereby notified that any review, copying or distribution of it and its attachments is strictly prohibited. Please inform the sender immediately and delete/destroy the original message and any copies. Please, note that we are not responsible for possible overrun or damages on account of a Software viruses. Thank you.
+        </p>
+    </body>
+</html>

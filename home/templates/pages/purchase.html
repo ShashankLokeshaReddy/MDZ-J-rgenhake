@@ -100,12 +100,22 @@
                 <p>Gesamt Preis: <span id="gesamt-price">0</span></p>
             </div>
             <div class="col">
+                <form id="requestOfferForm" method="post">
+                    {% csrf_token %}
+                    {% if not in_cart_items %}
+                        <button type="button" id="request-offer" class="btn btn-outline-info disabled" data-toggle="modal" data-target="#requestOfferModal" aria-disabled="true">Anfrage Angebot</button>
+                    {% else %}
+                        <button type="button" id="request-offer" class="btn btn-outline-info" data-toggle="modal" data-target="#requestOfferModal">Anfrage Angebot</button>
+                    {% endif %}
+                </form>
+            </div>
+            <div class="col">
                 <form id="submitOrderForm" method="post">
                     {% csrf_token %}
                     {% if not in_cart_items %}
-                        <button type="button" id="submit-order" class="btn btn-outline-info disabled" data-toggle="modal" data-target="#submitOrderModal" aria-disabled="true">Bestellung abschicken</button>
+                        <button type="button" id="submit-order" class="btn btn-info disabled" data-toggle="modal" data-target="#submitOrderModal" aria-disabled="true">Bestellung abschicken</button>
                     {% else %}
-                        <button type="button" id="submit-order" class="btn btn-outline-info" data-toggle="modal" data-target="#submitOrderModal">Bestellung abschicken</button>
+                        <button type="button" id="submit-order" class="btn btn-info" data-toggle="modal" data-target="#submitOrderModal">Bestellung abschicken</button>
                     {% endif %}
                 </form>
             </div>
@@ -223,6 +233,70 @@
                         body: JSON.stringify(
                             {
                                 'items_in_order': itemsInOrder
+                            }
+                        ),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Die Netzwerkantwort war nicht in Ordnung');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Handle the response data as needed
+                        console.log('Response:', data);
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
+                }
+            });
+
+            // Event listener for the request offer button
+            document.getElementById('request-offer').addEventListener('click', function () {
+                updateTotalPrice();
+                // Prompt user for confirmation
+                if (confirm("Sind Sie sicher, dass Sie die Angebote für die ausgewählten Artikel anfordern möchten?")) {
+                    var itemsInOfferRequest = [];
+
+                    // Collect order details for submission
+                    document.querySelectorAll('.item-row').forEach(function (row) {
+                        var itemNumber = row.getAttribute('data-item-number');
+                        var original_preis = row.getAttribute('data-original_preis');
+                        var reduzierter_preis = parseInt(row.querySelector('.reduzierter_preis').textContent);
+                        var menge = parseInt(row.querySelector('.menge').textContent);
+                        var gesamt = parseInt(row.querySelector('.gesamt-price').textContent);
+                        var item_akkuvariante = row.querySelector('.item-akkuvariante').textContent;
+                        var item_CAN_Bus = row.querySelector('.item-CAN-Bus').textContent;
+                        var item_kabelvariante = row.querySelector('.item-kabelvariante').textContent;
+                        var item_schnittstelle = row.querySelector('.item-schnittstelle').textContent;
+                        var item_masse = row.querySelector('.item-masse').textContent;
+
+                        itemsInOfferRequest.push({
+                            'item_nummer': itemNumber,
+                            'original_preis': original_preis,
+                            'reduzierter_preis': reduzierter_preis,
+                            'menge': menge,
+                            'gesamt': gesamt,
+                            'akkuvariante': item_akkuvariante,
+                            'mit_120_Ohm_CAN_Bus_Widerstand': item_akkuvariante,
+                            'kabelvariante': item_kabelvariante,
+                            'schnittstelle': item_schnittstelle,
+                            'masse': item_masse
+                        });
+                    });
+
+                    // Trigger POST request to update orders
+                    fetch('/create_offer_request_with_items/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for Django
+                        },
+                        body: JSON.stringify(
+                            {
+                                'items_in_order': itemsInOfferRequest
                             }
                         ),
                     })
