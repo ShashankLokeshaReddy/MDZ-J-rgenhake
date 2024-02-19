@@ -4,35 +4,31 @@
         <br>
         <p>Sehr geehrte/r Herr/Frau <b>{{last_name}}</b>,</p>
 
-        <p>vielen Dank für Ihre Interesse und der Nutzung von <a href="https://juergenhakexAES.com">juergenhakexAES.com</a>, der Kabelkonfigurator der Jürgenhake Deutschland GmbH.</p>
+        <p>{{email_body_special_solution_text | safe}}</p>
 
         <p>Hiermit bestätigen wir den Eingang Ihrer Anfrage. Innerhalb der nächsten 1 – 2 Werktage werden wir uns mit Ihnen über die angegebene E-Mail-Adresse in Verbindung setzen. Bitte überprüfen Sie auch Ihren Spam-Ordner, falls Sie die Bestätigung nicht in Ihrem Posteingang finden sollte.</p>
 
         <p>Mit freundlichen Grüßen</p>
-        <img src="cid:logo" alt="Logo: Jürgenhake" class="logo-svg" style="width: 200px;">
+        <img src="cid:logo" alt="Logo: {{email_body_firma_name}}" class="logo-svg" style="width: 200px;">
 
-        <p>Jürgenhake  |  Windmüllerstr 41  |  59557 Lippstadt</p>
+        <p>{{email_body_firma_name}}  |  {{firma_adresse_1}}  |  {{firma_adresse_2}}</p>
 
+        {% if email_body_fon and email_body_mob and email_body_fax and email_body_email %}
         <p>
-            fon:&nbsp;&nbsp;&nbsp; +49 2941 2807-12<br>
-            mob:&nbsp;&nbsp;&nbsp; +49 151 64077230<br>
-            fax:&nbsp;&nbsp;&nbsp; +49 2941 2807-60<br>
-            E-Mail: c.juergenhake@juergenhake.de
+            fon:&nbsp;&nbsp;&nbsp; {{email_body_fon}}<br>
+            mob:&nbsp;&nbsp;&nbsp; {{email_body_mob}}<br>
+            fax:&nbsp;&nbsp;&nbsp; {{email_body_fax}}<br>
+            E-Mail: {{email_body_email}}
         </p>
+        {% endif %}
 
-        <p>
-            Bernhard Jürgenhake Gesellschaft für Kabelkonfektion und Metallverarbeitung mbH<br>
-            HRB 5346&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Geschäftsführer:<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dr.-Ing. Christoph Jürgenhake, Andre Russ<br>
-            Amtsgericht Paderborn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USt-Ident-Nr. DE 125 687 409
-        </p>
+        {% if email_body_firma_1 %}
+        <p>{{email_body_firma_1 | safe}}</p>
+        {% endif %}
 
-        <p>
-            Jürgenhake Deutschland GmbH<br>
-            HRB 7608&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Geschäftsführer:<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dr.-Ing. Christoph Jürgenhake, Andre Russ<br>
-            Amtsgericht Paderborn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USt-Ident-Nr. DE 814 386 036
-        </p>
+        {% if email_body_firma_2 %}
+        <p>{{email_body_firma_2 | safe}}</p>
+        {% endif %}
 
         <p style="font-size: smaller;">
             Diese E-Mail und alle Anlagen können Betriebs- oder Geschäftsgeheimnisse, dem Anwaltsgeheimnis unterliegende oder sonstige vertrauliche Informationen enthalten. Sollten Sie diese E-Mail irrtümlich erhalten haben, ist Ihnen eine Kenntnisnahme des Inhalts, eine Vervielfältigung oder Weitergabe der E-Mail und aller Anlagen ausdrücklich untersagt. Bitte benachrichtigen Sie den Absender und löschen/vernichten Sie die empfangene E-Mail und alle Anlagen. Bitte beachten Sie, dass wir für eventuellen Datenverlust bzw. Beschädigungen aufgrund eines Softwareviruses nicht haftbar sind. Vielen Dank.<br>
