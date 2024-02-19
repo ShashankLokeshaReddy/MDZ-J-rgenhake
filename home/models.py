@@ -150,7 +150,7 @@ class Color(models.Model):
 
 class UILabel(models.Model):
     label_key = models.CharField(max_length=255, primary_key=True)
-    label_value = models.CharField(max_length=255,null=True)
+    label_value = models.CharField(max_length=1000,null=True)
 
     def __str__(self):
         return self.label_key  # or any other field to represent the object as a string

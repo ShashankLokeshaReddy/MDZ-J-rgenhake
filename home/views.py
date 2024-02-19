@@ -536,6 +536,7 @@ def delete_item(request):
 
 @require_POST
 def create_order_with_items(request):
+    ui_labels_data = get_ui_labels(request)
     try:
         json_data = json.loads(request.body)
         items_in_order = json_data['items_in_order']
@@ -567,9 +568,9 @@ def create_order_with_items(request):
                 OrderItem.objects.create(order=order, ust_id=ust_id, akkuvariante=akkuvariante, mit_120_Ohm_CAN_Bus_Widerstand=mit_120_Ohm_CAN_Bus_Widerstand, kabelvariante=kabelvariante, schnittstelle=schnittstelle, masse=masse, menge=menge, original_preis=original_preis, reduzierter_preis=reduzierter_preis, gesamt=gesamt)
                 InCartItem.objects.filter(item_nummer=item_nummer).delete()
             notificationService = NotificationService()
-            notificationService.send_order_created_notification(request, order)
+            notificationService.send_order_created_notification(request, order, ui_labels_data)
         except Exception as e:
-            return JsonResponse({'success': False, 'message': f'Error creating order items: {str(e)} {order}'})
+            return JsonResponse({'success': False, 'message': f'Fehler beim Erstellen von Auftragspositionen: {str(e)} {order}'})
 
         print("Update orders success")
         messages.success(request, f'Ihre Bestellungen wurden übermittelt!')
@@ -582,6 +583,7 @@ def create_order_with_items(request):
 
 @require_POST
 def create_offer_request_with_items(request):
+    ui_labels_data = get_ui_labels(request)
     try:
         json_data = json.loads(request.body)
         items_in_order = json_data['items_in_order']
@@ -613,18 +615,18 @@ def create_offer_request_with_items(request):
                 OrderItem.objects.create(order=order, ust_id=ust_id, akkuvariante=akkuvariante, mit_120_Ohm_CAN_Bus_Widerstand=mit_120_Ohm_CAN_Bus_Widerstand, kabelvariante=kabelvariante, schnittstelle=schnittstelle, masse=masse, menge=menge, original_preis=original_preis, reduzierter_preis=reduzierter_preis, gesamt=gesamt)
                 InCartItem.objects.filter(item_nummer=item_nummer).delete()
             notificationService = NotificationService()
-            notificationService.send_offer_requested_notification(request, order)
+            notificationService.send_offer_requested_notification(request, order, ui_labels_data)
         except Exception as e:
-            return JsonResponse({'success': False, 'message': f'Error creating order items: {str(e)} {order}'})
+            return JsonResponse({'success': False, 'message': f'Fehler beim Erstellen von Auftragspositionen: {str(e)}'})
 
         print("Offer request create success")
         messages.success(request, f'Ihre Angebotsanfrage wurde übermittelt!')
-        return JsonResponse({'success': True, 'message': 'Offer request created successfully'})
+        return JsonResponse({'success': True, 'message': 'Angebotsanfrage erfolgreich erstellt'})
 
     except Exception as e:
         print("Offer request create not success")
         print(f"Error creating offer request: {str(e)}")
-        return JsonResponse({'success': False, 'message': f'Error creating offer request: {str(e)}'})
+        return JsonResponse({'success': False, 'message': f'Fehler beim Erstellen einer Angebotsanfrage: {str(e)}'})
 
 @csrf_exempt
 @require_POST
@@ -776,6 +778,7 @@ def add_item_to_cart(request):
 @csrf_exempt
 @require_POST
 def upload_special_solution(request):
+    ui_labels_data = get_ui_labels(request)
     try:
         print("request.user in upload_special_solution", request.user)
         if request.user.is_authenticated:
@@ -787,7 +790,7 @@ def upload_special_solution(request):
             special_order.save()
             try:
                 notificationService = NotificationService()
-                notificationService.send_special_order_notification(request, special_order)
+                notificationService.send_special_order_notification(request, special_order, ui_labels_data)
             except Exception as e:
                 return JsonResponse({'message': 'Datei-Upload erfolgreich. Ihre Bestellung ist bei uns eingegangen und unsere Vertriebsmitarbeiter werden sich in Kürze mit Ihnen in Verbindung setzen', 'error': f'Error sending special order notification: {str(e)}'})
             messages.success(request, f'Datei-Upload erfolgreich. Ihre Bestellung ist bei uns eingegangen und unsere Vertriebsmitarbeiter werden sich in Kürze mit Ihnen in Verbindung setzen!')

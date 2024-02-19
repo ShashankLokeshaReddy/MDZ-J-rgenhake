@@ -83,8 +83,17 @@ class NotificationService:
             smtp.login(email_sender, email_password)
             smtp.sendmail(email_sender, email_receiver, em.as_string())
 
-    def send_order_created_notification(self, request, order):
-
+    def send_order_created_notification(self, request, order, ui_labels):
+        email_body_firma_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-name'), '')
+        firma_adresse_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'firma-adresse-1'), '')
+        firma_adresse_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'firma-adresse-2'), '')
+        email_body_ordering_text = next((label['label_value'] for label in ui_labels if label['label_key'] == 'E-Mail-Body-Ordering-text'), '')
+        email_body_fon = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-fon'), '')
+        email_body_mob = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-mob'), '')
+        email_body_fax = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-fax'), '')
+        email_body_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-email'), '')
+        email_body_firma_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-1'), '')
+        email_body_firma_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-2'), '')
         subject = f'Eingangsbestätigung und Übersicht Ihrer Bestellung: "{order.order_nummer}"'
         context = {
             'order_nummer': order.order_nummer,
@@ -105,14 +114,33 @@ class NotificationService:
                     'original_preis': item.original_preis,
                     'reduzierter_preis': item.reduzierter_preis,
                     'gesamt': item.gesamt
-                } for item in order.orderitem_set.all()]
-            }
+                } for item in order.orderitem_set.all()],
+            'email_body_firma_name': email_body_firma_name,
+            'firma_adresse_1': firma_adresse_1,
+            'firma_adresse_2': firma_adresse_2,
+            'email_body_ordering_text': email_body_ordering_text,
+            'email_body_fon': email_body_fon,
+            'email_body_mob': email_body_mob,
+            'email_body_fax': email_body_fax,
+            'email_body_email': email_body_email,
+            'email_body_firma_1': email_body_firma_1,
+            'email_body_firma_2': email_body_firma_2,
+        }
         html_message = render_to_string('emails/order_created_notification.html', context)
         plain_message = strip_tags(html_message)
         self.__send_email_notification(request, subject, html_message, plain_message)
     
-    def send_offer_requested_notification(self, request, order):
-
+    def send_offer_requested_notification(self, request, order, ui_labels):
+        email_body_firma_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-name'), '')
+        firma_adresse_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'firma-adresse-1'), '')
+        firma_adresse_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'firma-adresse-2'), '')
+        email_body_offer_text = next((label['label_value'] for label in ui_labels if label['label_key'] == 'E-Mail-Body-Offer-text'), '')
+        email_body_fon = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-fon'), '')
+        email_body_mob = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-mob'), '')
+        email_body_fax = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-fax'), '')
+        email_body_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-email'), '')
+        email_body_firma_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-1'), '')
+        email_body_firma_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-2'), '')
         subject = f'Eingangsbestätigung der Angebotsanfrage'
         context = {
             'order_nummer': order.order_nummer,
@@ -133,18 +161,48 @@ class NotificationService:
                     'original_preis': item.original_preis,
                     'reduzierter_preis': item.reduzierter_preis,
                     'gesamt': item.gesamt
-                } for item in order.orderitem_set.all()]
-            }
+                } for item in order.orderitem_set.all()],
+            'email_body_firma_name': email_body_firma_name,
+            'firma_adresse_1': firma_adresse_1,
+            'firma_adresse_2': firma_adresse_2,
+            'email_body_offer_text': email_body_offer_text,
+            'email_body_fon': email_body_fon,
+            'email_body_mob': email_body_mob,
+            'email_body_fax': email_body_fax,
+            'email_body_email': email_body_email,
+            'email_body_firma_1': email_body_firma_1,
+            'email_body_firma_2': email_body_firma_2,
+        }
         html_message = render_to_string('emails/offer_requested_notification.html', context)
         plain_message = strip_tags(html_message)
         self.__send_email_notification(request, subject, html_message, plain_message)
 
-    def send_special_order_notification(self, request, special_order):
+    def send_special_order_notification(self, request, special_order, ui_labels):
+        email_body_firma_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-name'), '')
+        firma_adresse_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'firma-adresse-1'), '')
+        firma_adresse_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'firma-adresse-2'), '')
+        email_body_special_solution_text = next((label['label_value'] for label in ui_labels if label['label_key'] == 'E-Mail-Body-Special-Solution-text'), '')
+        email_body_fon = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-fon'), '')
+        email_body_mob = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-mob'), '')
+        email_body_fax = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-fax'), '')
+        email_body_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-email'), '')
+        email_body_firma_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-1'), '')
+        email_body_firma_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-2'), '')
 
         subject = f'Eingangsbestätigung_Sonderlösung'
         context = {
             'last_name': request.user.last_name,
-            }
+            'email_body_firma_name': email_body_firma_name,
+            'firma_adresse_1': firma_adresse_1,
+            'firma_adresse_2': firma_adresse_2,
+            'email_body_special_solution_text': email_body_special_solution_text,
+            'email_body_fon': email_body_fon,
+            'email_body_mob': email_body_mob,
+            'email_body_fax': email_body_fax,
+            'email_body_email': email_body_email,
+            'email_body_firma_1': email_body_firma_1,
+            'email_body_firma_2': email_body_firma_2,
+        }
         html_message = render_to_string('emails/special_order_created_notification.html', context)
         plain_message = strip_tags(html_message)
         self.__send_email_notification_with_attachment(request, subject, html_message, plain_message, special_order.hochgeladene_datei.path)
@@ -155,9 +213,9 @@ class NotificationService:
 
         order = Order.objects.filter(order_nummer=order_nummer, ust_id=request.user.customerprofile.ust_id).first()
 
-        subject = f"Order #{order.order_nummer} has been cancelled!"
+        subject = f"Bestellung #{order.order_nummer} wurde storniert!"
         body = f"""
-        Your order #{order.order_nummer} has been cancelled.
+        Ihre Bestellung #{order.order_nummer} wurde storniert.
         """
         plain_message = body
         self.__send_email_notification(request, subject, plain_message, plain_message)
@@ -168,9 +226,9 @@ class NotificationService:
 
         order = Order.objects.filter(order_nummer=order_nummer, ust_id=request.user.customerprofile.ust_id).first()
 
-        subject = f"Order #{order.order_nummer} has been reordered!"
+        subject = f"Bestellung #{order.order_nummer} wurde nachbestellt!"
         body = f"""
-        Your cancelled order #{order.order_nummer} has been reordered again.
+        Ihre stornierte Bestellung #{order.order_nummer} wurde erneut bestellt.
         """
         plain_message = body
         self.__send_email_notification(request, subject, plain_message, plain_message)
