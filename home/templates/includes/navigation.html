@@ -4,7 +4,15 @@
             <li class="topper-action_item topper-action_left"><a href="tel:{{fon}} "><span class="ico"><i class="fal fa-phone"></i></span> <span class="txt">{{fon}}</span></a></li>
             <li class="topper-action_item topper-action_left"><a href="mailto:{{email}} "><span class="ico"><i class="fal fa-envelope"></i></span> <span class="txt">{{email}}</span></a></li>
             <li class="topper-action_item topper-action_left-spacer"></li>
-            <!-- User Icon -->
+            <!-- Home Icon -->
+            <li class="topper-action_item topper-action_right topper-action_item-impr">
+                <a href="/">
+                    <span class="tn-bt-ico">
+                        <i class="fal fa-home"></i>
+                    </span>
+                </a>
+            </li>
+            <!-- Configurator Icon -->
             <li class="topper-action_item topper-action_right topper-action_item-impr">
                 <a href="/konfigurator"  onclick="openProfile()">
                     <span class="tn-bt-ico">
@@ -21,13 +29,25 @@
                 </a>
             </li>
             <!-- Cart Icon -->
-            <li class="topper-action_item topper-action_right">
+            <li class="topper-action_item topper-action_right topper-action_item-impr">
                 <a href="/warenkorb"  onclick="openCart()">
                     <span class="tn-bt-ico">
                         <i class="fal fa-shopping-cart"></i>
                         <span class='badge badge-warning' id='lblCartCount'>{{in_cart_items|length}}</span>
                     </span>
                 </a>
+            </li>
+            <!-- Login/Logout Text -->
+            <li class="topper-action_item topper-action_right" id="loginLogout">
+                {% if user.is_authenticated %}
+                    <a href="/accounts/logout">
+                        <span id="logoutText">Ausloggen</span>
+                    </a>
+                {% else %}
+                    <a href="/accounts/login" onclick="toggleLogin()">
+                        <span id="loginText">Einloggen</span>
+                    </a>
+                {% endif %}
             </li>
         </ul>
     </section>

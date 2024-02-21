@@ -1,16 +1,23 @@
 firma|JÜRGENHAKE
+firma-adresse-1|Windmüllerstr. 41
 firma-adresse-2|D-59557 Lippstadt
 fon|+49 2941 2807-0
 fax|+49 2941 2807-60
 webseite|www.juergenhake.de
-firma-adresse-1|Windmüllerstr. 41
 E-Mail|info@juergenhake.de
 footer-copyright-info|Jürgenhake Gesellschaft für Kabelkonfektionen und Metallverarbeitung mbH
 index_text|Konfigurieren Sie Ihre persönliche Kabellösung zur Stromversorgung von AES Akkus
 rabatt_text|* Bestellen Sie mehr als 25, 50, 100, 250, 500, 100, 2000, um einen zusätzlichen Rabatt zu aktivieren
 Sales-E-Mail|shashanklreddy94@gmail.com
 SMTP-Server-Name|smtp.gmail.com
-E-Mail-Body-Special-Solution-text|ghdghdghgd
-E-Mail-Body-Ordering-text|fhgfhg
-E-Mail-Body-Offer-text|hfjhfj
+E-Mail-Body-Special-Solution-text|vielen Dank für Ihre Interesse und der Nutzung von <a href="https://juergenhakexAES.com">juergenhakexAES.com</a>, der Kabelkonfigurator der Jürgenhake Deutschland GmbH.
+E-Mail-Body-Ordering-text|vielen Dank für Ihre Interesse und der Nutzung von <a href="https://juergenhakexAES.com">juergenhakexAES.com</a>, der Kabelkonfigurator der Jürgenhake Deutschland GmbH.
+E-Mail-Body-Offer-text|vielen Dank für Ihre Interesse und der Nutzung von <a href="https://juergenhakexAES.com">juergenhakexAES.com</a>, der Kabelkonfigurator der Jürgenhake Deutschland GmbH.
 Sales-E-Mail-Password|azuexffmhvurppvu
+email-body-firma-name|Jürgenhake
+email-body-fon|+49 2941 2807-12
+email-body-mob|+49 151 64077230
+email-body-fax|+49 2941 2807-60
+email-body-email|c.juergenhake@juergenhake.de
+email-body-firma-1|Bernhard Jürgenhake Gesellschaft für Kabelkonfektion und Metallverarbeitung mbH<br>HRB 5346&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Geschäftsführer:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dr.-Ing. Christoph Jürgenhake, Andre Russ<br>             Amtsgericht Paderborn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USt-Ident-Nr. DE 125 687 409
+email-body-firma-2|Jürgenhake Deutschland GmbH<br>HRB 7608&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Geschäftsführer:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dr.-Ing. Chr

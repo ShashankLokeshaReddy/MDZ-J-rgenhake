@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
@@ -15,6 +14,19 @@ from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .notifications import NotificationService
 from django.urls import reverse
+from django.contrib.auth import logout
+
+def logout_view(request):
+    logout(request)
+    messages.success(request, f'Erfolgreich abgemeldet!')
+    return redirect('/') 
+
+@login_required
+def check_login_status(request):
+    """
+    View to check the login status of the user.
+    """
+    return JsonResponse({'logged_in': True})
 
 @csrf_exempt
 def register(request):
