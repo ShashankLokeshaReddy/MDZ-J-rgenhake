@@ -15,6 +15,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .notifications import NotificationService
 from django.urls import reverse
 from django.contrib.auth import logout
+from django.contrib.auth import views as auth_views
 
 def logout_view(request):
     logout(request)
@@ -28,9 +29,26 @@ def check_login_status(request):
     """
     return JsonResponse({'logged_in': True})
 
+class CustomLoginView(auth_views.LoginView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ui_labels_data = self.__get_ui_labels()
+        title = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'titel'), '')
+        context.update({
+            'title': title
+        })
+        return context
+
+    def __get_ui_labels(self):
+        ui_labels = UILabel.objects.all()
+        data = [{'label_key': label.label_key, 'label_value': label.label_value} for label in ui_labels]
+        return data # JsonResponse(data, safe=False)
+
+
 @csrf_exempt
 def register(request):
     ui_labels_data = get_ui_labels(request)
+    title = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'titel'), '')
     firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
     firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
     firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
@@ -48,6 +66,7 @@ def register(request):
             return redirect('login')
         else:
             render(request, 'accounts/register.html', {
+                'title': title,
                 'firma': firma,
                 'firma_adresse_1': firma_adresse_1,
                 'firma_adresse_2': firma_adresse_2,
@@ -60,6 +79,7 @@ def register(request):
     else:
         userRegisterForm = UserRegisterForm()
         return render(request, 'accounts/register.html', {
+            'title': title,
             'userRegisterForm': userRegisterForm,
             'firma': firma,
             'firma_adresse_1': firma_adresse_1,
@@ -74,10 +94,10 @@ def register(request):
 def index(request):
     customer_profiles = get_customer_profiles(request)
     colors = get_colors(request)
-    ui_labels = get_ui_labels(request)
     image_paths = get_image_path(request)
     orders = get_orders(request)
     ui_labels_data = get_ui_labels(request)
+    title = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'titel'), '')
     index_text = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'index_text'), '')
     firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
     firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
@@ -89,6 +109,7 @@ def index(request):
     footer_copyright_info = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'footer-copyright-info'), '')
 
     return render(request, 'pages/index.html', {
+        'title': title,
         'customer_profiles': customer_profiles,
         'colors': colors,
         'image_paths': image_paths,
@@ -111,11 +132,11 @@ def konfigurator(request):
     kabelvarianten = get_kabelvarianten(request)
     schnittstellen = get_schnittstellen(request)
     colors = get_colors(request)
-    ui_labels = get_ui_labels(request)
     image_paths = get_image_path(request)
     orders = get_orders(request)
     preisliste = get_preisliste(request)
     ui_labels_data = get_ui_labels(request)
+    title = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'titel'), '')
     firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
     firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
     firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
@@ -154,6 +175,7 @@ def konfigurator(request):
     print("kabelvariante:",kabelvarianten_json)
 
     return render(request, 'pages/configurator.html', {
+        'title': title,
         'customer_profiles': customer_profiles,
         'akkuvarianten': akkuvarianten,
         'kabelvarianten': kabelvarianten_json,
@@ -176,6 +198,7 @@ def konfigurator(request):
 @login_required
 def profil(request):
     ui_labels_data = get_ui_labels(request)
+    title = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'titel'), '')
     firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
     firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
     firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
@@ -203,6 +226,7 @@ def profil(request):
         profileUpdateForm = ProfileUpdateForm(instance=request.user.customerprofile)
 
     context = {
+        'title': title,
         'i_form': profileImageUpdateForm,
         'u_form': userUpdateForm,
         'p_form': profileUpdateForm,
@@ -256,6 +280,7 @@ def get_colors_dict():
 @login_required
 def orders(request):
     ui_labels_data = get_ui_labels(request)
+    title = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'titel'), '')
     firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
     firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
     firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
@@ -299,6 +324,7 @@ def orders(request):
         user_orders = paginator_orders.page(paginator_orders.num_pages)
 
     context = {
+        'title': title,
         'orders': user_orders,
         'firma': firma,
         'firma_adresse_1': firma_adresse_1,
@@ -315,6 +341,7 @@ def orders(request):
 @login_required
 def warenkorb(request):
     ui_labels_data = get_ui_labels(request)
+    title = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'titel'), '')
     firma = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma'), '')
     firma_adresse_1 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-1'), '')
     firma_adresse_2 = next((label['label_value'] for label in ui_labels_data if label['label_key'] == 'firma-adresse-2'), '')
@@ -352,6 +379,7 @@ def warenkorb(request):
         in_cart_items = paginator_in_cart.page(paginator_in_cart.num_pages)
 
     context = {
+        'title': title,
         'in_cart_items': in_cart_items,
         'preisliste': preisliste_json,
         'firma': firma,
@@ -372,7 +400,7 @@ def get_customer_profiles(request):
     data = [{'ust_id': profile.user.username,
              'unternehmensname': profile.unternehmensname,
              'land': profile.land,
-             'address': profile.address,
+             'adresse': profile.adresse,
              'email': profile.user.email,
              'telefonnummer': profile.telefonnummer,
              'ansprechpartner': profile.ansprechpartner} for profile in customer_profiles]
@@ -572,8 +600,8 @@ def create_order_with_items(request):
                 kabelvariante = entry['kabelvariante']
                 schnittstelle = entry['schnittstelle']
                 masse = entry['masse']
-                original_preis = entry['original_preis']
-                reduzierter_preis = entry['reduzierter_preis']
+                original_preis = entry['original_preis'].replace(',', '.')
+                reduzierter_preis = entry['reduzierter_preis'].replace(',', '.')
                 menge = entry['menge']
                 gesamt = entry['gesamt']
 
@@ -619,8 +647,8 @@ def create_offer_request_with_items(request):
                 kabelvariante = entry['kabelvariante']
                 schnittstelle = entry['schnittstelle']
                 masse = entry['masse']
-                original_preis = entry['original_preis']
-                reduzierter_preis = entry['reduzierter_preis']
+                original_preis = entry['original_preis'].replace(',', '.')
+                reduzierter_preis = entry['reduzierter_preis'].replace(',', '.')
                 menge = entry['menge']
                 gesamt = entry['gesamt']
 

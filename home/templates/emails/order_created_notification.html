@@ -2,16 +2,40 @@
 <html>
     <head>
         <style>
-            table {
+            table, th ,td {
                 border-top: 1px solid black;
-                border-collapse: collapse;
-            }
-            .table-row {
                 border-left: 1px solid black;
                 border-right: 1px solid black;
                 border-bottom: 1px solid black;
                 border-collapse: collapse;
+            }
+            .table-row {
+                border-collapse: collapse;
                 text-align: center;
+            }
+            .border-top {
+                border-top: 1px solid black;
+            }
+            .border-start {
+                border-left: 1px solid black;
+            }
+            .border-end {
+                border-right: 1px solid black;
+            }
+            .border-bottom {
+                border-bottom: 1px solid black;
+            }
+            .text-left {
+                text-align: left;
+            }
+            .text-center {
+                text-align: center;
+            }
+            th, td {
+                padding: 5px;
+            }
+            .ps-3 {
+                padding-left: 15px;
             }
         </style>
     </head>
@@ -33,43 +57,45 @@
             </b>
         </p>
         <br>
-        <table>
+        <table class="border-top border-black">
 
             <thead>
-                <tr class="table-row">
-                    <th class="table-heading p-1">Pos.</th>
-                    <th class="table-heading p-1">Produktkonfiguration</th>
-                    <th class="table-heading p-1">Original Stückpreis<br>[€]</th>
-                    <th class="table-heading p-1">Reduzerter Stückpreis<br>[€]</th>
-                    <th class="table-heading p-1">Menge</th>
-                    <th class="table-heading p-1">Gesamtpreis<br>[€]</th>
+                <tr class="table-row border-start border-end border-bottom border-black text-center">
+                    <th>Pos.</th>
+                    <th>Produktkonfiguration</th>
+                    <th>Original Stückpreis [€]</th>
+                    <th>Reduzerter Stückpreis [€]</th>
+                    <th>Menge</th>
+                    <th>Gesamtpreis [€]</th>
                 </tr>
             </thead>
 
             <tbody>
                 {% for item in items %}
-                    <tr class="table-row">
-                        <td class="table-data p-1">{{ forloop.counter }}</td>
-                        <td class="table-data p-1" style="text-align: left;">
-                            Akkuvariante: {{ item.akkuvariante }}<br>
-                            Mit 120 Ohm CAN-Bus Widerstand?: {{ item.mit_120_Ohm_CAN_Bus_Widerstand }}<br>
-                            Kabelvariante: {{ item.kabelvariante }}<br>
-                            Schnittstelle: {{ item.schnittstelle }}<br>
-                            Masse: {{ item.masse }}
+                    <tr class="table-row border-start border-end border-bottom">
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <div class="text-left ps-3">
+                                Akkuvariante: {{ item.akkuvariante }}<br>
+                                Mit 120 Ohm CAN-Bus Widerstand?: {{ item.mit_120_Ohm_CAN_Bus_Widerstand }}<br>
+                                Kabelvariante: {{ item.kabelvariante }}<br>
+                                Schnittstelle: {{ item.schnittstelle }}<br>
+                                Masse: {{ item.masse }}
+                            </div>
                         </td>
-                        <td class="table-data p-1">{{ item.original_preis }}</td>
-                        <td class="table-data p-1">{{ item.reduzierter_preis }}</td>
-                        <td class="table-data p-1">{{ item.menge }}</td>
-                        <td class="table-data p-1">{{ item.gesamt }}</td>
+                        <td>{{ item.original_preis }} €</td>
+                        <td>{{ item.reduzierter_preis }} €</td>
+                        <td>{{ item.menge }}</td>
+                        <td>{{ item.gesamt }} €</td>
                     </tr>
                 {% endfor %}
-                <tr>
-                    <td class="p-1"></td>
-                    <td class="p-1"></td>
-                    <td class="p-1"></td>
-                    <td class="p-1">Gesamtpreis</td>
-                    <td class="p-1"></td>
-                    <td class="p-1">{{ gesamt }}</td>
+                <tr class="table-row">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><b>Gesamtpreis</b></td>
+                    <td>{{ gesamt }} €</td>
                 </tr>
             </tbody>
         </table>

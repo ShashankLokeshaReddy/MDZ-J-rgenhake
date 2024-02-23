@@ -40,7 +40,7 @@ class ProfileUpdateForm(forms.ModelForm):
     plz = forms.CharField(max_length=5, label='PLZ')
     class Meta:
         model = CustomerProfile
-        fields = ['unternehmensname', 'land', 'address', 'plz', 'telefonnummer', 'ansprechpartner']
+        fields = ['unternehmensname', 'land', 'adresse', 'plz', 'telefonnummer', 'ansprechpartner']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -49,7 +49,7 @@ class ProfileUpdateForm(forms.ModelForm):
         self.helper.field_class = 'form-control form-control-sm'
         self.fields['unternehmensname'].required = False
         self.fields['land'].required = False
-        self.fields['address'].required = False
+        self.fields['adresse'].required = False
         self.fields['plz'].required = False
         self.fields['telefonnummer'].required = False
         self.fields['ansprechpartner'].required = False

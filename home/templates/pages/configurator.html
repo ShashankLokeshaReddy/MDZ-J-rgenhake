@@ -3,7 +3,7 @@
 {% load custom_filters %}
 
 {% block content %}
-    {% with in_cart_items=in_cart_items %}
+    {% with in_cart_items=in_cart_items title=title %}
     {{block.super}}
     {% endwith %}
     
