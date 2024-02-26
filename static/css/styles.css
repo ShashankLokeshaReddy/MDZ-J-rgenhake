@@ -1864,14 +1864,6 @@ body{
         padding-top:120px
     }
 }
-.main-website-top-area{
-    position:fixed;
-    width:100%;
-    left:0px;
-    top:0px;
-    z-index:800;
-    background:rgba(255,255,255,.95)
-}
 .main-website-top-area-pusher{
     width:100%;
     position:relative;

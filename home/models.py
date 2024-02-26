@@ -221,10 +221,10 @@ class InCartItem(models.Model):
     kabelvariante = models.CharField(max_length=255, null=True)
     schnittstelle = models.CharField(max_length=255, null=True)
     masse = models.CharField(max_length=255, null=True, verbose_name="Maße")
-    menge = models.FloatField(null=True)
-    original_preis = models.FloatField(null=True, verbose_name="Originalpreis")
-    reduzierter_preis = models.FloatField(null=True, verbose_name="Reduzierter Preis")
-    gesamt = models.FloatField(null=True)
+    menge = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    original_preis = models.DecimalField(max_digits=10, decimal_places=2, null=True, verbose_name="Originalpreis")
+    reduzierter_preis = models.DecimalField(max_digits=10, decimal_places=2, null=True, verbose_name="Reduzierter Preis")
+    gesamt = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
     class Meta:
         verbose_name = 'Artikel im Warenkorb'
@@ -284,10 +284,10 @@ class OrderItem(models.Model):
     kabelvariante = models.CharField(max_length=255, null=True)
     schnittstelle = models.CharField(max_length=255, null=True)
     masse = models.CharField(max_length=255, null=True, verbose_name="Maße")
-    menge = models.FloatField(null=True)
-    original_preis = models.FloatField(null=True, verbose_name="Originalpreis")
-    reduzierter_preis = models.FloatField(null=True, verbose_name="Reduzierter Preis")
-    gesamt = models.FloatField(null=True)
+    menge = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    original_preis = models.DecimalField(max_digits=10, decimal_places=2, null=True, verbose_name="Originalpreis")
+    reduzierter_preis = models.DecimalField(max_digits=10, decimal_places=2, null=True, verbose_name="Reduzierter Preis")
+    gesamt = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
     class Meta:
         verbose_name = "Bestellten Artikel"
