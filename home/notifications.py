@@ -14,11 +14,11 @@ import os
 
 class NotificationService:
     def __send_email_notification(self, request, subject, html_message, plain_message, ui_labels):
-        smtp_server_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'SMTP-Server-Name'), '')
-        sender_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sender-E-Mail'), '')
-        sender_email_password = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sender-E-Mail-Password'), '')
-        sales_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sales-E-Mail'), '')
-        smtp_port = next((label['label_value'] for label in ui_labels if label['label_key'] == 'SMTP-Port-Number'), '')
+        smtp_server_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'SMTP_Server_Name'), '')
+        sender_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sender_Email'), '')
+        sender_email_password = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sender_Email_Password'), '')
+        sales_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sales_Email'), '')
+        smtp_port = next((label['label_value'] for label in ui_labels if label['label_key'] == 'SMTP_Port_Number'), '')
         smtp_port_number = 465
         if smtp_port:
             smtp_port_number = int(smtp_port)
@@ -53,11 +53,11 @@ class NotificationService:
                 smtp.sendmail(sender_email, email_receiver, em.as_string())
 
     def __send_email_notification_with_attachment(self, request, subject, html_message, plain_message, attachmentFileName, ui_labels):
-        smtp_server_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'SMTP-Server-Name'), '')
-        sales_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sales-E-Mail'), '')
-        sender_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sender-E-Mail'), '')
-        sender_email_password = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sender-E-Mail-Password'), '')
-        smtp_port = next((label['label_value'] for label in ui_labels if label['label_key'] == 'SMTP-Port-Number'), '')
+        smtp_server_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'SMTP_Server_Name'), '')
+        sales_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sales_Email'), '')
+        sender_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sender_Email'), '')
+        sender_email_password = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sender_Email_Password'), '')
+        smtp_port = next((label['label_value'] for label in ui_labels if label['label_key'] == 'SMTP_Port_Number'), '')
         smtp_port_number = 465
         if smtp_port:
             smtp_port_number = int(smtp_port)
@@ -100,20 +100,20 @@ class NotificationService:
                 smtp.sendmail(sender_email, email_receiver, em.as_string())
 
     def send_order_created_notification(self, request, order, ui_labels):
-        email_body_firma_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-name'), '')
-        firma_adresse_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'firma-adresse-1'), '')
-        firma_adresse_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'firma-adresse-2'), '')
-        email_body_ordering_text = next((label['label_value'] for label in ui_labels if label['label_key'] == 'E-Mail-Body-Ordering-text'), '')
-        email_body_fon = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-fon'), '')
-        email_body_mob = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-mob'), '')
-        email_body_fax = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-fax'), '')
-        email_body_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-email'), '')
-        email_body_firma_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-1'), '')
-        email_body_firma_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-2'), '')
+        email_body_firma_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Firma_Name'), '')
+        firma_adresse_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Firma_Adresse_1'), '')
+        firma_adresse_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Firma_Adresse_2'), '')
+        email_body_ordering_text = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Ordering_Text'), '')
+        email_body_fon = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Fon'), '')
+        email_body_mob = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Mob'), '')
+        email_body_fax = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Fax'), '')
+        email_body_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Email'), '')
+        email_body_firma_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Firma_1'), '')
+        email_body_firma_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Firma_2'), '')
         subject = f'Eingangsbestätigung und Übersicht Ihrer Bestellung: "{order.order_nummer}"'
         context = {
             'order_nummer': order.order_nummer,
-            'ust_id': order.ust_id,
+            'benutzername': order.benutzername,
             'order_datum': order.order_datum,
             'bestelldetails': order.bestelldetails,
             'order_status' : order.order_status,
@@ -147,20 +147,20 @@ class NotificationService:
         self.__send_email_notification(request, subject, html_message, plain_message, ui_labels=ui_labels)
     
     def send_offer_requested_notification(self, request, order, ui_labels):
-        email_body_firma_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-name'), '')
-        firma_adresse_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'firma-adresse-1'), '')
-        firma_adresse_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'firma-adresse-2'), '')
-        email_body_offer_text = next((label['label_value'] for label in ui_labels if label['label_key'] == 'E-Mail-Body-Offer-text'), '')
-        email_body_fon = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-fon'), '')
-        email_body_mob = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-mob'), '')
-        email_body_fax = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-fax'), '')
-        email_body_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-email'), '')
-        email_body_firma_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-1'), '')
-        email_body_firma_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-2'), '')
+        email_body_firma_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Firma_Name'), '')
+        firma_adresse_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Firma_Adresse_1'), '')
+        firma_adresse_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Firma_Adresse_2'), '')
+        email_body_offer_text = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Offer_Text'), '')
+        email_body_fon = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Fon'), '')
+        email_body_mob = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Mob'), '')
+        email_body_fax = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Fax'), '')
+        email_body_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Email'), '')
+        email_body_firma_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Firma_1'), '')
+        email_body_firma_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Firma_2'), '')
         subject = f'Eingangsbestätigung der Angebotsanfrage'
         context = {
             'order_nummer': order.order_nummer,
-            'ust_id': order.ust_id,
+            'benutzername': order.benutzername,
             'order_datum': order.order_datum,
             'bestelldetails': order.bestelldetails,
             'order_status' : order.order_status,
@@ -194,16 +194,16 @@ class NotificationService:
         self.__send_email_notification(request, subject, html_message, plain_message, ui_labels=ui_labels)
 
     def send_special_order_notification(self, request, special_order, ui_labels):
-        email_body_firma_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-name'), '')
-        firma_adresse_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'firma-adresse-1'), '')
-        firma_adresse_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'firma-adresse-2'), '')
-        email_body_special_solution_text = next((label['label_value'] for label in ui_labels if label['label_key'] == 'E-Mail-Body-Special-Solution-text'), '')
-        email_body_fon = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-fon'), '')
-        email_body_mob = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-mob'), '')
-        email_body_fax = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-fax'), '')
-        email_body_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-email'), '')
-        email_body_firma_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-1'), '')
-        email_body_firma_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-2'), '')
+        email_body_firma_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Firma_Name'), '')
+        firma_adresse_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Firma_Adresse_1'), '')
+        firma_adresse_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Firma_Adresse_2'), '')
+        email_body_special_solution_text = next((label['label_value'] for label in ui_labels if label['label_key'] == Email_Body_Special_Solution_Text), '')
+        email_body_fon = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Fon'), '')
+        email_body_mob = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Mob'), '')
+        email_body_fax = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Fax'), '')
+        email_body_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Email'), '')
+        email_body_firma_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Firma_1'), '')
+        email_body_firma_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Firma_2'), '')
 
         subject = f'Eingangsbestätigung_Sonderlösung'
         context = {
@@ -227,7 +227,7 @@ class NotificationService:
         json_data = json.loads(request.body)
         order_nummer = json_data['order_nummer']
 
-        order = Order.objects.filter(order_nummer=order_nummer, ust_id=request.user.customerprofile.ust_id).first()
+        order = Order.objects.filter(order_nummer=order_nummer, benutzername=request.user.customerprofile.benutzername).first()
 
         subject = f"Bestellung #{order.order_nummer} wurde storniert!"
         body = f"""
@@ -240,7 +240,7 @@ class NotificationService:
         json_data = json.loads(request.body)
         order_nummer = json_data['order_nummer']
 
-        order = Order.objects.filter(order_nummer=order_nummer, ust_id=request.user.customerprofile.ust_id).first()
+        order = Order.objects.filter(order_nummer=order_nummer, benutzername=request.user.customerprofile.benutzername).first()
 
         subject = f"Bestellung #{order.order_nummer} wurde nachbestellt!"
         body = f"""

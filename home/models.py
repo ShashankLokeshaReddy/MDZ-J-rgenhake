@@ -9,7 +9,7 @@ from home.storage import OverwriteStorage
 from django.utils.text import slugify
 
 def get_img_upload_path_profile(instance, filename):
-    return f"profile_pics/{instance.ust_id}.{filename.split('.')[-1]}"
+    return f"profile_pics/{instance.benutzername}.{filename.split('.')[-1]}"
 
 def get_img_upload_path_akku(instance, filename):
     return f"Akkuvariante/{convert_to_url_format(instance.akkuvariante_name)}.{filename.split('.')[-1]}"
@@ -33,7 +33,7 @@ def get_img_upload_path_general_images(instance, filename):
 
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
-    ust_id = models.CharField(max_length=50, primary_key=True)
+    benutzername = models.CharField(max_length=50, primary_key=True)
     image = models.ImageField(default='General/default.png', upload_to=get_img_upload_path_profile, storage=OverwriteStorage())
     unternehmensname = models.CharField(max_length=255, null=True)
     land = models.CharField(max_length=100, null=True)
@@ -41,6 +41,10 @@ class CustomerProfile(models.Model):
     plz = models.CharField(max_length=5, null=True)
     telefonnummer = models.CharField(max_length=20, null=True)
     ansprechpartner = models.CharField(max_length=255, null=True)
+
+    class Meta:
+        verbose_name = 'Kundenprofil'
+        verbose_name_plural = 'Kundenprofile'
 
     def __str__(self):
         return self.user.username  # or any other field to represent the object as a string
@@ -58,6 +62,10 @@ class CustomerProfile(models.Model):
 class Akkuvariante(models.Model):
     akkuvariante_name = models.CharField(max_length=255, primary_key=True)
     akkuvariante_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_akku, storage=OverwriteStorage())
+
+    class Meta:
+        verbose_name = 'Akkuvariante'
+        verbose_name_plural = 'Akkuvarianten'
 
     def save(self, *args, **kwargs):
         # Check if there's an existing object with the same name
@@ -80,12 +88,16 @@ class Akkuvariante(models.Model):
         return self.akkuvariante_name
 
 class Kabelvariante(models.Model):
-    kabelvariante_name = models.CharField(max_length=255, primary_key=True)
-    kabelvariante_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_kabel, storage=OverwriteStorage())
-    main_part_min_length = models.IntegerField(null=True)
-    split_part_min_length = models.IntegerField(null=True)
-    masse_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_masse, storage=OverwriteStorage())
-    splits = models.IntegerField(null=True)
+    kabelvariante_name = models.CharField(max_length=255, primary_key=True, verbose_name="Kabelvariante")
+    kabelvariante_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_kabel, storage=OverwriteStorage(), verbose_name="Abbildungspfad")
+    main_part_min_length = models.IntegerField(null=True, verbose_name="Mindestlänge der Hauptleitung")
+    split_part_min_length = models.IntegerField(null=True, verbose_name="Mindestlänge der Zweigleitungen")
+    masse_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_masse, storage=OverwriteStorage(), verbose_name="Abbildungspfad für beschriftete Abbildung")
+    splits = models.IntegerField(null=True, verbose_name="Splits")
+
+    class Meta:
+        verbose_name = "Kabelvariante"
+        verbose_name_plural = "Kabelvarianten"
 
     def save(self, *args, **kwargs):
         # Check if there's an existing object with the same name
@@ -118,8 +130,12 @@ class Kabelvariante(models.Model):
         return self.kabelvariante_name
 
 class Schnittstelle(models.Model):
-    schnittstelle_name = models.CharField(max_length=255, primary_key=True)
-    schnittstelle_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_schnittstelle, storage=OverwriteStorage())
+    schnittstelle_name = models.CharField(max_length=255, primary_key=True, verbose_name="Bezeichnung")
+    schnittstelle_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_schnittstelle, storage=OverwriteStorage(), verbose_name="Abbildungspfad")
+
+    class Meta:
+        verbose_name = "Schnittstelle"
+        verbose_name_plural = "Schnittstellen"
 
     def save(self, *args, **kwargs):
         # Check if there's an existing object with the same name
@@ -142,22 +158,34 @@ class Schnittstelle(models.Model):
         return self.schnittstelle_name
 
 class Color(models.Model):
-    color_name = models.CharField(max_length=255, primary_key=True)
-    color_value = ColorField(format="hex") # hex or hexa (https://pypi.org/project/django-colorfield/)
+    color_name = models.CharField(max_length=255, primary_key=True, verbose_name="Kategorie")
+    color_value = ColorField(format="hex", verbose_name="Farbcode") # hex or hexa (https://pypi.org/project/django-colorfield/)
+
+    class Meta:
+        verbose_name = 'Farbe'
+        verbose_name_plural = 'Farben'
 
     def __str__(self):
         return self.color_name  # or any other field to represent the object as a string
 
 class UILabel(models.Model):
-    label_key = models.CharField(max_length=255, primary_key=True)
-    label_value = models.CharField(max_length=1000,null=True)
+    label_key = models.CharField(max_length=255, primary_key=True, verbose_name="Label")
+    label_value = models.CharField(max_length=1000,null=True, verbose_name="Labelwert")
+
+    class Meta:
+        verbose_name = "UI-Label"
+        verbose_name_plural = "UI-Labels"
 
     def __str__(self):
         return self.label_key  # or any other field to represent the object as a string
 
 class Image(models.Model):
-    general_image_name = models.CharField(max_length=255, primary_key=True)
-    general_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_general_images, storage=OverwriteStorage())
+    general_image_name = models.CharField(max_length=255, primary_key=True, verbose_name="Bezeichnung")
+    general_image_path = models.ImageField(default='default.png', upload_to=get_img_upload_path_general_images, storage=OverwriteStorage(), verbose_name="Abbildungspfad")
+
+    class Meta:
+        verbose_name = 'Abbildung'
+        verbose_name_plural = 'Abbildungen'
 
     def save(self, *args, **kwargs):
         # Check if there's an existing object with the same name
@@ -184,18 +212,22 @@ class InCartItem(models.Model):
         ('Ja', 'Ja'),
         ('Nein', 'Nein'),
     ]
-    item_nummer = models.CharField(max_length=255, primary_key=True)
-    ust_id = models.CharField(max_length=50, null=True)
+    item_nummer = models.CharField(max_length=255, primary_key=True, verbose_name="Artikelnummer")
+    benutzername = models.CharField(max_length=50, null=True)
     # item_details = models.CharField(max_length=255, null=True)
     akkuvariante = models.CharField(max_length=255, null=True)
     mit_120_Ohm_CAN_Bus_Widerstand = models.CharField(max_length=255, null=True, choices=CAN_BUS_STATUS_CHOICES, default='Nein')
     kabelvariante = models.CharField(max_length=255, null=True)
     schnittstelle = models.CharField(max_length=255, null=True)
-    masse = models.CharField(max_length=255, null=True)
+    masse = models.CharField(max_length=255, null=True, verbose_name="Maße")
     menge = models.FloatField(null=True)
-    original_preis = models.FloatField(null=True)
-    reduzierter_preis = models.FloatField(null=True)
+    original_preis = models.FloatField(null=True, verbose_name="Originalpreis")
+    reduzierter_preis = models.FloatField(null=True, verbose_name="Reduzierter Preis")
     gesamt = models.FloatField(null=True)
+
+    class Meta:
+        verbose_name = 'Artikel im Warenkorb'
+        verbose_name_plural = 'Artikel im Warenkorb'
 
     def __str__(self):
         return self.item_nummer
@@ -208,11 +240,15 @@ class Order(models.Model):
         ('Abgesagt', 'Abgesagt'),
     ]
 
-    order_nummer = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    ust_id = models.CharField(max_length=50, null=True)
+    order_nummer = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="Bestellnummer")
+    benutzername = models.CharField(max_length=50, null=True)
     order_datum = models.DateTimeField(auto_now_add=True)
     bestelldetails = models.CharField(max_length=255, null=True)
-    order_status = models.CharField(max_length=255, null=True, choices=ORDER_STATUS_CHOICES, default='Bestellt')
+    order_status = models.CharField(max_length=255, null=True, choices=ORDER_STATUS_CHOICES, default='Bestellt', verbose_name="Bestellstatus")
+
+    class Meta:
+        verbose_name = "Bestellung"
+        verbose_name_plural = "Bestellungen"
 
     def update_status(self, new_status):
         """
@@ -238,25 +274,29 @@ class OrderItem(models.Model):
         ('Ja', 'Ja'),
         ('Nein', 'Nein'),
     ]
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, db_constraint=False)
-    item_nummer = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    ust_id = models.CharField(max_length=50, null=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, db_constraint=False, verbose_name="Bestellung")
+    item_nummer = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="Artikelnummer")
+    benutzername = models.CharField(max_length=50, null=True)
     # item_details = models.CharField(max_length=255, null=True)
     mit_120_Ohm_CAN_Bus_Widerstand = models.CharField(max_length=255, null=True, choices=CAN_BUS_STATUS_CHOICES, default='Nein')
     akkuvariante = models.CharField(max_length=255, null=True)
     kabelvariante = models.CharField(max_length=255, null=True)
     schnittstelle = models.CharField(max_length=255, null=True)
-    masse = models.CharField(max_length=255, null=True)
+    masse = models.CharField(max_length=255, null=True, verbose_name="Maße")
     menge = models.FloatField(null=True)
-    original_preis = models.FloatField(null=True)
-    reduzierter_preis = models.FloatField(null=True)
+    original_preis = models.FloatField(null=True, verbose_name="Originalpreis")
+    reduzierter_preis = models.FloatField(null=True, verbose_name="Reduzierter Preis")
     gesamt = models.FloatField(null=True)
+
+    class Meta:
+        verbose_name = "Bestellten Artikel"
+        verbose_name_plural = "Bestellte Artikel"
 
 class PreisListe(models.Model):
     kabelvariante = models.CharField(max_length=50, null=True)
-    gehause = models.CharField(max_length=50, null=True)
-    leitung = models.CharField(max_length=50, null=True)
-    lange = models.CharField(max_length=50, null=True)
+    gehause = models.CharField(max_length=50, null=True, verbose_name="Akkuvariante")
+    leitung = models.CharField(max_length=50, null=True, verbose_name="Schnittstelle")
+    lange = models.CharField(max_length=50, null=True, verbose_name="Länge")
     qty_1 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     qty_25 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     qty_50 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
@@ -266,17 +306,25 @@ class PreisListe(models.Model):
     qty_1000 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     qty_2000 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
+    class Meta:
+        verbose_name = "Preis"
+        verbose_name_plural = "Preisliste"
+
 class SpezielleBestellung(models.Model):
     ORDER_STATUS_CHOICES = [
         ('Bestellt', 'Bestellt'),
         ('Geliefert', 'Geliefert'),
         ('Abgesagt', 'Abgesagt'),
     ]
-    order_nummer = models.CharField(max_length=255, primary_key=True)
+    order_nummer = models.CharField(max_length=255, primary_key=True, verbose_name="Bestellnummer")
     Ust_id = models.CharField(max_length=255, null=True)
     order_datum = models.DateTimeField(auto_now_add=True, null=True)
     Status = models.CharField(max_length=255, null=True, choices=ORDER_STATUS_CHOICES, default='InCart')
-    hochgeladene_datei = models.FileField(upload_to="special_orders/", null=True)
+    hochgeladene_datei = models.FileField(upload_to="special_orders/", null=True, verbose_name="Hochgeladene Datei")
+
+    class Meta:
+        verbose_name = "Sonderlösung"
+        verbose_name_plural = "Sonderlösungen"
 
     def __str__(self):
         return f"Special Order {self.order_nummer}"
