@@ -1,3 +1,4 @@
 logo|General/logo.png
 default|General/default.png
 customSolution|General/customSolution.png
+favicon|General/favicon.png
