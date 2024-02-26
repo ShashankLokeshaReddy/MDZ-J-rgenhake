@@ -157,6 +157,7 @@ html {
 
 .main-website-top-area {
     position: fixed;
+    max-height: 20%;
     width: 100%;
     left: 0px;
     top: 0px;
@@ -1863,14 +1864,6 @@ body{
     .space.space-4{
         padding-top:120px
     }
-}
-.main-website-top-area{
-    position:fixed;
-    width:100%;
-    left:0px;
-    top:0px;
-    z-index:800;
-    background:rgba(255,255,255,.95)
 }
 .main-website-top-area-pusher{
     width:100%;
