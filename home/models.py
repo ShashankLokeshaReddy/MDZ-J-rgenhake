@@ -37,7 +37,7 @@ class CustomerProfile(models.Model):
     image = models.ImageField(default='General/default.png', upload_to=get_img_upload_path_profile, storage=OverwriteStorage())
     unternehmensname = models.CharField(max_length=255, null=True)
     land = models.CharField(max_length=100, null=True)
-    address = models.TextField(null=True)
+    adresse = models.TextField(null=True)
     plz = models.CharField(max_length=5, null=True)
     telefonnummer = models.CharField(max_length=20, null=True)
     ansprechpartner = models.CharField(max_length=255, null=True)

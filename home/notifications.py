@@ -13,15 +13,22 @@ from django.contrib.staticfiles import finders
 import os
 
 class NotificationService:
-    def __send_email_notification(self, request, subject, html_message, plain_message):
-        email_sender = 'jurgenhaketest@gmail.com'
-        email_password = 'azuexffmhvurppvu'
+    def __send_email_notification(self, request, subject, html_message, plain_message, ui_labels):
+        smtp_server_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'SMTP-Server-Name'), '')
+        sender_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sender-E-Mail'), '')
+        sender_email_password = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sender-E-Mail-Password'), '')
+        sales_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sales-E-Mail'), '')
+        smtp_port = next((label['label_value'] for label in ui_labels if label['label_key'] == 'SMTP-Port-Number'), '')
+        smtp_port_number = 465
+        if smtp_port:
+            smtp_port_number = int(smtp_port)
         email_receiver = request.user.email
 
         em = MIMEMultipart('alternative')
-        em['From'] = email_sender
+        em['From'] = sender_email
         em['To'] = email_receiver
         em['Subject'] = subject
+        em['Cc'] = sales_email
 
         # Record the MIME types of both parts - text/plain and text/html.
         part1 = MIMEText(plain_message, 'plain')
@@ -40,19 +47,27 @@ class NotificationService:
         context = ssl.create_default_context()
 
         # Log in and send the email
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-            smtp.login(email_sender, email_password)
-            smtp.sendmail(email_sender, email_receiver, em.as_string())
+        if smtp_server_name and type(smtp_server_name) is str:
+            with smtplib.SMTP_SSL(smtp_server_name, smtp_port_number, context=context) as smtp:
+                smtp.login(sender_email, sender_email_password)
+                smtp.sendmail(sender_email, email_receiver, em.as_string())
 
-    def __send_email_notification_with_attachment(self, request, subject, html_message, plain_message, attachmentFileName):
-        email_sender = 'jurgenhaketest@gmail.com'
-        email_password = 'azuexffmhvurppvu'
+    def __send_email_notification_with_attachment(self, request, subject, html_message, plain_message, attachmentFileName, ui_labels):
+        smtp_server_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'SMTP-Server-Name'), '')
+        sales_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sales-E-Mail'), '')
+        sender_email = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sender-E-Mail'), '')
+        sender_email_password = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Sender-E-Mail-Password'), '')
+        smtp_port = next((label['label_value'] for label in ui_labels if label['label_key'] == 'SMTP-Port-Number'), '')
+        smtp_port_number = 465
+        if smtp_port:
+            smtp_port_number = int(smtp_port)
         email_receiver = request.user.email
 
         em = MIMEMultipart('alternative')
-        em['From'] = email_sender
+        em['From'] = sender_email
         em['To'] = email_receiver
         em['Subject'] = subject
+        em['Cc'] = sales_email
 
         # Record the MIME types of both parts - text/plain and text/html.
         part1 = MIMEText(plain_message, 'plain')
@@ -65,7 +80,7 @@ class NotificationService:
         logo = MIMEImage(img_data)
         logo.add_header('Content-ID', '<logo>')
         logo.add_header('Content-Disposition', 'inline', filename='logo')
-        em.attach(logo)     
+        em.attach(logo)
 
         # locate and attach desired attachments
         att_name = os.path.basename(attachmentFileName)
@@ -79,9 +94,10 @@ class NotificationService:
         context = ssl.create_default_context()
 
         # Log in and send the email
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-            smtp.login(email_sender, email_password)
-            smtp.sendmail(email_sender, email_receiver, em.as_string())
+        if smtp_server_name and type(smtp_server_name) is str:
+            with smtplib.SMTP_SSL(smtp_server_name, smtp_port_number, context=context) as smtp:
+                smtp.login(sender_email, sender_email_password)
+                smtp.sendmail(sender_email, email_receiver, em.as_string())
 
     def send_order_created_notification(self, request, order, ui_labels):
         email_body_firma_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-name'), '')
@@ -128,7 +144,7 @@ class NotificationService:
         }
         html_message = render_to_string('emails/order_created_notification.html', context)
         plain_message = strip_tags(html_message)
-        self.__send_email_notification(request, subject, html_message, plain_message)
+        self.__send_email_notification(request, subject, html_message, plain_message, ui_labels=ui_labels)
     
     def send_offer_requested_notification(self, request, order, ui_labels):
         email_body_firma_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-name'), '')
@@ -175,7 +191,7 @@ class NotificationService:
         }
         html_message = render_to_string('emails/offer_requested_notification.html', context)
         plain_message = strip_tags(html_message)
-        self.__send_email_notification(request, subject, html_message, plain_message)
+        self.__send_email_notification(request, subject, html_message, plain_message, ui_labels=ui_labels)
 
     def send_special_order_notification(self, request, special_order, ui_labels):
         email_body_firma_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'email-body-firma-name'), '')
@@ -205,7 +221,7 @@ class NotificationService:
         }
         html_message = render_to_string('emails/special_order_created_notification.html', context)
         plain_message = strip_tags(html_message)
-        self.__send_email_notification_with_attachment(request, subject, html_message, plain_message, special_order.hochgeladene_datei.path)
+        self.__send_email_notification_with_attachment(request, subject, html_message, plain_message, special_order.hochgeladene_datei.path, ui_labels=ui_labels)
 
     def send_cancel_notification(self, request):
         json_data = json.loads(request.body)

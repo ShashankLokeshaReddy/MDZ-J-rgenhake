@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
-    {% with in_cart_items=in_cart_items %}
+    {% with in_cart_items=in_cart_items title=title %}
     {{block.super}}
     {% endwith %}
     {% load bootstrap_icons %}
@@ -200,7 +200,7 @@
                     document.querySelectorAll('.item-row').forEach(function (row) {
                         var itemNumber = row.getAttribute('data-item-number');
                         var original_preis = row.getAttribute('data-original_preis');
-                        var reduzierter_preis = parseInt(row.querySelector('.reduzierter_preis').textContent);
+                        var reduzierter_preis = row.getAttribute('data-reduzierter_preis');
                         var menge = parseInt(row.querySelector('.menge').textContent);
                         var gesamt = parseInt(row.querySelector('.gesamt-price').textContent);
                         var item_akkuvariante = row.querySelector('.item-akkuvariante').textContent;
@@ -264,7 +264,7 @@
                     document.querySelectorAll('.item-row').forEach(function (row) {
                         var itemNumber = row.getAttribute('data-item-number');
                         var original_preis = row.getAttribute('data-original_preis');
-                        var reduzierter_preis = parseInt(row.querySelector('.reduzierter_preis').textContent);
+                        var reduzierter_preis = row.getAttribute('data-reduzierter_preis');
                         var menge = parseInt(row.querySelector('.menge').textContent);
                         var gesamt = parseInt(row.querySelector('.gesamt-price').textContent);
                         var item_akkuvariante = row.querySelector('.item-akkuvariante').textContent;

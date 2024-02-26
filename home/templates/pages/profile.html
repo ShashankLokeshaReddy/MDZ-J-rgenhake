@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-    {% with in_cart_items=in_cart_items %}
+    {% with in_cart_items=in_cart_items title=title %}
     {{block.super}}
     {% endwith %}
     <div class="container mt-4">
