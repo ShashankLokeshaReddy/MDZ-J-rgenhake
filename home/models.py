@@ -192,10 +192,10 @@ class InCartItem(models.Model):
     kabelvariante = models.CharField(max_length=255, null=True)
     schnittstelle = models.CharField(max_length=255, null=True)
     masse = models.CharField(max_length=255, null=True)
-    menge = models.FloatField(null=True)
-    original_preis = models.FloatField(null=True)
-    reduzierter_preis = models.FloatField(null=True)
-    gesamt = models.FloatField(null=True)
+    menge = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    original_preis = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    reduzierter_preis = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    gesamt = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
     def __str__(self):
         return self.item_nummer
@@ -247,10 +247,10 @@ class OrderItem(models.Model):
     kabelvariante = models.CharField(max_length=255, null=True)
     schnittstelle = models.CharField(max_length=255, null=True)
     masse = models.CharField(max_length=255, null=True)
-    menge = models.FloatField(null=True)
-    original_preis = models.FloatField(null=True)
-    reduzierter_preis = models.FloatField(null=True)
-    gesamt = models.FloatField(null=True)
+    menge = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    original_preis = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    reduzierter_preis = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    gesamt = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
 class PreisListe(models.Model):
     kabelvariante = models.CharField(max_length=50, null=True)

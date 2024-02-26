@@ -167,7 +167,7 @@
                 gesamtPrice += gesamtPriceRow; // Add the gesamt price of the row to the total price
             });
 
-            $('#gesamt-price').text(gesamtPrice.toFixed(2)); // Set the total price in the gesamt-price element
+            $('#gesamt-price').text(gesamtPrice.toFixed(2).replace('.', ',')); // Set the total price in the gesamt-price element
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -220,7 +220,7 @@
                         var original_preis = row.getAttribute('data-original_preis');
                         var reduzierter_preis = row.getAttribute('data-reduzierter_preis');
                         var menge = parseInt(row.querySelector('.menge').textContent);
-                        var gesamt = parseInt(row.querySelector('.gesamt-price').textContent);
+                        var gesamt = parseFloat(row.querySelector('.gesamt-price').textContent.replace(',', '.'));
                         var item_akkuvariante = row.querySelector('.item-akkuvariante').textContent;
                         var item_CAN_Bus = row.querySelector('.item-CAN-Bus').textContent;
                         var item_kabelvariante = row.querySelector('.item-kabelvariante').textContent;
@@ -284,7 +284,7 @@
                         var original_preis = row.getAttribute('data-original_preis');
                         var reduzierter_preis = row.getAttribute('data-reduzierter_preis');
                         var menge = parseInt(row.querySelector('.menge').textContent);
-                        var gesamt = parseInt(row.querySelector('.gesamt-price').textContent);
+                        var gesamt = parseFloat(row.querySelector('.gesamt-price').textContent.replace(',', '.'));
                         var item_akkuvariante = row.querySelector('.item-akkuvariante').textContent;
                         var item_CAN_Bus = row.querySelector('.item-CAN-Bus').textContent;
                         var item_kabelvariante = row.querySelector('.item-kabelvariante').textContent;
@@ -455,7 +455,7 @@
                     }
                 });
                 
-                $('#gesamt-price').text(gesamtPrice.toFixed(2));
+                $('#gesamt-price').text(gesamtPrice.toFixed(2).replace('.', ','));
             }
 
         });
