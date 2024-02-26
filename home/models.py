@@ -34,6 +34,7 @@ def get_img_upload_path_general_images(instance, filename):
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     benutzername = models.CharField(max_length=50, primary_key=True)
+    ust_id = models.CharField(max_length=20, null=True)
     image = models.ImageField(default='General/default.png', upload_to=get_img_upload_path_profile, storage=OverwriteStorage())
     unternehmensname = models.CharField(max_length=255, null=True)
     land = models.CharField(max_length=100, null=True)

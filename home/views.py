@@ -215,9 +215,12 @@ def profil(request):
         profileUpdateForm = ProfileUpdateForm(
             request.POST, instance=request.user.customerprofile)
         if profileImageUpdateForm.is_valid() and userUpdateForm.is_valid() and profileUpdateForm.is_valid():
+            oldUsername = request.user.customerprofile.benutzername
+            username = userUpdateForm.cleaned_data['username']
             profileImageUpdateForm.save()
             userUpdateForm.save()
             profileUpdateForm.save()
+            CustomerProfile.objects.filter(benutzername=oldUsername).update(benutzername=username)
             messages.success(request, f'Deine Profiländerungen wurden gespeichert!')
             return redirect('profil')
     else:

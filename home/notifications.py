@@ -197,7 +197,7 @@ class NotificationService:
         email_body_firma_name = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Firma_Name'), '')
         firma_adresse_1 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Firma_Adresse_1'), '')
         firma_adresse_2 = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Firma_Adresse_2'), '')
-        email_body_special_solution_text = next((label['label_value'] for label in ui_labels if label['label_key'] == Email_Body_Special_Solution_Text), '')
+        email_body_special_solution_text = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Special_Solution_Text'), '')
         email_body_fon = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Fon'), '')
         email_body_mob = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Mob'), '')
         email_body_fax = next((label['label_value'] for label in ui_labels if label['label_key'] == 'Email_Body_Fax'), '')
